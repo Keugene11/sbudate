@@ -192,12 +192,28 @@ export default function ChatPage() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
               {messages.length === 0 && (
-                <div className="text-center py-20 animate-fade-in">
+                <div className="text-center py-16 animate-fade-in">
                   {other?.photo_url && (
-                    <img src={other.photo_url} alt="" className="w-16 h-16 rounded-full object-cover mx-auto mb-4 opacity-80" />
+                    <img src={other.photo_url} alt="" className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-rose/20 ring-offset-2" />
                   )}
-                  <p className="text-gray-900 text-[16px] font-medium mb-1">You matched!</p>
-                  <p className="text-gray-400 text-[14px]">Say something to {other?.first_name}</p>
+                  <p className="text-gray-900 text-[18px] font-semibold mb-1 tracking-tight">You matched!</p>
+                  <p className="text-gray-400 text-[14px] mb-6">Start a conversation with {other?.first_name}</p>
+                  {/* Conversation starters */}
+                  <div className="space-y-2 max-w-[260px] mx-auto">
+                    {[
+                      `Hey ${other?.first_name}! What made you swipe?`,
+                      "What's your go-to campus spot?",
+                      "What are you studying?",
+                    ].map((starter) => (
+                      <button
+                        key={starter}
+                        onClick={() => setNewMessage(starter)}
+                        className="w-full text-left px-4 py-3 bg-gray-50 rounded-2xl text-[14px] text-gray-600 press hover:bg-gray-100 transition-colors"
+                      >
+                        {starter}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
               {messages.map((msg, idx) => {
