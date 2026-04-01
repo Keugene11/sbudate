@@ -2,16 +2,20 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import ProfileCard from "@/components/ProfileCard";
+import MatchCelebration from "@/components/MatchCelebration";
 import type { ProfileWithContent } from "@/types";
 import { RefreshCw } from "lucide-react";
 
 export default function DiscoverPage() {
   const supabase = createClient();
+  const router = useRouter();
   const [profiles, setProfiles] = useState<ProfileWithContent[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
+  const [matchInfo, setMatchInfo] = useState<{ name: string; photoUrl: string | null; matchId: string } | null>(null);
 
   const fetchProfiles = useCallback(async () => {
     setLoading(true);
@@ -48,9 +52,19 @@ export default function DiscoverPage() {
 
   const handleLike = async (contentType: "photo" | "prompt", contentId: string, comment?: string) => {
     if (!myProfileId || !profiles[currentIndex]) return;
-    await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: profiles[currentIndex].id, content_type: contentType, content_id: contentId, comment: comment || null });
-    const { data: mutualLike } = await supabase.from("likes").select("id").eq("from_profile_id", profiles[currentIndex].id).eq("to_profile_id", myProfileId).limit(1);
-    if (mutualLike && mutualLike.length > 0) await supabase.from("matches").insert({ profile1_id: myProfileId, profile2_id: profiles[currentIndex].id });
+    const likedProfile = profiles[currentIndex];
+    await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: likedProfile.id, content_type: contentType, content_id: contentId, comment: comment || null });
+    const { data: mutualLike } = await supabase.from("likes").select("id").eq("from_profile_id", likedProfile.id).eq("to_profile_id", myProfileId).limit(1);
+    if (mutualLike && mutualLike.length > 0) {
+      const { data: match } = await supabase.from("matches").insert({ profile1_id: myProfileId, profile2_id: likedProfile.id }).select().single();
+      if (match) {
+        setMatchInfo({
+          name: likedProfile.first_name,
+          photoUrl: likedProfile.photos[0]?.url || null,
+          matchId: match.id,
+        });
+      }
+    }
     setCurrentIndex((prev) => prev + 1);
   };
 
@@ -89,16 +103,27 @@ export default function DiscoverPage() {
 
   return (
     <div className="max-w-lg mx-auto pb-4">
-      {/* Minimal header */}
+      {/* Header */}
       <div className="px-5 pt-3 pb-1 flex items-center justify-between">
-        <div>
-          <h1 className="text-[15px] font-medium text-gray-900 tracking-tight">Discover</h1>
-        </div>
-        <span className="text-[12px] text-gray-400">
+        <h1 className="text-[15px] font-medium text-gray-900 tracking-tight">Discover</h1>
+        <span className="text-[12px] text-gray-400 tabular-nums">
           {currentIndex + 1} / {profiles.length}
         </span>
       </div>
       <ProfileCard key={current.id} profile={current} onLike={handleLike} onSkip={handleSkip} />
+
+      {/* Match celebration */}
+      {matchInfo && (
+        <MatchCelebration
+          name={matchInfo.name}
+          photoUrl={matchInfo.photoUrl}
+          onChat={() => {
+            setMatchInfo(null);
+            router.push(`/chat/${matchInfo.matchId}`);
+          }}
+          onKeepBrowsing={() => setMatchInfo(null)}
+        />
+      )}
     </div>
   );
 }

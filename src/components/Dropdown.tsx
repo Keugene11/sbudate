@@ -56,20 +56,23 @@ export default function Dropdown({ value, onChange, options, placeholder = "Sele
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="press w-full h-[48px] bg-gray-100 rounded-xl px-4 text-[15px] outline-none border border-transparent flex items-center justify-between gap-2 text-left transition-all duration-200 focus:border-black focus:shadow-[0_0_0_2px_rgba(0,0,0,0.05)]"
+        className="press w-full h-[50px] bg-gray-50 rounded-xl px-4 text-[15px] outline-none border border-border flex items-center justify-between gap-2 text-left transition-all duration-200 focus:border-gray-900"
       >
-        <span className={selected ? "text-black truncate" : "text-gray-400 truncate"}>
+        <span className={selected ? "text-gray-900 truncate font-medium" : "text-gray-400 truncate"}>
           {selected ? selected.label : placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} strokeWidth={2} />
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          strokeWidth={2}
+        />
       </button>
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute z-50 left-0 right-0 mt-1 bg-white rounded-2xl shadow-lg shadow-black/10 border border-gray-100 overflow-hidden animate-slide-up" style={{ animationDuration: "0.2s" }}>
+        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-surface rounded-2xl border border-border overflow-hidden animate-scale-in" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}>
           {searchable && (
             <div className="px-3 pt-3 pb-2">
-              <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3 h-[40px]">
+              <div className="flex items-center gap-2.5 bg-gray-50 rounded-xl px-3.5 h-[42px]">
                 <Search className="w-4 h-4 text-gray-400" strokeWidth={2} />
                 <input
                   ref={searchRef}
@@ -83,22 +86,24 @@ export default function Dropdown({ value, onChange, options, placeholder = "Sele
           )}
           <div className="max-h-[280px] overflow-y-auto py-1">
             {filtered.length === 0 && (
-              <p className="text-center text-gray-400 text-[14px] py-6">No results</p>
+              <p className="text-center text-gray-400 text-[14px] py-8">No results</p>
             )}
             {[...groups.entries()].map(([group, items]) => (
               <div key={group}>
                 {group && (
-                  <p className="px-4 pt-3 pb-1 text-[11px] text-gray-400 uppercase tracking-wider font-medium">{group}</p>
+                  <p className="px-4 pt-3 pb-1.5 text-[11px] text-gray-400 uppercase tracking-[0.08em] font-medium">{group}</p>
                 )}
                 {items.map((option) => (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => { onChange(option.value); setOpen(false); }}
-                    className="w-full flex items-center justify-between px-4 py-3 text-[15px] text-left hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-3 text-[15px] text-left press hover:bg-gray-50 transition-colors"
                   >
-                    <span className={option.value === value ? "text-black" : "text-gray-700"}>{option.label}</span>
-                    {option.value === value && <Check className="w-4 h-4 text-black flex-shrink-0" strokeWidth={2.5} />}
+                    <span className={option.value === value ? "text-gray-900 font-medium" : "text-gray-700"}>
+                      {option.label}
+                    </span>
+                    {option.value === value && <Check className="w-4 h-4 text-gray-900 flex-shrink-0" strokeWidth={2.5} />}
                   </button>
                 ))}
               </div>

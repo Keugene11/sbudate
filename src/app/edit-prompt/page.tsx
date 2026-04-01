@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, Pencil, X as XIcon } from "lucide-react";
+import { ChevronLeft, Pencil, X as XIcon, Search } from "lucide-react";
 import { PROMPT_OPTIONS } from "@/types";
 import { Suspense } from "react";
 
@@ -19,6 +19,7 @@ function EditPromptInner() {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [existingPromptId, setExistingPromptId] = useState<string | null>(null);
   const [usedQuestions, setUsedQuestions] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -66,49 +67,54 @@ function EditPromptInner() {
   };
 
   const available = PROMPT_OPTIONS.filter((o) => !usedQuestions.includes(o));
+  const filteredPrompts = searchQuery
+    ? available.filter((q) => q.toLowerCase().includes(searchQuery.toLowerCase()))
+    : available;
 
   if (step === "write") {
     return (
       <div className="h-[100dvh] flex flex-col bg-surface">
-        <div className="flex items-center justify-between px-4 h-[52px] flex-shrink-0" style={{ borderBottom: "1px solid #E0DFDB" }}>
-          <button onClick={() => existingPromptId ? router.push("/edit-profile") : setStep("pick")} className="press p-1">
-            <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={1.8} />
+        <div className="flex items-center justify-between px-4 h-[56px] flex-shrink-0 border-b border-border">
+          <button onClick={() => existingPromptId ? router.push("/edit-profile") : setStep("pick")} className="press p-1.5 -ml-1">
+            <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
           </button>
-          <span className="text-[16px] text-gray-900">Write answer</span>
+          <span className="text-[16px] text-gray-900 font-semibold">Write Answer</span>
           <button onClick={handleDone} disabled={!answer.trim() || saving}
-            className="press text-[15px] text-rose disabled:text-gray-300">Done</button>
+            className="press text-[15px] text-rose font-semibold disabled:text-gray-300">
+            {saving ? "Saving" : "Done"}
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-5">
-          {/* Prompt question with edit icon */}
-          <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-[12px] px-4 py-4 mb-4">
-            <p className="text-[15px] text-gray-900 flex-1">{selectedQuestion}</p>
-            <button onClick={() => setStep("pick")} className="press ml-3 flex-shrink-0">
-              <Pencil className="w-5 h-5 text-gray-400" strokeWidth={1.5} />
-            </button>
-          </div>
+        <div className="flex-1 overflow-y-auto px-5 py-6">
+          {/* Selected prompt question */}
+          <button
+            onClick={() => setStep("pick")}
+            className="w-full flex items-center justify-between bg-cream rounded-2xl px-5 py-4 mb-5 press text-left"
+          >
+            <p className="text-[15px] text-gray-900 font-medium flex-1">{selectedQuestion}</p>
+            <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0 ml-3" strokeWidth={1.8} />
+          </button>
 
-          {/* Answer textarea */}
-          <div className="bg-gray-50 border border-gray-200 rounded-[12px] px-4 py-4 relative">
+          {/* Answer */}
+          <div className="bg-gray-50 border border-border rounded-2xl px-5 py-5 relative">
             <textarea
               value={answer}
               onChange={(e) => setAnswer(e.target.value.slice(0, 225))}
               placeholder="Write your answer..."
               rows={5}
-              className="w-full bg-transparent text-[16px] text-gray-900 leading-relaxed outline-none resize-none placeholder:text-gray-400"
+              className="w-full bg-transparent text-[17px] text-gray-900 leading-relaxed outline-none resize-none placeholder:text-gray-400 font-medium"
               autoFocus
             />
             {answer && (
-              <button onClick={() => setAnswer("")} className="absolute bottom-3 right-3 press">
-                <XIcon className="w-5 h-5 text-gray-300" strokeWidth={1.5} />
+              <button onClick={() => setAnswer("")} className="absolute top-4 right-4 press p-1">
+                <XIcon className="w-4 h-4 text-gray-300" strokeWidth={2} />
               </button>
             )}
           </div>
-          <p className="text-[12px] text-gray-400 mt-2 text-right">{answer.length}/225</p>
+          <p className="text-[12px] text-gray-400 mt-2.5 text-right tabular-nums">{answer.length}/225</p>
 
-          {/* Delete option for existing prompts */}
           {existingPromptId && (
-            <button onClick={handleDelete} className="press mt-8 text-[14px] text-gray-400">
+            <button onClick={handleDelete} className="press mt-10 text-[14px] text-red-400 font-medium">
               Remove this prompt
             </button>
           )}
@@ -120,18 +126,36 @@ function EditPromptInner() {
   // Prompt picker
   return (
     <div className="h-[100dvh] flex flex-col bg-surface">
-      <div className="flex items-center justify-between px-4 h-[52px] flex-shrink-0" style={{ borderBottom: "1px solid #E0DFDB" }}>
-        <button onClick={() => router.push("/edit-profile")} className="press p-1">
-          <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={1.8} />
+      <div className="flex items-center justify-between px-4 h-[56px] flex-shrink-0 border-b border-border">
+        <button onClick={() => router.push("/edit-profile")} className="press p-1.5 -ml-1">
+          <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
         </button>
-        <span className="text-[16px] text-gray-900">Prompts</span>
-        <div className="w-6" />
+        <span className="text-[16px] text-gray-900 font-semibold">Choose a Prompt</span>
+        <div className="w-8" />
+      </div>
+
+      {/* Search */}
+      <div className="px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-2.5 bg-gray-50 rounded-xl px-4 h-[44px]">
+          <Search className="w-4 h-4 text-gray-400" strokeWidth={2} />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search prompts..."
+            className="flex-1 bg-transparent text-[15px] outline-none placeholder:text-gray-400"
+          />
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {available.map((q, i) => (
+        {filteredPrompts.length === 0 && (
+          <p className="text-center text-gray-400 text-[14px] py-12">No matching prompts</p>
+        )}
+        {filteredPrompts.map((q, i) => (
           <button key={q} onClick={() => pickQuestion(q)}
-            className="w-full text-left px-5 py-4 press" style={i < available.length - 1 ? { borderBottom: "1px solid #E0DFDB" } : {}}>
+            className={`w-full text-left px-5 py-4 press hover:bg-gray-50 transition-colors ${
+              i < filteredPrompts.length - 1 ? "border-b border-border" : ""
+            }`}>
             <p className="text-[15px] text-gray-900">{q}</p>
           </button>
         ))}
@@ -142,7 +166,11 @@ function EditPromptInner() {
 
 export default function EditPromptPage() {
   return (
-    <Suspense fallback={<div className="h-[100dvh] flex items-center justify-center bg-surface"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" /></div>}>
+    <Suspense fallback={
+      <div className="h-[100dvh] flex items-center justify-center bg-surface">
+        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+      </div>
+    }>
       <EditPromptInner />
     </Suspense>
   );
