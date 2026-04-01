@@ -128,13 +128,20 @@ export default function EditProfilePage() {
           <div>
             <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">Photos</p>
             <div className="grid grid-cols-3 gap-2.5">
-              {existingPhotos.map((photo) => (
+              {existingPhotos.map((photo, idx) => (
                 <div key={photo.id} className="aspect-[3/4] relative rounded-xl overflow-hidden">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => removeExistingPhoto(photo.id)}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
                     <X className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
                   </button>
+                  {idx === 0 && (
+                    <div className="absolute bottom-2 left-2">
+                      <span className="text-[10px] text-white font-semibold bg-black/40 glass px-2 py-0.5 rounded-full uppercase tracking-wide">
+                        Main
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))}
               {newPhotos.map((photo, idx) => (

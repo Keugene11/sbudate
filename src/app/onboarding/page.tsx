@@ -208,6 +208,13 @@ export default function OnboardingPage() {
                         className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
                         <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />
                       </button>
+                      {i === 0 && (
+                        <div className="absolute bottom-2 left-2">
+                          <span className="text-[10px] text-white font-semibold bg-black/40 glass px-2 py-0.5 rounded-full uppercase tracking-wide">
+                            Main
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <label className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors press">
