@@ -127,7 +127,7 @@ export default function ChatPage() {
     : null;
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-white">
+    <div className="h-[100dvh] flex flex-col bg-surface">
       <div className="max-w-lg mx-auto w-full flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-[52px] flex-shrink-0">
@@ -143,11 +143,11 @@ export default function ChatPage() {
         </div>
 
         {/* Chat / Profile tabs */}
-        <div className="flex items-center border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center border-b border-border flex-shrink-0">
           <button
             onClick={() => setTab("chat")}
             className={`flex-1 py-3 text-center text-[15px] font-medium transition-colors ${
-              tab === "chat" ? "text-black border-b-2 border-black" : "text-gray-400"
+              tab === "chat" ? "text-black border-b-2 border-gray-900" : "text-gray-400"
             }`}
           >
             Chat
@@ -156,7 +156,7 @@ export default function ChatPage() {
           <button
             onClick={switchToProfile}
             className={`flex-1 py-3 text-center text-[15px] font-medium transition-colors ${
-              tab === "profile" ? "text-black border-b-2 border-black" : "text-gray-400"
+              tab === "profile" ? "text-black border-b-2 border-gray-900" : "text-gray-400"
             }`}
           >
             Profile
@@ -199,7 +199,7 @@ export default function ChatPage() {
                       <div className={mine ? "flex flex-col items-end" : ""}>
                         <div className={`max-w-[260px] px-4 py-2.5 text-[15px] leading-relaxed ${
                           mine
-                            ? "bg-[#67295F] text-white rounded-[20px] rounded-br-[6px]"
+                            ? "bg-rose text-white rounded-[20px] rounded-br-[6px]"
                             : "bg-[#F0F0F0] text-black rounded-[20px] rounded-bl-[6px]"
                         }`}>
                           {msg.content}
@@ -229,7 +229,7 @@ export default function ChatPage() {
                   onClick={send}
                   disabled={!newMessage.trim()}
                   className={`press w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all duration-200 ${
-                    newMessage.trim() ? "bg-[#67295F]" : "bg-gray-100"
+                    newMessage.trim() ? "bg-rose" : "bg-gray-100"
                   }`}
                 >
                   <Send className={`w-[18px] h-[18px] ${newMessage.trim() ? "text-white" : "text-gray-400"}`} strokeWidth={2.5} />
@@ -282,7 +282,7 @@ export default function ChatPage() {
                       {details.map((item, i) => {
                         const Icon = item.icon;
                         return (
-                          <div key={i} className={`flex items-center gap-3.5 px-5 py-4 ${i < details.length - 1 ? "border-b border-gray-200" : ""}`}>
+                          <div key={i} className={`flex items-center gap-3.5 px-5 py-4 ${i < details.length - 1 ? "border-b border-border" : ""}`}>
                             <Icon className="w-[20px] h-[20px] text-gray-700" strokeWidth={1.8} />
                             <span className="text-[15px] text-black">{item.value}</span>
                           </div>

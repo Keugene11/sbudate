@@ -44,7 +44,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <div className="max-w-lg mx-auto bg-white min-h-screen">
+    <div className="max-w-lg mx-auto min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between px-5 h-[52px]">
         <span className="text-[17px] font-medium text-gray-900">SBUdate</span>
@@ -56,7 +56,7 @@ export default function ProfilePage() {
 
       {/* Avatar + name */}
       <div className="flex flex-col items-center pt-1 pb-5">
-        <div className="w-[88px] h-[88px] rounded-full overflow-hidden ring-[2.5px] ring-accent ring-offset-2 mb-3">
+        <div className="w-[88px] h-[88px] rounded-full overflow-hidden ring-[2.5px] ring-rose ring-offset-2 mb-3">
           {profile.photos[0] ? (
             <img src={profile.photos[0].url} alt="" className="w-full h-full object-cover" />
           ) : <div className="w-full h-full bg-gray-200" />}
@@ -65,11 +65,11 @@ export default function ProfilePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex mx-5 rounded-[12px] bg-gray-100 p-[3px] mb-4">
+      <div className="flex mx-5 rounded-[10px] bg-gray-100 p-[3px] mb-4">
         {(["edit", "view"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`flex-1 py-2 text-center text-[14px] rounded-[10px] transition-all duration-200 ${
-              tab === t ? "bg-white text-gray-900 font-medium shadow-sm" : "text-gray-500"
+            className={`flex-1 py-2 text-center text-[14px] rounded-[8px] transition-all duration-200 ${
+              tab === t ? "bg-surface text-gray-900 font-medium shadow-sm" : "text-gray-400"
             }`}>
             {t === "edit" ? "Edit" : "View"}
           </button>
@@ -99,7 +99,7 @@ export default function ProfilePage() {
           {profile.prompts.length > 0 && (
             <div className="mx-5 mb-4">
               <p className="text-[12px] text-gray-400 uppercase tracking-wider mb-2">Prompts</p>
-              <div className="bg-gray-50 rounded-[14px] overflow-hidden">
+              <div className="bg-surface rounded-[12px] overflow-hidden">
                 {profile.prompts.map((prompt, i) => (
                   <button key={prompt.id} onClick={() => router.push("/profile/edit")}
                     className={`w-full px-4 py-3.5 flex items-center justify-between press text-left ${i < profile.prompts.length - 1 ? "border-b border-gray-100" : ""}`}>
@@ -117,7 +117,7 @@ export default function ProfilePage() {
           {/* Vitals */}
           <div className="mx-5">
             <p className="text-[12px] text-gray-400 uppercase tracking-wider mb-2">Vitals</p>
-            <div className="bg-gray-50 rounded-[14px] overflow-hidden">
+            <div className="bg-surface rounded-[12px] overflow-hidden">
               {[
                 { label: "Major", value: profile.major },
                 { label: "Graduation Year", value: profile.graduation_year ? `Class of ${profile.graduation_year}` : null },
@@ -148,7 +148,7 @@ export default function ProfilePage() {
               if (profile.gender) vitals.push({ icon: User, value: profile.gender });
               if (heightDisplay) vitals.push({ icon: Ruler, value: heightDisplay });
               return vitals.length > 0 ? (
-                <div className="bg-gray-50 rounded-[16px] overflow-hidden">
+                <div className="bg-surface rounded-[12px] overflow-hidden">
                   <div className="flex items-center">
                     {vitals.map((item, i) => { const Icon = item.icon; return (
                       <div key={i} className={`flex items-center gap-2 px-4 py-3 flex-shrink-0 ${i < vitals.length - 1 ? "border-r border-gray-200" : ""}`}>
@@ -166,7 +166,7 @@ export default function ProfilePage() {
               if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
               if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
               return details.length > 0 ? (
-                <div className="bg-gray-50 rounded-[16px] overflow-hidden">
+                <div className="bg-surface rounded-[12px] overflow-hidden">
                   {details.map((item, i) => { const Icon = item.icon; return (
                     <div key={i} className={`flex items-center gap-3 px-5 py-3.5 ${i < details.length - 1 ? "border-b border-gray-200" : ""}`}>
                       <Icon className="w-[18px] h-[18px] text-gray-500" strokeWidth={1.6} />
@@ -181,17 +181,17 @@ export default function ProfilePage() {
           {profile.photos.map((photo, idx) => (
             <div key={photo.id} className="relative mx-4 mt-3">
               {idx === 0 && (
-                <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent rounded-b-[16px] z-10">
+                <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent rounded-b-[12px] z-10">
                   <p className="text-white text-[24px] font-semibold">{profile.first_name}, <span className="font-normal">{profile.age}</span></p>
                   {profile.major && <p className="text-white/70 text-[14px] mt-0.5">{profile.major}</p>}
                 </div>
               )}
-              <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-[16px]" draggable={false} />
+              <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-[12px]" draggable={false} />
             </div>
           ))}
 
           {profile.prompts.map((prompt) => (
-            <div key={prompt.id} className="bg-cream mx-4 mt-3 px-5 py-5 rounded-[16px]">
+            <div key={prompt.id} className="bg-surface mx-4 mt-2 px-5 py-4 rounded-[12px]">
               <p className="text-[12px] text-gray-500 tracking-wide mb-1.5">{prompt.question}</p>
               <p className="text-[17px] text-gray-900 leading-[1.45]">{prompt.answer}</p>
             </div>
