@@ -234,7 +234,7 @@ export default function OnboardingPage() {
             <p className="text-gray-400 text-[15px] mb-8">Answer at least 2. Be creative!</p>
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
-                <div key={idx} className="bg-cream rounded-2xl p-5">
+                <div key={idx} className={`${idx % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]"} rounded-2xl p-5`}>
                   <Dropdown
                     value={prompt.question}
                     onChange={(v) => { const u = [...prompts]; u[idx].question = v; setPrompts(u); }}
