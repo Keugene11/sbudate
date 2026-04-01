@@ -47,6 +47,10 @@ export default function MatchesPage() {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
+  // Separate new matches (no messages) from conversations
+  const newMatches = matches.filter((m) => !m.last_message);
+  const conversations = matches.filter((m) => m.last_message);
+
   return (
     <div className="max-w-lg mx-auto min-h-screen">
       <div className="px-5 pt-4 pb-2">
@@ -55,7 +59,17 @@ export default function MatchesPage() {
 
       {loading ? (
         <div className="px-4 space-y-0">
-          {[0,1,2,3].map((i) => (
+          {/* New matches skeleton */}
+          <div className="flex gap-3 px-1 py-4 overflow-hidden">
+            {[0,1,2,3].map((i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                <div className="w-[60px] h-[60px] rounded-full skeleton" />
+                <div className="h-3 w-12 skeleton rounded" />
+              </div>
+            ))}
+          </div>
+          {/* Conversation skeleton */}
+          {[0,1,2].map((i) => (
             <div key={i} className="flex items-center gap-3.5 px-4 py-4">
               <div className="w-[52px] h-[52px] rounded-full skeleton flex-shrink-0" />
               <div className="flex-1 space-y-2">
@@ -74,45 +88,91 @@ export default function MatchesPage() {
           <p className="text-gray-400 text-[15px] leading-relaxed">When you and someone like each other,<br />you can chat here.</p>
         </div>
       ) : (
-        <div className="px-2 stagger">
-          {matches.map((match) => (
-            <Link
-              key={match.match_id}
-              href={`/chat/${match.match_id}`}
-              className="flex items-center gap-3.5 px-3 py-3 mx-1 rounded-2xl press hover:bg-gray-50 transition-colors duration-100"
-            >
-              {/* Avatar */}
-              {match.profile.photo_url ? (
-                <div className="relative flex-shrink-0">
-                  <img src={match.profile.photo_url} alt="" className="w-[52px] h-[52px] rounded-full object-cover" />
-                  {match.unread && (
-                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
-                  )}
-                </div>
-              ) : (
-                <div className="relative flex-shrink-0">
-                  <div className="w-[52px] h-[52px] rounded-full bg-gray-200" />
-                  {match.unread && (
-                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
-                  )}
-                </div>
-              )}
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className={`text-[16px] tracking-tight ${match.unread ? "text-gray-900 font-semibold" : "text-gray-900 font-medium"}`}>
-                    {match.profile.first_name}
-                  </p>
-                  <span className={`text-[12px] ${match.unread ? "text-rose font-medium" : "text-gray-400"}`}>
-                    {formatTime(match.last_message_at || "")}
-                  </span>
-                </div>
-                <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-700 font-medium" : "text-gray-400"}`}>
-                  {match.last_message || "Say hello"}
-                </p>
+        <div className="animate-fade-in">
+          {/* New matches — horizontal scroll like Hinge */}
+          {newMatches.length > 0 && (
+            <div className="pb-2">
+              <p className="px-5 text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">
+                New Matches
+              </p>
+              <div className="flex gap-4 px-5 overflow-x-auto pb-3">
+                {newMatches.map((match) => (
+                  <Link
+                    key={match.match_id}
+                    href={`/chat/${match.match_id}`}
+                    className="flex flex-col items-center gap-1.5 flex-shrink-0 press"
+                  >
+                    <div className="relative">
+                      {match.profile.photo_url ? (
+                        <img
+                          src={match.profile.photo_url}
+                          alt=""
+                          className="w-[64px] h-[64px] rounded-full object-cover ring-2 ring-rose ring-offset-2"
+                        />
+                      ) : (
+                        <div className="w-[64px] h-[64px] rounded-full bg-gray-200 ring-2 ring-rose ring-offset-2" />
+                      )}
+                    </div>
+                    <span className="text-[12px] text-gray-900 font-medium">
+                      {match.profile.first_name}
+                    </span>
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))}
+              {conversations.length > 0 && <div className="h-px bg-border mx-5" />}
+            </div>
+          )}
+
+          {/* Conversations */}
+          {conversations.length > 0 && (
+            <div>
+              <p className="px-5 pt-3 text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-1">
+                Messages
+              </p>
+              <div className="stagger">
+                {conversations.map((match) => (
+                  <Link
+                    key={match.match_id}
+                    href={`/chat/${match.match_id}`}
+                    className="flex items-center gap-3.5 px-5 py-3.5 press hover:bg-gray-50 transition-colors duration-100"
+                  >
+                    {/* Avatar */}
+                    <div className="relative flex-shrink-0">
+                      {match.profile.photo_url ? (
+                        <img src={match.profile.photo_url} alt="" className="w-[52px] h-[52px] rounded-full object-cover" />
+                      ) : (
+                        <div className="w-[52px] h-[52px] rounded-full bg-gray-200" />
+                      )}
+                      {match.unread && (
+                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
+                      )}
+                    </div>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className={`text-[16px] tracking-tight ${match.unread ? "text-gray-900 font-semibold" : "text-gray-900 font-medium"}`}>
+                          {match.profile.first_name}
+                        </p>
+                        <span className={`text-[12px] ${match.unread ? "text-rose font-medium" : "text-gray-400"}`}>
+                          {formatTime(match.last_message_at || "")}
+                        </span>
+                      </div>
+                      <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-700 font-medium" : "text-gray-400"}`}>
+                        {match.last_message}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* New matches that have no conversations yet — show as list too if they exist but no conversations section */}
+          {newMatches.length > 0 && conversations.length === 0 && (
+            <div className="pt-6 px-5 text-center">
+              <p className="text-gray-400 text-[14px]">Start a conversation with your matches!</p>
+            </div>
+          )}
         </div>
       )}
     </div>
