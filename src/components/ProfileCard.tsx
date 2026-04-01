@@ -65,6 +65,15 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                 {isFirst && (
                   <>
                     <div className="absolute inset-0 rounded-[16px] photo-gradient" />
+                    {/* Dating intention badge at top */}
+                    {profile.dating_intention && (
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 glass rounded-full text-[12px] text-gray-700 font-medium">
+                          <Target className="w-3 h-3 text-gray-500" strokeWidth={2} />
+                          {profile.dating_intention}
+                        </span>
+                      </div>
+                    )}
                     <div className="absolute bottom-5 left-5 right-16">
                       <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
                         {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
