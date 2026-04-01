@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil } from "lucide-react";
+import { Settings, LogOut, ChevronRight, Pencil, Target, Church, Wine, Cigarette } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { Cake, User, Ruler, GraduationCap, Home, Building } from "lucide-react";
 
@@ -196,6 +196,26 @@ export default function ProfilePage() {
               ) : null;
             })()}
           </div>
+
+          {/* Lifestyle in view */}
+          {(profile.dating_intention || profile.religion || profile.drinking || profile.smoking) && (
+            <div className="mx-3 mt-2.5 bg-gray-50 rounded-2xl overflow-hidden">
+              {[
+                { icon: Target, value: profile.dating_intention },
+                { icon: Church, value: profile.religion },
+                { icon: Wine, value: profile.drinking ? (profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink") : null },
+                { icon: Cigarette, value: profile.smoking ? (profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke") : null },
+              ].filter((item) => item.value).map((item, i, arr) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i} className={`flex items-center gap-3 px-5 py-3.5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
+                    <Icon className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.6} />
+                    <span className="text-[15px] text-gray-900">{item.value}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {profile.photos.map((photo, idx) => (
             <div key={photo.id} className="relative mx-3 mt-2.5">

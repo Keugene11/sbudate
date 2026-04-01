@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building } from "lucide-react";
+import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building, Target, Church, Wine, Cigarette } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ChatMessage { id: string; content: string; sender_id: string; created_at: string; }
@@ -336,6 +336,26 @@ export default function ChatPage() {
                     </div>
                   );
                 })()}
+
+                {/* Lifestyle */}
+                {(otherFullProfile.dating_intention || otherFullProfile.religion || otherFullProfile.drinking || otherFullProfile.smoking) && (
+                  <div className="bg-gray-50 rounded-2xl overflow-hidden">
+                    {[
+                      { icon: Target, value: otherFullProfile.dating_intention },
+                      { icon: Church, value: otherFullProfile.religion },
+                      { icon: Wine, value: otherFullProfile.drinking ? (otherFullProfile.drinking === "Yes" ? "Drinks" : otherFullProfile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink") : null },
+                      { icon: Cigarette, value: otherFullProfile.smoking ? (otherFullProfile.smoking === "Yes" ? "Smokes" : otherFullProfile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke") : null },
+                    ].filter((item) => item.value).map((item, i, arr) => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={i} className={`flex items-center gap-3.5 px-5 py-3.5 ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
+                          <Icon className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.6} />
+                          <span className="text-[15px] text-gray-900">{item.value}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {/* Photos */}
                 {otherFullProfile.photos.map((photo, idx) => (
