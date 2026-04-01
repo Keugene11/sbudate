@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
 import { ChevronLeft, Plus, X, Camera } from "lucide-react";
+import Dropdown from "@/components/Dropdown";
 
 type Step = "basics" | "photos" | "prompts" | "preferences";
 const STEPS: Step[] = ["basics", "photos", "prompts", "preferences"];
@@ -153,16 +154,13 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Major</label>
-                <select
+                <Dropdown
                   value={major}
-                  onChange={(e) => setMajor(e.target.value)}
-                  className={`${inputCls} appearance-none cursor-pointer`}
-                >
-                  <option value="">Select your major...</option>
-                  {SBU_MAJORS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
+                  onChange={setMajor}
+                  options={SBU_MAJORS.map((m) => ({ value: m, label: m }))}
+                  placeholder="Select your major..."
+                  searchable
+                />
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Graduation year</label>
@@ -174,20 +172,15 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Residence Hall</label>
-                <select
+                <Dropdown
                   value={residenceHall}
-                  onChange={(e) => setResidenceHall(e.target.value)}
-                  className={`${inputCls} appearance-none cursor-pointer`}
-                >
-                  <option value="">Select your dorm...</option>
-                  {Object.entries(RESIDENCE_HALLS).map(([group, halls]) => (
-                    <optgroup key={group} label={group}>
-                      {halls.map((hall) => (
-                        <option key={hall} value={hall}>{hall}</option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
+                  onChange={setResidenceHall}
+                  options={Object.entries(RESIDENCE_HALLS).flatMap(([group, halls]) =>
+                    halls.map((h) => ({ value: h, label: h, group }))
+                  )}
+                  placeholder="Select your dorm..."
+                  searchable
+                />
               </div>
             </div>
           </div>
@@ -227,14 +220,12 @@ export default function OnboardingPage() {
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
                 <div key={idx} className="bg-cream rounded-xl p-4">
-                  <select value={prompt.question}
-                    onChange={(e) => { const u = [...prompts]; u[idx].question = e.target.value; setPrompts(u); }}
-                    className="w-full bg-transparent text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] outline-none mb-2 appearance-none cursor-pointer">
-                    <option value="">Choose a prompt...</option>
-                    {PROMPT_OPTIONS.filter((o) => !prompts.some((p, i) => i !== idx && p.question === o)).map((o) => (
-                      <option key={o} value={o}>{o}</option>
-                    ))}
-                  </select>
+                  <Dropdown
+                    value={prompt.question}
+                    onChange={(v) => { const u = [...prompts]; u[idx].question = v; setPrompts(u); }}
+                    options={PROMPT_OPTIONS.filter((o) => !prompts.some((p, i) => i !== idx && p.question === o)).map((o) => ({ value: o, label: o }))}
+                    placeholder="Choose a prompt..."
+                  />
                   {prompt.question && (
                     <>
                       <textarea value={prompt.answer}
