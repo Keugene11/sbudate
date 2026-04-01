@@ -27,11 +27,12 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
   const sendLike = () => {
     if (!activeHeart) return;
     setExiting(true);
-    setTimeout(() => onLike(activeHeart.type, activeHeart.id, comment.trim() || undefined), 200);
+    setTimeout(() => onLike(activeHeart.type, activeHeart.id, comment.trim() || undefined), 250);
   };
 
-  const handleSkip = () => { setExiting(true); setTimeout(() => onSkip(), 200); };
+  const handleSkip = () => { setExiting(true); setTimeout(() => onSkip(), 250); };
 
+  // Interleave photos and prompts like Hinge
   const items: Array<{ type: "photo" | "prompt"; data: (typeof profile.photos)[0] | (typeof profile.prompts)[0] }> = [];
   const maxLen = Math.max(profile.photos.length, profile.prompts.length);
   for (let i = 0; i < maxLen; i++) {
@@ -45,34 +46,80 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
         if (item.type === "photo") {
           const photo = item.data as (typeof profile.photos)[0];
           const isOpen = activeHeart?.id === photo.id;
+          const isFirst = idx === 0;
           return (
             <div key={photo.id}>
-              <div className="relative mx-4 mt-2">
-                <img src={photo.url} alt="" className="w-full aspect-square object-cover rounded-[12px]" draggable={false} />
-                {/* Name on first photo */}
-                {idx === 0 && (
-                  <div className="absolute top-4 left-4">
-                    <p className="text-white text-[22px] font-medium drop-shadow-sm">{profile.first_name}</p>
-                  </div>
+              <div className="relative mx-3 mt-2.5">
+                <img
+                  src={photo.url}
+                  alt=""
+                  className="w-full aspect-[4/5] object-cover rounded-[16px]"
+                  draggable={false}
+                />
+                {/* Name + info overlay on first photo */}
+                {isFirst && (
+                  <>
+                    <div className="absolute inset-0 rounded-[16px] photo-gradient" />
+                    <div className="absolute bottom-5 left-5 right-16">
+                      <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
+                        {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
+                      </h2>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        {profile.major && (
+                          <span className="text-white/80 text-[14px]">{profile.major}</span>
+                        )}
+                        {profile.major && (profile.residence_hall || profile.hometown) && (
+                          <span className="text-white/40">·</span>
+                        )}
+                        {profile.residence_hall && (
+                          <span className="text-white/70 text-[14px]">{profile.residence_hall}</span>
+                        )}
+                        {!profile.residence_hall && profile.hometown && (
+                          <span className="text-white/70 text-[14px]">{profile.hometown}</span>
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
-                {/* Heart */}
-                <button onClick={() => handleHeartTap("photo", photo.id)}
-                  className={`absolute bottom-4 right-4 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-150 ${
-                    isOpen ? "bg-rose scale-110" : "bg-white"
-                  }`} style={{ boxShadow: isOpen ? "none" : "0 2px 8px rgba(0,0,0,0.12)" }}>
-                  <Heart className={`w-5 h-5 ${isOpen ? "text-white" : "text-gray-900"}`}
-                    strokeWidth={isOpen ? 0 : 1.5} fill={isOpen ? "currentColor" : "none"} />
+                {/* Heart button */}
+                <button
+                  onClick={() => handleHeartTap("photo", photo.id)}
+                  className={`absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    isOpen
+                      ? "bg-rose scale-110 shadow-lg shadow-rose/30"
+                      : "bg-white/95 shadow-md"
+                  }`}
+                >
+                  <Heart
+                    className={`w-[22px] h-[22px] transition-colors duration-150 ${
+                      isOpen ? "text-white" : "text-gray-800"
+                    } ${isOpen ? "animate-heart-pop" : ""}`}
+                    strokeWidth={isOpen ? 0 : 1.5}
+                    fill={isOpen ? "currentColor" : "none"}
+                  />
                 </button>
               </div>
-              {/* Inline comment */}
+              {/* Comment input when heart is active */}
               {isOpen && (
-                <div className="mx-4 mt-2 animate-fade-in">
-                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment"
-                    rows={2} className="w-full border border-gray-200 rounded-[10px] px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-surface input-focus" autoFocus />
-                  <button onClick={sendLike}
-                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] press">
-                    Send Like
-                  </button>
+                <div className="mx-3 mt-2.5 animate-slide-up">
+                  <div className="bg-surface rounded-[14px] border border-border overflow-hidden">
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Add a comment..."
+                      rows={2}
+                      className="w-full px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-transparent"
+                      autoFocus
+                    />
+                    <div className="px-3 pb-3">
+                      <button
+                        onClick={sendLike}
+                        className="w-full h-[44px] bg-gray-900 text-white rounded-xl text-[14px] font-medium press tracking-wide"
+                      >
+                        Send Like
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -82,28 +129,52 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           const isOpen = activeHeart?.id === prompt.id;
           return (
             <div key={prompt.id}>
-              {/* Prompt — no box, just text with subtle separator */}
-              <div className="mx-4 mt-2 bg-surface rounded-[12px] relative">
-                <div className="px-5 py-4">
-                  <p className="text-[13px] text-gray-400 mb-1">{prompt.question}</p>
-                  <p className="text-[18px] text-gray-900 leading-[1.4] pr-10">{prompt.answer}</p>
+              <div className="mx-3 mt-2.5 bg-cream rounded-[16px] relative overflow-hidden">
+                <div className="px-5 py-5">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-2">
+                    {prompt.question}
+                  </p>
+                  <p className="text-[20px] text-gray-900 leading-[1.35] font-medium pr-10">
+                    {prompt.answer}
+                  </p>
                 </div>
-                <button onClick={() => handleHeartTap("prompt", prompt.id)}
-                  className={`absolute bottom-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150 ${
-                    isOpen ? "bg-rose scale-110" : "bg-gray-50"
-                  }`}>
-                  <Heart className={`w-[16px] h-[16px] ${isOpen ? "text-white" : "text-gray-400"}`}
-                    strokeWidth={isOpen ? 0 : 1.5} fill={isOpen ? "currentColor" : "none"} />
+                <button
+                  onClick={() => handleHeartTap("prompt", prompt.id)}
+                  className={`absolute bottom-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    isOpen
+                      ? "bg-rose scale-110 shadow-lg shadow-rose/30"
+                      : "bg-white shadow-sm"
+                  }`}
+                >
+                  <Heart
+                    className={`w-[17px] h-[17px] transition-colors duration-150 ${
+                      isOpen ? "text-white" : "text-gray-400"
+                    } ${isOpen ? "animate-heart-pop" : ""}`}
+                    strokeWidth={isOpen ? 0 : 1.5}
+                    fill={isOpen ? "currentColor" : "none"}
+                  />
                 </button>
               </div>
               {isOpen && (
-                <div className="mx-4 mt-2 animate-fade-in">
-                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment"
-                    rows={2} className="w-full border border-gray-200 rounded-[10px] px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-surface input-focus" autoFocus />
-                  <button onClick={sendLike}
-                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] press">
-                    Send Like
-                  </button>
+                <div className="mx-3 mt-2.5 animate-slide-up">
+                  <div className="bg-surface rounded-[14px] border border-border overflow-hidden">
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Add a comment..."
+                      rows={2}
+                      className="w-full px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-transparent"
+                      autoFocus
+                    />
+                    <div className="px-3 pb-3">
+                      <button
+                        onClick={sendLike}
+                        className="w-full h-[44px] bg-gray-900 text-white rounded-xl text-[14px] font-medium press tracking-wide"
+                      >
+                        Send Like
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -111,30 +182,56 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
         }
       })}
 
-      {/* Vitals — clean list, no boxes */}
-      <div className="mx-4 mt-2 bg-surface rounded-[12px]">
+      {/* Vitals section */}
+      <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
         <div className="px-5 py-4">
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[14px] text-gray-500">
-            {profile.age && <span>{profile.age}</span>}
-            {profile.gender && <><span className="text-gray-300">·</span><span>{profile.gender}</span></>}
-            {heightDisplay && <><span className="text-gray-300">·</span><span>{heightDisplay}</span></>}
+          {/* Quick vitals row */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {profile.age && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
+                {profile.age}
+              </span>
+            )}
+            {profile.gender && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
+                {profile.gender}
+              </span>
+            )}
+            {heightDisplay && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
+                {heightDisplay}
+              </span>
+            )}
+            {profile.graduation_year && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
+                Class of {profile.graduation_year}
+              </span>
+            )}
           </div>
-          {(profile.major || profile.residence_hall || profile.hometown || profile.graduation_year) && (
+          {/* Detail rows */}
+          {(profile.major || profile.residence_hall || profile.hometown) && (
             <div className="mt-3 space-y-2">
-              {profile.major && <p className="text-[14px] text-gray-900">{profile.major}</p>}
-              {profile.residence_hall && <p className="text-[14px] text-gray-500">{profile.residence_hall}</p>}
-              {profile.hometown && <p className="text-[14px] text-gray-500">{profile.hometown}</p>}
-              {profile.graduation_year && <p className="text-[14px] text-gray-500">Class of {profile.graduation_year}</p>}
+              {profile.major && (
+                <p className="text-[15px] text-gray-900 font-medium">{profile.major}</p>
+              )}
+              {profile.residence_hall && (
+                <p className="text-[14px] text-gray-500">{profile.residence_hall}</p>
+              )}
+              {profile.hometown && (
+                <p className="text-[14px] text-gray-500">{profile.hometown}</p>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Skip */}
-      <div className="flex justify-center pt-4 pb-6">
-        <button onClick={handleSkip} className="w-12 h-12 rounded-full bg-surface flex items-center justify-center press"
-          style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
-          <X className="w-5 h-5 text-gray-400" strokeWidth={1.8} />
+      {/* Skip button */}
+      <div className="flex justify-center pt-5 pb-8">
+        <button
+          onClick={handleSkip}
+          className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border"
+        >
+          <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
         </button>
       </div>
     </div>

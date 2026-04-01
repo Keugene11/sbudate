@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Info } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 export default function StandoutsPage() {
@@ -41,15 +41,16 @@ export default function StandoutsPage() {
   }, [supabase]);
 
   return (
-    <div className="max-w-lg mx-auto bg-[#1A1A1A] min-h-screen">
+    <div className="max-w-lg mx-auto bg-gray-900 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-4 pb-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-[28px] font-medium text-white">Standouts</h1>
-          <Info className="w-4 h-4 text-gray-500" strokeWidth={2} />
+      <div className="flex items-center justify-between px-5 pt-5 pb-4">
+        <div className="flex items-center gap-2.5">
+          <Sparkles className="w-5 h-5 text-amber-400" strokeWidth={2} fill="currentColor" />
+          <h1 className="text-[26px] font-semibold text-white tracking-tight">Standouts</h1>
         </div>
-        <button className="press px-4 py-2 bg-[#C7C7E5] rounded-full flex items-center gap-2">
-          <span className="text-[13px] text-black font-medium">Roses (1)</span>
+        <button className="press px-4 py-2 bg-white/10 rounded-full flex items-center gap-2 backdrop-blur-sm">
+          <span className="text-[14px]">🌹</span>
+          <span className="text-[13px] text-white font-medium">1 Rose</span>
         </button>
       </div>
 
@@ -58,34 +59,39 @@ export default function StandoutsPage() {
           <div className="w-6 h-6 border-2 border-gray-600 border-t-white rounded-full animate-spin" />
         </div>
       ) : profiles.length === 0 ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-gray-500 text-[15px]">No standouts yet</p>
+        <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
+          <Sparkles className="w-10 h-10 text-gray-600 mb-4" strokeWidth={1.5} />
+          <p className="text-gray-400 text-[16px] font-medium">No standouts yet</p>
+          <p className="text-gray-600 text-[14px] mt-1">Check back later for featured profiles</p>
         </div>
       ) : (
         <div className="px-4 pb-24">
+          <p className="text-gray-500 text-[13px] mb-3 px-1">Send a rose to stand out</p>
           <div className="flex gap-3 overflow-x-auto pb-4 snap-x">
             {profiles.map((p) => (
               <div key={p.id} className="flex-shrink-0 w-[280px] snap-start">
                 <div className="relative rounded-2xl overflow-hidden bg-black">
-                  <img src={p.photos[0].url} alt="" className="w-full aspect-square object-cover" draggable={false} />
+                  <img src={p.photos[0].url} alt="" className="w-full aspect-[3/4] object-cover" draggable={false} />
+                  {/* Gradient */}
+                  <div className="absolute inset-0 photo-gradient" />
                   {/* Name overlay */}
-                  <div className="absolute top-4 left-4">
-                    <p className="text-white text-[22px] font-medium">{p.first_name}</p>
-                  </div>
-                  {/* Prompt overlay at bottom */}
-                  {p.prompts[0] && (
-                    <div className="absolute bottom-0 left-0 right-0 mx-3 mb-3">
-                      <div className="bg-white rounded-xl px-4 py-3">
-                        <p className="text-[11px] text-gray-500">{p.prompts[0].question}</p>
-                        <p className="text-[15px] font-medium text-black mt-0.5">{p.prompts[0].answer}</p>
-                        <div className="flex justify-end mt-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                            <span className="text-[14px]">🌹</span>
-                          </div>
-                        </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    {p.prompts[0] && (
+                      <div className="bg-white/95 glass rounded-xl px-4 py-3 mb-3">
+                        <p className="text-[11px] text-gray-500 font-medium uppercase tracking-wide">{p.prompts[0].question}</p>
+                        <p className="text-[14px] font-medium text-gray-900 mt-0.5 line-clamp-2">{p.prompts[0].answer}</p>
                       </div>
+                    )}
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-white text-[22px] font-semibold tracking-tight">{p.first_name}</p>
+                        {p.major && <p className="text-white/60 text-[13px]">{p.major}</p>}
+                      </div>
+                      <button className="w-10 h-10 rounded-full bg-white/15 glass flex items-center justify-center press">
+                        <span className="text-[16px]">🌹</span>
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             ))}

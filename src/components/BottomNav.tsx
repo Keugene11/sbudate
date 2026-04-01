@@ -22,42 +22,70 @@ export default function BottomNav() {
   }, []);
 
   const tabs = [
-    { href: "/discover", label: "Discover", icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "#1A1A1A" : "#8E8E93"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="4" />
-      </svg>
-    )},
-    { href: "/likes", label: "Likes", icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "none" : "#8E8E93"} strokeWidth="1.5">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    )},
-    { href: "/matches", label: "Chat", icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "none" : "#8E8E93"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-    )},
+    {
+      href: "/discover",
+      label: "Discover",
+      icon: (active: boolean) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "#1A1A1A" : "#CDCCC8"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="4" />
+        </svg>
+      ),
+    },
+    {
+      href: "/likes",
+      label: "Likes",
+      icon: (active: boolean) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "none" : "#CDCCC8"} strokeWidth="1.8">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      ),
+    },
+    {
+      href: "/matches",
+      label: "Chat",
+      icon: (active: boolean) => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "none" : "#CDCCC8"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      ),
+    },
     { href: "/profile", label: "Me", icon: null },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-surface z-50" style={{ borderTop: "1px solid #E0DFDB" }}>
-      <div className="max-w-lg mx-auto flex items-center justify-around h-[52px]" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface/95 glass z-50 border-t border-border">
+      <div
+        className="max-w-lg mx-auto flex items-center justify-around h-[56px]"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
         {tabs.map((tab) => {
           const isActive = pathname.startsWith(tab.href);
           return (
-            <Link key={tab.href} href={tab.href}
-              className="flex flex-col items-center justify-center gap-[2px] w-16 h-full">
+            <Link
+              key={tab.href}
+              href={tab.href}
+              className="flex flex-col items-center justify-center gap-1 w-16 h-full press"
+            >
               {tab.icon ? (
-                tab.icon(isActive)
+                <div className="relative">
+                  {tab.icon(isActive)}
+                </div>
+              ) : avatarUrl ? (
+                <div className={`relative w-[24px] h-[24px] rounded-full overflow-hidden transition-all duration-200 ${
+                  isActive ? "ring-[2px] ring-gray-900 ring-offset-[1.5px]" : "opacity-50"
+                }`}>
+                  <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                </div>
               ) : (
-                avatarUrl ? (
-                  <img src={avatarUrl} alt="" className={`w-[26px] h-[26px] rounded-full object-cover ${isActive ? "ring-[1.5px] ring-gray-900 ring-offset-1" : "opacity-60"}`} />
-                ) : (
-                  <div className={`w-[26px] h-[26px] rounded-full ${isActive ? "bg-gray-900" : "bg-gray-300"}`} />
-                )
+                <div className={`w-[24px] h-[24px] rounded-full transition-colors ${
+                  isActive ? "bg-gray-900" : "bg-gray-300"
+                }`} />
               )}
-              <span className={`text-[10px] ${isActive ? "text-gray-900 font-medium" : "text-gray-400"}`}>{tab.label}</span>
+              <span className={`text-[10px] leading-none transition-colors ${
+                isActive ? "text-gray-900 font-medium" : "text-gray-400"
+              }`}>
+                {tab.label}
+              </span>
             </Link>
           );
         })}

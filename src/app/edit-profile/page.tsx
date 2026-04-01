@@ -86,52 +86,59 @@ export default function EditProfilePage() {
     } catch (err) { console.error(err); } finally { setSaving(false); }
   };
 
-  if (loading) return <div className="h-[100dvh] flex items-center justify-center bg-surface"><div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" /></div>;
+  if (loading) return (
+    <div className="h-[100dvh] flex items-center justify-center bg-surface">
+      <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+    </div>
+  );
 
   const totalPhotos = existingPhotos.length + newPhotos.length;
-  const inputCls = "w-full h-[48px] bg-gray-50 rounded-[10px] px-4 text-[15px] text-gray-900 outline-none border border-gray-200 input-focus";
+  const inputCls = "w-full h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge transition-colors";
   const selectCls = `${inputCls} appearance-none cursor-pointer`;
 
   return (
     <div className="h-[100dvh] flex flex-col bg-surface">
-      {/* Header — Cancel / Title / Done */}
-      <div className="flex items-center justify-between px-4 h-[52px] flex-shrink-0" style={{ borderBottom: "1px solid #E0DFDB" }}>
-        <button onClick={() => router.push("/profile")} className="press text-[15px] text-gray-400 w-16 text-left">Cancel</button>
-        <span className="text-[16px] text-gray-900">Edit Profile</span>
-        <button onClick={handleSave} disabled={saving} className="press text-[15px] text-rose disabled:text-gray-300 w-16 text-right">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 h-[56px] flex-shrink-0 border-b border-border">
+        <button onClick={() => router.push("/profile")} className="press text-[15px] text-gray-400 font-medium w-16 text-left">
+          Cancel
+        </button>
+        <span className="text-[16px] text-gray-900 font-semibold">Edit Profile</span>
+        <button onClick={handleSave} disabled={saving}
+          className="press text-[15px] text-rose font-semibold disabled:text-gray-300 w-16 text-right">
           {saving ? "Saving" : "Done"}
         </button>
       </div>
 
-      {/* Scrollable content — no bottom nav */}
+      {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-lg mx-auto px-5 py-5 space-y-6 pb-8">
+        <div className="max-w-lg mx-auto px-5 py-6 space-y-7 pb-10">
 
           {/* Photos */}
           <div>
-            <p className="text-[13px] text-gray-400 mb-3">Photos</p>
-            <div className="grid grid-cols-3 gap-2">
+            <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">Photos</p>
+            <div className="grid grid-cols-3 gap-2.5">
               {existingPhotos.map((photo) => (
-                <div key={photo.id} className="aspect-square relative rounded-[10px] overflow-hidden">
+                <div key={photo.id} className="aspect-[3/4] relative rounded-xl overflow-hidden">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => removeExistingPhoto(photo.id)}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center press">
+                    className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
                     <X className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
                   </button>
                 </div>
               ))}
               {newPhotos.map((photo, idx) => (
-                <div key={`new-${idx}`} className="aspect-square relative rounded-[10px] overflow-hidden">
+                <div key={`new-${idx}`} className="aspect-[3/4] relative rounded-xl overflow-hidden">
                   <img src={photo.preview} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => setNewPhotos((p) => p.filter((_, i) => i !== idx))}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center press">
+                    className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
                     <X className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
                   </button>
                 </div>
               ))}
               {totalPhotos < 6 && (
-                <label className="aspect-square rounded-[10px] border border-dashed border-gray-300 flex items-center justify-center cursor-pointer press">
-                  <Plus className="w-5 h-5 text-gray-400" strokeWidth={1.5} />
+                <label className="aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer press hover:border-gray-400 transition-colors">
+                  <Plus className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
                   <input type="file" accept="image/*" onChange={handleNewPhoto} className="hidden" />
                 </label>
               )}
@@ -139,55 +146,68 @@ export default function EditProfilePage() {
           </div>
 
           {/* Info */}
-          <div className="space-y-3">
-            <p className="text-[13px] text-gray-400">Info</p>
-            <div className="grid grid-cols-2 gap-2">
-              <div><label className="text-[12px] text-gray-400 mb-1 block">First name</label><input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} /></div>
-              <div><label className="text-[12px] text-gray-400 mb-1 block">Last name</label><input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} /></div>
+          <div className="space-y-4">
+            <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium">Info</p>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div>
+                <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">First name</label>
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} />
+              </div>
+              <div>
+                <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Last name</label>
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} />
+              </div>
             </div>
-            <div><label className="text-[12px] text-gray-400 mb-1 block">Age</label><input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} /></div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Gender</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Age</label>
+              <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} />
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Gender</label>
               <div className="flex gap-2">
                 {GENDER_OPTIONS.map((g) => (
                   <button key={g} onClick={() => setGender(g)}
-                    className={`press flex-1 h-[44px] rounded-[10px] text-[14px] transition-colors duration-100 ${
-                      gender === g ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-gray-200"}`}>{g}</button>
+                    className={`press flex-1 h-[46px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
+                      gender === g ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
+                    {g}
+                  </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Show me</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Show me</label>
               <div className="flex gap-2">
                 {["Women", "Men", "Everyone"].map((p) => (
                   <button key={p} onClick={() => setGenderPreference(p)}
-                    className={`press flex-1 h-[44px] rounded-[10px] text-[14px] transition-colors duration-100 ${
-                      genderPreference === p ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-gray-200"}`}>{p}</button>
+                    className={`press flex-1 h-[46px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
+                      genderPreference === p ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
+                    {p}
+                  </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Height</label>
-              <div className="flex gap-2 items-center">
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Height</label>
+              <div className="flex gap-2.5 items-center">
                 <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={inputCls} placeholder="5" />
-                <span className="text-gray-400 text-[13px]">ft</span>
+                <span className="text-gray-400 text-[13px] font-medium">ft</span>
                 <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={inputCls} placeholder="8" />
-                <span className="text-gray-400 text-[13px]">in</span>
+                <span className="text-gray-400 text-[13px] font-medium">in</span>
               </div>
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Major</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Major</label>
               <select value={major} onChange={(e) => setMajor(e.target.value)} className={selectCls}>
                 <option value="">Select...</option>
                 {SBU_MAJORS.map((m) => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Graduation year</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Graduation year</label>
               <input type="number" value={gradYear} onChange={(e) => setGradYear(e.target.value)} className={inputCls} placeholder="2027" />
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Residence hall</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Residence hall</label>
               <select value={residenceHall} onChange={(e) => setResidenceHall(e.target.value)} className={selectCls}>
                 <option value="">Select...</option>
                 {Object.entries(RESIDENCE_HALLS).map(([group, halls]) => (
@@ -198,29 +218,29 @@ export default function EditProfilePage() {
               </select>
             </div>
             <div>
-              <label className="text-[12px] text-gray-400 mb-1 block">Hometown</label>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Hometown</label>
               <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
             </div>
           </div>
 
-          {/* Prompts — tap to edit on separate page */}
+          {/* Prompts */}
           <div>
-            <p className="text-[13px] text-gray-400 mb-3">Prompts</p>
-            <div className="space-y-2">
+            <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">Prompts</p>
+            <div className="space-y-2.5">
               {[0, 1, 2].map((idx) => {
                 const prompt = prompts[idx];
                 return (
                   <button key={idx} onClick={() => router.push(`/edit-prompt?index=${idx}`)}
-                    className="w-full text-left bg-gray-50 border border-gray-200 rounded-[10px] px-4 py-4 flex items-center justify-between press">
+                    className="w-full text-left bg-gray-50 border border-border rounded-xl px-5 py-4 flex items-center justify-between press hover:bg-gray-100 transition-colors">
                     {prompt?.question ? (
                       <div className="flex-1 min-w-0 mr-3">
-                        <p className="text-[13px] text-gray-400">{prompt.question}</p>
-                        <p className="text-[15px] text-gray-900 mt-0.5 line-clamp-2">{prompt.answer}</p>
+                        <p className="text-[12px] text-gray-400 font-medium">{prompt.question}</p>
+                        <p className="text-[15px] text-gray-900 mt-0.5 line-clamp-2 font-medium">{prompt.answer}</p>
                       </div>
                     ) : (
                       <p className="text-[15px] text-gray-400">Add a prompt...</p>
                     )}
-                    <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={1.8} />
+                    <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={2} />
                   </button>
                 );
               })}

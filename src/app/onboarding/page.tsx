@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
-import { ChevronLeft, Plus, X, Camera } from "lucide-react";
+import { ChevronLeft, Plus, X } from "lucide-react";
 import Dropdown from "@/components/Dropdown";
 
 type Step = "basics" | "photos" | "prompts" | "preferences";
@@ -86,34 +86,39 @@ export default function OnboardingPage() {
   const next = () => stepIdx < STEPS.length - 1 ? setStep(STEPS[stepIdx + 1]) : handleSubmit();
   const prev = () => stepIdx > 0 && setStep(STEPS[stepIdx - 1]);
 
-  const inputCls = "w-full h-[48px] bg-gray-100 rounded-xl px-4 text-[15px] outline-none input-hinge border border-transparent";
+  const inputCls = "w-full h-[50px] bg-gray-50 rounded-xl px-4 text-[15px] outline-none input-hinge border border-transparent transition-colors";
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-surface">
       {/* Header */}
-      <div className="flex items-center px-4 h-[52px] flex-shrink-0">
+      <div className="flex items-center px-4 h-[56px] flex-shrink-0">
         {stepIdx > 0 ? (
-          <button onClick={prev} className="press p-1"><ChevronLeft className="w-6 h-6" strokeWidth={2} /></button>
+          <button onClick={prev} className="press p-1.5 -ml-1">
+            <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
+          </button>
         ) : <div className="w-8" />}
         <div className="flex-1" />
-        <span className="text-[13px] text-gray-400 font-medium">{stepIdx + 1}/{STEPS.length}</span>
+        <span className="text-[13px] text-gray-400 font-medium tabular-nums">{stepIdx + 1} of {STEPS.length}</span>
       </div>
 
-      {/* Progress */}
-      <div className="flex gap-1 px-4 mb-6">
+      {/* Progress bar */}
+      <div className="flex gap-1.5 px-5 mb-8">
         {STEPS.map((_, i) => (
           <div key={i} className="h-[3px] rounded-full flex-1 bg-gray-200 overflow-hidden">
-            <div className={`h-full bg-black rounded-full transition-all duration-500 ${i <= stepIdx ? "w-full" : "w-0"}`} />
+            <div className={`h-full rounded-full transition-all duration-500 ease-out ${
+              i <= stepIdx ? "w-full bg-gray-900" : "w-0"
+            }`} />
           </div>
         ))}
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-5 pb-32" key={step}>
+      <div className="flex-1 overflow-y-auto px-6 pb-32" key={step}>
         {step === "basics" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-medium mb-8">About you</h2>
-            <div className="space-y-4">
+            <h2 className="text-[28px] font-semibold tracking-tight mb-2">About you</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Let&apos;s get to know you</p>
+            <div className="space-y-5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">First name</label>
@@ -130,11 +135,11 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Gender</label>
-                <div className="flex gap-2">
+                <div className="flex gap-2.5">
                   {GENDER_OPTIONS.map((g) => (
                     <button key={g} onClick={() => setGender(g)}
-                      className={`press flex-1 h-[48px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
-                        gender === g ? "bg-black text-white animate-pill" : "bg-gray-100 text-gray-700"
+                      className={`press flex-1 h-[50px] rounded-xl text-[14px] font-semibold transition-all duration-200 ${
+                        gender === g ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-600 border border-border"
                       }`}>{g}</button>
                   ))}
                 </div>
@@ -142,13 +147,13 @@ export default function OnboardingPage() {
               <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Height</label>
                 <div className="flex gap-3">
-                  <div className="flex items-center gap-1 flex-1">
+                  <div className="flex items-center gap-1.5 flex-1">
                     <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={inputCls} placeholder="5" />
-                    <span className="text-gray-400 text-[14px]">ft</span>
+                    <span className="text-gray-400 text-[14px] font-medium">ft</span>
                   </div>
-                  <div className="flex items-center gap-1 flex-1">
+                  <div className="flex items-center gap-1.5 flex-1">
                     <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={inputCls} placeholder="8" />
-                    <span className="text-gray-400 text-[14px]">in</span>
+                    <span className="text-gray-400 text-[14px] font-medium">in</span>
                   </div>
                 </div>
               </div>
@@ -188,22 +193,22 @@ export default function OnboardingPage() {
 
         {step === "photos" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-medium mb-1">Your photos</h2>
-            <p className="text-gray-500 text-[14px] mb-6">At least 2, up to 6.</p>
-            <div className="grid grid-cols-3 gap-2">
+            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Your photos</h2>
+            <p className="text-gray-400 text-[15px] mb-8">At least 2, up to 6. Show your personality.</p>
+            <div className="grid grid-cols-3 gap-2.5">
               {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="aspect-square relative">
+                <div key={i} className="aspect-[3/4] relative">
                   {photos[i] ? (
-                    <div className="w-full h-full rounded-xl overflow-hidden animate-fade-in">
+                    <div className="w-full h-full rounded-xl overflow-hidden animate-scale-in">
                       <img src={photos[i].preview} alt="" className="w-full h-full object-cover" />
                       <button onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))}
-                        className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center">
+                        className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
                         <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />
                       </button>
                     </div>
                   ) : (
-                    <label className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors active:scale-95 transition-transform duration-150">
-                      <Plus className="w-6 h-6 text-gray-400" strokeWidth={2} />
+                    <label className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors press">
+                      <Plus className="w-6 h-6 text-gray-400" strokeWidth={1.8} />
                       <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                     </label>
                   )}
@@ -215,11 +220,11 @@ export default function OnboardingPage() {
 
         {step === "prompts" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-medium mb-1">Your prompts</h2>
-            <p className="text-gray-500 text-[14px] mb-6">Answer at least 2.</p>
+            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Your prompts</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Answer at least 2. Be creative!</p>
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
-                <div key={idx} className="bg-cream rounded-xl p-4">
+                <div key={idx} className="bg-cream rounded-2xl p-5">
                   <Dropdown
                     value={prompt.question}
                     onChange={(v) => { const u = [...prompts]; u[idx].question = v; setPrompts(u); }}
@@ -231,8 +236,10 @@ export default function OnboardingPage() {
                       <textarea value={prompt.answer}
                         onChange={(e) => { const u = [...prompts]; u[idx].answer = e.target.value.slice(0, 225); setPrompts(u); }}
                         placeholder="Your answer..." maxLength={225} rows={3}
-                        className="w-full bg-transparent text-[18px] font-medium text-black leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:text-[14px] placeholder:font-normal" />
-                      <p className="text-[11px] text-gray-400 text-right">{prompt.answer.length}/225</p>
+                        className="w-full bg-transparent text-[18px] font-medium text-gray-900 leading-snug outline-none resize-none mt-2 placeholder:text-gray-400 placeholder:text-[14px] placeholder:font-normal" />
+                      <div className="flex justify-end">
+                        <span className="text-[11px] text-gray-400 tabular-nums">{prompt.answer.length}/225</span>
+                      </div>
                     </>
                   )}
                 </div>
@@ -243,13 +250,13 @@ export default function OnboardingPage() {
 
         {step === "preferences" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-medium mb-1">Show me</h2>
-            <p className="text-gray-500 text-[14px] mb-6">Who are you interested in?</p>
-            <div className="space-y-2">
+            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Show me</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Who are you interested in?</p>
+            <div className="space-y-2.5">
               {["Women", "Men", "Everyone"].map((p) => (
                 <button key={p} onClick={() => setGenderPreference(p)}
-                  className={`press w-full h-[52px] rounded-xl text-[15px] font-medium text-left px-5 transition-all duration-200 ${
-                    genderPreference === p ? "bg-black text-white animate-pill" : "bg-gray-100 text-black"
+                  className={`press w-full h-[56px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
+                    genderPreference === p ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
                   }`}>{p}</button>
               ))}
             </div>
@@ -258,13 +265,13 @@ export default function OnboardingPage() {
       </div>
 
       {/* CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
+      <div className="fixed bottom-0 left-0 right-0 px-6 pb-10 pt-6 bg-gradient-to-t from-surface via-surface to-transparent">
         <div className="max-w-lg mx-auto">
           <button onClick={next} disabled={!canAdvance() || loading}
-            className={`press w-full h-[52px] rounded-full text-[14px] font-medium uppercase tracking-[0.08em] transition-all duration-300 ${
-              canAdvance() ? "bg-black text-white" : "bg-gray-200 text-gray-400"
+            className={`press w-full h-[56px] rounded-2xl text-[15px] font-semibold transition-all duration-300 shadow-lg ${
+              canAdvance() ? "bg-gray-900 text-white shadow-black/15" : "bg-gray-200 text-gray-400 shadow-transparent"
             }`}>
-            {loading ? "Setting up..." : step === "preferences" ? "Start" : "Continue"}
+            {loading ? "Setting up..." : step === "preferences" ? "Get Started" : "Continue"}
           </button>
         </div>
       </div>

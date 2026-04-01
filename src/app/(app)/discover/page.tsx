@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ProfileCard from "@/components/ProfileCard";
 import type { ProfileWithContent } from "@/types";
+import { RefreshCw } from "lucide-react";
 
 export default function DiscoverPage() {
   const supabase = createClient();
@@ -60,18 +61,26 @@ export default function DiscoverPage() {
   };
 
   if (loading) return (
-    <div className="max-w-lg mx-auto pt-14 px-4">
-      <div className="rounded-[12px] overflow-hidden"><div className="w-full aspect-square skeleton" /></div>
-      <div className="mt-2 rounded-[12px] h-[100px] skeleton" />
+    <div className="max-w-lg mx-auto pt-6 px-3">
+      <div className="rounded-[16px] overflow-hidden"><div className="w-full aspect-[4/5] skeleton" /></div>
+      <div className="mt-2.5 rounded-[16px] h-[100px] skeleton" />
     </div>
   );
 
   if (currentIndex >= profiles.length) return (
-    <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[70vh] px-8 text-center">
+    <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[75vh] px-10 text-center">
       <div className="animate-slide-up">
-        <p className="text-[20px] font-medium text-gray-900 mb-2">You&apos;ve seen everyone</p>
-        <p className="text-gray-400 text-[14px] mb-8">Check back later for new Stony Brook students.</p>
-        <button onClick={fetchProfiles} className="press h-[52px] bg-gray-900 text-white px-10 rounded-full text-[15px] font-medium tracking-[-0.2px]">Refresh</button>
+        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-5">
+          <RefreshCw className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
+        </div>
+        <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">You&apos;ve seen everyone</p>
+        <p className="text-gray-400 text-[15px] mb-10 leading-relaxed">Check back later for new<br />Stony Brook students.</p>
+        <button
+          onClick={fetchProfiles}
+          className="press h-[52px] bg-gray-900 text-white px-12 rounded-2xl text-[15px] font-medium tracking-[-0.2px] shadow-lg shadow-black/10"
+        >
+          Refresh
+        </button>
       </div>
     </div>
   );
@@ -79,10 +88,15 @@ export default function DiscoverPage() {
   const current = profiles[currentIndex];
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="px-5 pt-3 pb-1">
-        <p className="text-[24px] font-medium text-gray-900 tracking-tight">{current.first_name}</p>
-        <p className="text-[13px] text-gray-400 mt-0.5">Active today</p>
+    <div className="max-w-lg mx-auto pb-4">
+      {/* Minimal header */}
+      <div className="px-5 pt-3 pb-1 flex items-center justify-between">
+        <div>
+          <h1 className="text-[15px] font-medium text-gray-900 tracking-tight">Discover</h1>
+        </div>
+        <span className="text-[12px] text-gray-400">
+          {currentIndex + 1} / {profiles.length}
+        </span>
       </div>
       <ProfileCard key={current.id} profile={current} onLike={handleLike} onSkip={handleSkip} />
     </div>

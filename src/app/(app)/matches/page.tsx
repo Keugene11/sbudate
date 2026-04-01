@@ -49,43 +49,68 @@ export default function MatchesPage() {
 
   return (
     <div className="max-w-lg mx-auto min-h-screen">
-      <div className="px-5 pt-4 pb-3">
-        <h1 className="text-[24px] font-medium text-gray-900 tracking-tight">Matches</h1>
+      <div className="px-5 pt-4 pb-2">
+        <h1 className="text-[26px] font-semibold text-gray-900 tracking-tight">Messages</h1>
       </div>
 
       {loading ? (
-        <div className="mx-4 bg-surface rounded-[12px] overflow-hidden">
-          {[0,1,2].map((i) => (
-            <div key={i} className={`flex items-center gap-3 px-4 py-3.5 ${i < 2 ? "border-b border-gray-100" : ""}`}>
-              <div className="w-[48px] h-[48px] rounded-full skeleton flex-shrink-0" />
-              <div className="flex-1 space-y-2"><div className="h-4 w-20 skeleton rounded" /><div className="h-3 w-36 skeleton rounded" /></div>
+        <div className="px-4 space-y-0">
+          {[0,1,2,3].map((i) => (
+            <div key={i} className="flex items-center gap-3.5 px-4 py-4">
+              <div className="w-[52px] h-[52px] rounded-full skeleton flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-24 skeleton rounded-lg" />
+                <div className="h-3 w-40 skeleton rounded-lg" />
+              </div>
             </div>
           ))}
         </div>
       ) : matches.length === 0 ? (
-        <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
-          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <MessageSquare className="w-6 h-6 text-gray-300" strokeWidth={1.5} />
+        <div className="flex flex-col items-center pt-24 px-8 text-center animate-slide-up">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-5">
+            <MessageSquare className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
           </div>
-          <p className="text-[18px] font-medium text-gray-900 mb-1">No matches yet</p>
-          <p className="text-gray-400 text-[14px]">When you and someone like each other, you can chat here.</p>
+          <p className="text-[20px] font-semibold text-gray-900 mb-2 tracking-tight">No matches yet</p>
+          <p className="text-gray-400 text-[15px] leading-relaxed">When you and someone like each other,<br />you can chat here.</p>
         </div>
       ) : (
-        <div className="mx-4 bg-surface rounded-[12px] overflow-hidden stagger">
-          {matches.map((match, i) => (
-            <Link key={match.match_id} href={`/chat/${match.match_id}`}
-              className={`flex items-center gap-3 px-4 py-3.5 press active:bg-gray-50 transition-colors duration-100 ${i < matches.length - 1 ? "border-b border-gray-100" : ""}`}>
+        <div className="px-2 stagger">
+          {matches.map((match) => (
+            <Link
+              key={match.match_id}
+              href={`/chat/${match.match_id}`}
+              className="flex items-center gap-3.5 px-3 py-3 mx-1 rounded-2xl press hover:bg-gray-50 transition-colors duration-100"
+            >
+              {/* Avatar */}
               {match.profile.photo_url ? (
-                <img src={match.profile.photo_url} alt="" className="w-[48px] h-[48px] rounded-full object-cover flex-shrink-0" />
-              ) : <div className="w-[48px] h-[48px] rounded-full bg-gray-200 flex-shrink-0" />}
+                <div className="relative flex-shrink-0">
+                  <img src={match.profile.photo_url} alt="" className="w-[52px] h-[52px] rounded-full object-cover" />
+                  {match.unread && (
+                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
+                  )}
+                </div>
+              ) : (
+                <div className="relative flex-shrink-0">
+                  <div className="w-[52px] h-[52px] rounded-full bg-gray-200" />
+                  {match.unread && (
+                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
+                  )}
+                </div>
+              )}
+              {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className={`text-[15px] text-gray-900 ${match.unread ? "" : ""}`}>{match.profile.first_name}</p>
-                  <span className="text-[12px] text-gray-400">{formatTime(match.last_message_at || "")}</span>
+                  <p className={`text-[16px] tracking-tight ${match.unread ? "text-gray-900 font-semibold" : "text-gray-900 font-medium"}`}>
+                    {match.profile.first_name}
+                  </p>
+                  <span className={`text-[12px] ${match.unread ? "text-rose font-medium" : "text-gray-400"}`}>
+                    {formatTime(match.last_message_at || "")}
+                  </span>
                 </div>
-                <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-900" : "text-gray-400"}`}>{match.last_message || "Say hello 👋"}</p>
+                <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-700 font-medium" : "text-gray-400"}`}>
+                  {match.last_message || "Say hello"}
+                </p>
               </div>
-              {match.unread && <div className="w-2 h-2 rounded-full bg-rose flex-shrink-0" />}
             </Link>
           ))}
         </div>

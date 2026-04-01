@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Heart, MessageCircle, X, Send, ChevronLeft, Cake, User, Ruler, GraduationCap, Building, Home } from "lucide-react";
+import { Heart, MessageCircle, X, Send, ChevronLeft } from "lucide-react";
 import type { ProfileWithContent, Photo, Prompt } from "@/types";
 
 interface IncomingLike {
@@ -83,32 +83,37 @@ export default function LikesPage() {
     const likedContent = getLikedContent(viewing);
     return (
       <div className="max-w-lg mx-auto min-h-screen pb-28">
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm">
-          <div className="flex items-center px-4 h-[52px]">
-            <button onClick={() => { setViewing(null); setViewingProfile(null); }} className="press p-1">
+        {/* Header */}
+        <div className="sticky top-0 z-40 bg-surface/95 glass border-b border-border">
+          <div className="flex items-center px-3 h-[52px]">
+            <button onClick={() => { setViewing(null); setViewingProfile(null); }} className="press p-1.5">
               <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
             </button>
+            <div className="flex-1" />
           </div>
         </div>
 
-        <div className="px-4 pt-1 pb-3">
+        {/* Who liked + what they liked */}
+        <div className="px-4 pt-4 pb-3">
           <div className="flex items-center gap-3 mb-4">
             {viewing.from_profile.photo_url ? (
-              <img src={viewing.from_profile.photo_url} alt="" className="w-10 h-10 rounded-full object-cover" />
-            ) : <div className="w-10 h-10 rounded-full bg-gray-200" />}
+              <img src={viewing.from_profile.photo_url} alt="" className="w-11 h-11 rounded-full object-cover" />
+            ) : <div className="w-11 h-11 rounded-full bg-gray-200" />}
             <div>
-              <p className="text-[15px] text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
+              <p className="text-[16px] font-semibold text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
               {viewing.from_profile.major && <p className="text-[13px] text-gray-400">{viewing.from_profile.major}</p>}
             </div>
           </div>
 
           {likedContent?.type === "photo" && (
-            <div className="rounded-[12px] overflow-hidden mb-3"><img src={likedContent.photo.url} alt="" className="w-full aspect-square object-cover" /></div>
+            <div className="rounded-2xl overflow-hidden mb-3">
+              <img src={likedContent.photo.url} alt="" className="w-full aspect-[4/5] object-cover" />
+            </div>
           )}
           {likedContent?.type === "prompt" && (
-            <div className="bg-surface rounded-[12px] px-5 py-4 mb-3">
-              <p className="text-[12px] text-gray-400 tracking-wide mb-1">{likedContent.prompt.question}</p>
-              <p className="text-[16px] text-gray-900 leading-[1.4]">{likedContent.prompt.answer}</p>
+            <div className="bg-cream rounded-2xl px-5 py-5 mb-3">
+              <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{likedContent.prompt.question}</p>
+              <p className="text-[17px] text-gray-900 leading-[1.4] font-medium">{likedContent.prompt.answer}</p>
             </div>
           )}
 
@@ -117,40 +122,68 @@ export default function LikesPage() {
               {viewing.from_profile.photo_url ? (
                 <img src={viewing.from_profile.photo_url} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5" />
               ) : <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 mt-0.5" />}
-              <div className="bg-surface rounded-[12px] rounded-tl-[4px] px-4 py-2.5">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-[6px] px-4 py-3">
                 <p className="text-[15px] text-gray-900">{viewing.comment}</p>
               </div>
             </div>
           )}
-          {!viewing.comment && <p className="text-[14px] text-gray-400 mb-3">{viewing.from_profile.first_name} liked your {likedContent?.type || "profile"}</p>}
+          {!viewing.comment && (
+            <p className="text-[14px] text-gray-400 mb-3">
+              {viewing.from_profile.first_name} liked your {likedContent?.type || "profile"}
+            </p>
+          )}
         </div>
 
+        {/* Full profile */}
         {viewingProfile && (
-          <div className="px-4 space-y-2">
-            {viewingProfile.photos.map((photo) => (
-              <div key={photo.id} className="rounded-[12px] overflow-hidden"><img src={photo.url} alt="" className="w-full aspect-square object-cover" draggable={false} /></div>
+          <div className="px-3 space-y-2.5">
+            {viewingProfile.photos.map((photo, idx) => (
+              <div key={photo.id} className="relative rounded-2xl overflow-hidden">
+                <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                {idx === 0 && (
+                  <>
+                    <div className="absolute inset-0 photo-gradient" />
+                    <div className="absolute bottom-5 left-5">
+                      <p className="text-white text-[26px] font-semibold tracking-tight">
+                        {viewingProfile.first_name}, {viewingProfile.age}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
             ))}
             {viewingProfile.prompts.map((prompt) => (
-              <div key={prompt.id} className="bg-surface rounded-[12px] px-5 py-4">
-                <p className="text-[12px] text-gray-400 tracking-wide mb-1">{prompt.question}</p>
-                <p className="text-[17px] text-gray-900 leading-[1.45]">{prompt.answer}</p>
+              <div key={prompt.id} className="bg-cream rounded-2xl px-5 py-5">
+                <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
+                <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
               </div>
             ))}
           </div>
         )}
 
-        <div className="fixed bottom-0 left-0 right-0 bg-surface z-50 border-t border-border">
+        {/* Bottom action bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-surface/95 glass z-50 border-t border-border">
           <div className="max-w-lg mx-auto px-4 py-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
             <div className="flex items-center gap-2.5">
               <button onClick={handleDismiss} className="press w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
                 <X className="w-5 h-5 text-gray-400" strokeWidth={2} />
               </button>
-              <input value={reply} onChange={(e) => setReply(e.target.value)}
+              <input
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (reply.trim() ? handleMatch(reply.trim()) : handleMatch())}
-                placeholder="Type a reply..." className="flex-1 h-12 bg-gray-100 rounded-[12px] px-4 text-[15px] outline-none input-focus" />
-              <button onClick={() => reply.trim() ? handleMatch(reply.trim()) : handleMatch()}
-                className="press w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
-                {reply.trim() ? <Send className="w-5 h-5 text-white" strokeWidth={2} /> : <Heart className="w-5 h-5 text-white" fill="white" strokeWidth={0} />}
+                placeholder="Type a reply..."
+                className="flex-1 h-12 bg-gray-50 border border-border rounded-full px-4 text-[15px] outline-none input-hinge"
+              />
+              <button
+                onClick={() => reply.trim() ? handleMatch(reply.trim()) : handleMatch()}
+                className="press w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 shadow-md shadow-black/10"
+              >
+                {reply.trim() ? (
+                  <Send className="w-5 h-5 text-white" strokeWidth={2} />
+                ) : (
+                  <Heart className="w-5 h-5 text-white" fill="white" strokeWidth={0} />
+                )}
               </button>
             </div>
           </div>
@@ -161,33 +194,46 @@ export default function LikesPage() {
 
   return (
     <div className="max-w-lg mx-auto min-h-screen">
-      <div className="px-5 pt-4 pb-3">
-        <h1 className="text-[24px] font-medium text-gray-900 tracking-tight">Likes You</h1>
+      <div className="px-5 pt-4 pb-2">
+        <h1 className="text-[26px] font-semibold text-gray-900 tracking-tight">Likes You</h1>
       </div>
 
       {loading ? (
-        <div className="px-4 grid grid-cols-2 gap-2">{[0,1,2,3].map((i) => <div key={i} className="aspect-square rounded-[12px] skeleton" />)}</div>
+        <div className="px-4 grid grid-cols-2 gap-2.5">
+          {[0,1,2,3].map((i) => <div key={i} className="aspect-[3/4] rounded-2xl skeleton" />)}
+        </div>
       ) : likes.length === 0 ? (
-        <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
-          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <Heart className="w-6 h-6 text-gray-300" strokeWidth={1.5} />
+        <div className="flex flex-col items-center pt-24 px-8 text-center animate-slide-up">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-5">
+            <Heart className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
           </div>
-          <p className="text-[18px] font-medium text-gray-900 mb-1">No likes yet</p>
-          <p className="text-gray-400 text-[14px]">When someone likes your profile, they&apos;ll appear here.</p>
+          <p className="text-[20px] font-semibold text-gray-900 mb-2 tracking-tight">No likes yet</p>
+          <p className="text-gray-400 text-[15px] leading-relaxed">When someone likes your profile,<br />they&apos;ll appear here.</p>
         </div>
       ) : (
         <div className="px-4 pb-24">
-          <p className="text-[13px] text-gray-400 mb-3">{likes.length} {likes.length === 1 ? "person" : "people"} liked you</p>
-          <div className="grid grid-cols-2 gap-2 stagger">
+          <p className="text-[13px] text-gray-400 mb-3 font-medium">
+            {likes.length} {likes.length === 1 ? "person" : "people"} liked you
+          </p>
+          <div className="grid grid-cols-2 gap-2.5 stagger">
             {likes.map((like) => (
-              <button key={like.id} onClick={() => openLike(like)} className="relative rounded-[12px] overflow-hidden bg-gray-200 aspect-square text-left press">
-                {like.from_profile.photo_url ? <img src={like.from_profile.photo_url} alt="" className="w-full h-full object-cover" draggable={false} /> : <div className="w-full h-full" />}
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/50 to-transparent">
-                  <p className="text-white text-[15px]">{like.from_profile.first_name}, {like.from_profile.age}</p>
+              <button
+                key={like.id}
+                onClick={() => openLike(like)}
+                className="relative rounded-2xl overflow-hidden bg-gray-200 aspect-[3/4] text-left press"
+              >
+                {like.from_profile.photo_url ? (
+                  <img src={like.from_profile.photo_url} alt="" className="w-full h-full object-cover" draggable={false} />
+                ) : <div className="w-full h-full" />}
+                <div className="absolute inset-0 photo-gradient" />
+                <div className="absolute bottom-0 left-0 right-0 p-3.5">
+                  <p className="text-white text-[16px] font-semibold tracking-tight">
+                    {like.from_profile.first_name}, {like.from_profile.age}
+                  </p>
                   {like.comment && (
-                    <div className="flex items-start gap-1 mt-0.5">
+                    <div className="flex items-start gap-1.5 mt-1">
                       <MessageCircle className="w-3 h-3 text-white/50 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                      <p className="text-white/70 text-[11px] line-clamp-2 leading-tight">{like.comment}</p>
+                      <p className="text-white/75 text-[12px] line-clamp-2 leading-tight">{like.comment}</p>
                     </div>
                   )}
                 </div>
