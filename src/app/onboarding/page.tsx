@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, DATING_INTENTIONS, RESIDENCE_HALLS } from "@/types";
+import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
 import { ChevronLeft, Plus, X, Camera } from "lucide-react";
 
 type Step = "basics" | "photos" | "prompts" | "preferences";
@@ -24,7 +24,6 @@ export default function OnboardingPage() {
   const [major, setMajor] = useState("");
   const [gradYear, setGradYear] = useState("");
   const [hometown, setHometown] = useState("");
-  const [datingIntention, setDatingIntention] = useState("");
   const [residenceHall, setResidenceHall] = useState("");
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [prompts, setPrompts] = useState([
@@ -53,7 +52,7 @@ export default function OnboardingPage() {
         age: parseInt(age), gender, gender_preference: genderPreference,
         height_inches: totalInches, major: major || null,
         graduation_year: gradYear ? parseInt(gradYear) : null,
-        hometown: hometown || null, dating_intention: datingIntention || null,
+        hometown: hometown || null,
         residence_hall: residenceHall || null,
       }).select().single();
       if (error) throw error;
@@ -154,7 +153,16 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Major</label>
-                <input value={major} onChange={(e) => setMajor(e.target.value)} className={inputCls} placeholder="Computer Science" />
+                <select
+                  value={major}
+                  onChange={(e) => setMajor(e.target.value)}
+                  className={`${inputCls} appearance-none cursor-pointer`}
+                >
+                  <option value="">Select your major...</option>
+                  {SBU_MAJORS.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Graduation year</label>
@@ -180,17 +188,6 @@ export default function OnboardingPage() {
                     </optgroup>
                   ))}
                 </select>
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Dating intention</label>
-                <div className="flex flex-wrap gap-2">
-                  {DATING_INTENTIONS.map((d) => (
-                    <button key={d} onClick={() => setDatingIntention(d)}
-                      className={`press px-4 h-[40px] rounded-full text-[13px] font-semibold transition-all duration-200 ${
-                        datingIntention === d ? "bg-black text-white animate-pill" : "bg-gray-100 text-gray-700"
-                      }`}>{d}</button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

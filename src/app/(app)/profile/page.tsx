@@ -86,7 +86,6 @@ export default function ProfilePage() {
           <div className="flex flex-wrap gap-2">
             {heightDisplay && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{heightDisplay}</span>}
             {profile.graduation_year && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">Class of {profile.graduation_year}</span>}
-            {profile.dating_intention && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.dating_intention}</span>}
             {profile.residence_hall && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.residence_hall}</span>}
             {profile.hometown && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.hometown}</span>}
             {profile.major && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.major}</span>}

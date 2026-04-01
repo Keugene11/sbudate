@@ -174,11 +174,6 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
               Class of {profile.graduation_year}
             </span>
           )}
-          {profile.dating_intention && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {profile.dating_intention}
-            </span>
-          )}
           {profile.residence_hall && (
             <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
               {profile.residence_hall}
