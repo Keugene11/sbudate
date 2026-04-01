@@ -20,6 +20,11 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
 
+  const scrollToBottom = useCallback(() => {
+    // Use setTimeout to ensure DOM has updated
+    setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+  }, []);
+
   const fetchMessages = useCallback(async () => {
     const { data } = await supabase.from("messages").select("*").eq("match_id", matchId).order("created_at", { ascending: true });
     if (data) setMessages(data);
@@ -46,13 +51,11 @@ export default function ChatPage() {
     };
     init();
 
-    // Realtime — best effort, optimistic update is the primary mechanism
     const channel = supabase.channel(`chat-${matchId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as ChatMessage;
           setMessages((prev) => {
-            // Dedupe — don't add if optimistic version already exists
             if (prev.some((m) => m.id === newMsg.id)) return prev;
             return [...prev, newMsg];
           });
@@ -61,43 +64,40 @@ export default function ChatPage() {
     return () => { supabase.removeChannel(channel); };
   }, [supabase, matchId, fetchMessages]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  // Scroll to bottom whenever messages change or loading finishes
+  useEffect(() => {
+    if (!loading) scrollToBottom();
+  }, [messages, loading, scrollToBottom]);
 
   const send = async () => {
     if (!newMessage.trim() || !myProfileId) return;
     const content = newMessage.trim();
     setNewMessage("");
 
-    // Optimistic: show message immediately
     const optimisticId = `temp-${Date.now()}`;
     const optimisticMsg: ChatMessage = {
       id: optimisticId,
-      match_id: matchId,
       sender_id: myProfileId,
       content,
       created_at: new Date().toISOString(),
     } as ChatMessage;
     setMessages((prev) => [...prev, optimisticMsg]);
 
-    // Insert into DB
     const { data, error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: myProfileId, content }).select().single();
-
     if (data) {
-      // Replace optimistic message with real one
       setMessages((prev) => prev.map((m) => m.id === optimisticId ? data : m));
     } else if (error) {
-      // Remove optimistic message on error
       setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
       console.error("Send failed:", error);
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-screen"><div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" /></div>;
+  if (loading) return <div className="fixed inset-0 flex items-center justify-center bg-white"><div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" /></div>;
 
   return (
-    <div className="flex flex-col h-screen max-w-lg mx-auto bg-white">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-3 h-[56px] border-b border-gray-100 bg-white flex-shrink-0">
+    <div className="fixed inset-0 flex flex-col bg-white">
+      {/* Header — fixed at top */}
+      <div className="flex items-center gap-3 px-3 h-[56px] border-b border-gray-100 bg-white flex-shrink-0 z-10">
         <button onClick={() => router.push("/matches")} className="press p-1">
           <ChevronLeft className="w-6 h-6 text-black" strokeWidth={2} />
         </button>
@@ -109,7 +109,7 @@ export default function ChatPage() {
         <p className="font-medium text-[16px]">{other?.first_name}</p>
       </div>
 
-      {/* Messages */}
+      {/* Messages — scrollable middle */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.length === 0 && (
           <div className="text-center py-16 animate-fade-in">
@@ -133,9 +133,9 @@ export default function ChatPage() {
         <div ref={endRef} />
       </div>
 
-      {/* Input */}
-      <div className="px-4 py-3 border-t border-gray-100 bg-white pb-[max(12px,env(safe-area-inset-bottom))] flex-shrink-0">
-        <div className="flex gap-2">
+      {/* Input — fixed at bottom */}
+      <div className="px-4 py-3 border-t border-gray-100 bg-white flex-shrink-0" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
+        <div className="flex gap-2 max-w-lg mx-auto">
           <input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}

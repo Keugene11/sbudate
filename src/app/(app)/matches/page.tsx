@@ -96,7 +96,7 @@ export default function MatchesPage() {
           {matches.map((match) => (
             <Link
               key={match.match_id}
-              href={`/matches/${match.match_id}`}
+              href={`/chat/${match.match_id}`}
               className="flex items-center gap-3 px-4 py-3 press active:bg-gray-50 transition-colors"
             >
               {match.profile.photo_url ? (
