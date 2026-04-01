@@ -50,7 +50,7 @@ export default function MatchesPage() {
   return (
     <div className="max-w-lg mx-auto min-h-screen">
       <div className="px-5 pt-4 pb-3">
-        <h1 className="text-[24px] font-semibold text-gray-900 tracking-tight">Matches</h1>
+        <h1 className="text-[24px] font-medium text-gray-900 tracking-tight">Matches</h1>
       </div>
 
       {loading ? (
@@ -67,7 +67,7 @@ export default function MatchesPage() {
           <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <MessageSquare className="w-6 h-6 text-gray-300" strokeWidth={1.5} />
           </div>
-          <p className="text-[18px] font-semibold text-gray-900 mb-1">No matches yet</p>
+          <p className="text-[18px] font-medium text-gray-900 mb-1">No matches yet</p>
           <p className="text-gray-400 text-[14px]">When you and someone like each other, you can chat here.</p>
         </div>
       ) : (
@@ -80,7 +80,7 @@ export default function MatchesPage() {
               ) : <div className="w-[48px] h-[48px] rounded-full bg-gray-200 flex-shrink-0" />}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className={`text-[15px] text-gray-900 ${match.unread ? "font-medium" : ""}`}>{match.profile.first_name}</p>
+                  <p className={`text-[15px] text-gray-900 ${match.unread ? "" : ""}`}>{match.profile.first_name}</p>
                   <span className="text-[12px] text-gray-400">{formatTime(match.last_message_at || "")}</span>
                 </div>
                 <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-900" : "text-gray-400"}`}>{match.last_message || "Say hello 👋"}</p>

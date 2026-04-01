@@ -69,9 +69,9 @@ export default function DiscoverPage() {
   if (currentIndex >= profiles.length) return (
     <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[70vh] px-8 text-center">
       <div className="animate-slide-up">
-        <p className="text-[20px] font-semibold text-gray-900 mb-2">You&apos;ve seen everyone</p>
+        <p className="text-[20px] font-medium text-gray-900 mb-2">You&apos;ve seen everyone</p>
         <p className="text-gray-400 text-[14px] mb-8">Check back later for new Stony Brook students.</p>
-        <button onClick={fetchProfiles} className="press h-[52px] bg-gray-900 text-white px-10 rounded-full text-[15px] font-semibold tracking-[-0.2px]">Refresh</button>
+        <button onClick={fetchProfiles} className="press h-[52px] bg-gray-900 text-white px-10 rounded-full text-[15px] font-medium tracking-[-0.2px]">Refresh</button>
       </div>
     </div>
   );
@@ -81,7 +81,7 @@ export default function DiscoverPage() {
   return (
     <div className="max-w-lg mx-auto">
       <div className="px-5 pt-3 pb-1">
-        <p className="text-[24px] font-semibold text-gray-900 tracking-tight">{current.first_name}</p>
+        <p className="text-[24px] font-medium text-gray-900 tracking-tight">{current.first_name}</p>
         <p className="text-[13px] text-gray-400 mt-0.5">Active today</p>
       </div>
       <ProfileCard key={current.id} profile={current} onLike={handleLike} onSkip={handleSkip} />

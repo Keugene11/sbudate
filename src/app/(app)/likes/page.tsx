@@ -97,7 +97,7 @@ export default function LikesPage() {
               <img src={viewing.from_profile.photo_url} alt="" className="w-10 h-10 rounded-full object-cover" />
             ) : <div className="w-10 h-10 rounded-full bg-gray-200" />}
             <div>
-              <p className="text-[15px] font-medium text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
+              <p className="text-[15px] text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
               {viewing.from_profile.major && <p className="text-[13px] text-gray-400">{viewing.from_profile.major}</p>}
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function LikesPage() {
   return (
     <div className="max-w-lg mx-auto min-h-screen">
       <div className="px-5 pt-4 pb-3">
-        <h1 className="text-[24px] font-semibold text-gray-900 tracking-tight">Likes You</h1>
+        <h1 className="text-[24px] font-medium text-gray-900 tracking-tight">Likes You</h1>
       </div>
 
       {loading ? (
@@ -172,7 +172,7 @@ export default function LikesPage() {
           <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <Heart className="w-6 h-6 text-gray-300" strokeWidth={1.5} />
           </div>
-          <p className="text-[18px] font-semibold text-gray-900 mb-1">No likes yet</p>
+          <p className="text-[18px] font-medium text-gray-900 mb-1">No likes yet</p>
           <p className="text-gray-400 text-[14px]">When someone likes your profile, they&apos;ll appear here.</p>
         </div>
       ) : (
@@ -183,7 +183,7 @@ export default function LikesPage() {
               <button key={like.id} onClick={() => openLike(like)} className="relative rounded-[12px] overflow-hidden bg-gray-200 aspect-square text-left press">
                 {like.from_profile.photo_url ? <img src={like.from_profile.photo_url} alt="" className="w-full h-full object-cover" draggable={false} /> : <div className="w-full h-full" />}
                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/50 to-transparent">
-                  <p className="text-white text-[15px] font-medium">{like.from_profile.first_name}, {like.from_profile.age}</p>
+                  <p className="text-white text-[15px]">{like.from_profile.first_name}, {like.from_profile.age}</p>
                   {like.comment && (
                     <div className="flex items-start gap-1 mt-0.5">
                       <MessageCircle className="w-3 h-3 text-white/50 mt-0.5 flex-shrink-0" strokeWidth={2} />

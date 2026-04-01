@@ -52,7 +52,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                 {/* Name on first photo */}
                 {idx === 0 && (
                   <div className="absolute top-4 left-4">
-                    <p className="text-white text-[22px] font-semibold drop-shadow-sm">{profile.first_name}</p>
+                    <p className="text-white text-[22px] font-medium drop-shadow-sm">{profile.first_name}</p>
                   </div>
                 )}
                 {/* Heart */}
@@ -70,7 +70,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                   <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment"
                     rows={2} className="w-full border border-gray-200 rounded-[10px] px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-surface input-focus" autoFocus />
                   <button onClick={sendLike}
-                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] font-medium press">
+                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] press">
                     Send Like
                   </button>
                 </div>
@@ -101,7 +101,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                   <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment"
                     rows={2} className="w-full border border-gray-200 rounded-[10px] px-4 py-3 text-[15px] outline-none resize-none placeholder:text-gray-400 bg-surface input-focus" autoFocus />
                   <button onClick={sendLike}
-                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] font-medium press">
+                    className="w-full mt-2 h-[44px] bg-gray-900 text-white rounded-[10px] text-[14px] press">
                     Send Like
                   </button>
                 </div>

@@ -302,8 +302,8 @@ export default function ChatPage() {
                 {/* Prompts */}
                 {otherFullProfile.prompts.map((prompt) => (
                   <div key={prompt.id} className="bg-cream rounded-2xl px-5 py-5">
-                    <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">{prompt.question}</p>
-                    <p className="text-[18px] font-medium text-black leading-[1.4]">{prompt.answer}</p>
+                    <p className="text-[12px] text-gray-400 uppercase tracking-[0.1em] mb-1.5">{prompt.question}</p>
+                    <p className="text-[18px] text-gray-900 leading-[1.4]">{prompt.answer}</p>
                   </div>
                 ))}
               </div>

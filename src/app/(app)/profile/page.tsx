@@ -47,7 +47,7 @@ export default function ProfilePage() {
     <div className="max-w-lg mx-auto min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between px-5 h-[52px]">
-        <span className="text-[17px] font-medium text-gray-900">SBUdate</span>
+        <span className="text-[17px] text-gray-900">SBUdate</span>
         <div className="flex items-center gap-0.5">
           <button onClick={handleLogout} className="press p-2.5"><LogOut className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.8} /></button>
           <button className="press p-2.5"><Settings className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.8} /></button>
@@ -61,7 +61,7 @@ export default function ProfilePage() {
             <img src={profile.photos[0].url} alt="" className="w-full h-full object-cover" />
           ) : <div className="w-full h-full bg-gray-200" />}
         </div>
-        <p className="text-[18px] font-semibold text-gray-900">{profile.first_name}</p>
+        <p className="text-[18px] font-medium text-gray-900">{profile.first_name}</p>
       </div>
 
       {/* Tabs */}
@@ -182,7 +182,7 @@ export default function ProfilePage() {
             <div key={photo.id} className="relative mx-4 mt-3">
               {idx === 0 && (
                 <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent rounded-b-[12px] z-10">
-                  <p className="text-white text-[24px] font-semibold">{profile.first_name}, <span className="font-normal">{profile.age}</span></p>
+                  <p className="text-white text-[24px] font-medium">{profile.first_name}, <span className="font-normal">{profile.age}</span></p>
                   {profile.major && <p className="text-white/70 text-[14px] mt-0.5">{profile.major}</p>}
                 </div>
               )}
