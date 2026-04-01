@@ -76,6 +76,34 @@ export default function ProfilePage() {
         <p className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</p>
       </div>
 
+      {/* Profile completeness prompt */}
+      {(() => {
+        const missing: string[] = [];
+        if (!profile.dating_intention) missing.push("dating intention");
+        if (!profile.height_inches) missing.push("height");
+        if (!profile.hometown) missing.push("hometown");
+        if (!profile.religion) missing.push("religion");
+        if (profile.photos.length < 4) missing.push("more photos");
+        if (profile.prompts.length < 3) missing.push("more prompts");
+        return missing.length > 0 ? (
+          <button
+            onClick={() => router.push("/edit-profile")}
+            className="mx-5 mb-4 px-5 py-3.5 bg-cream rounded-2xl flex items-center gap-3 press text-left"
+          >
+            <div className="w-9 h-9 bg-rose/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Pencil className="w-4 h-4 text-rose" strokeWidth={2} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[14px] font-semibold text-gray-900">Complete your profile</p>
+              <p className="text-[12px] text-gray-400 mt-0.5 truncate">
+                Add {missing.slice(0, 2).join(", ")}{missing.length > 2 ? `, +${missing.length - 2} more` : ""}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={2} />
+          </button>
+        ) : null;
+      })()}
+
       {/* Tabs */}
       <div className="flex mx-5 rounded-xl bg-gray-100 p-[3px] mb-5">
         {(["edit", "view"] as const).map((t) => (
