@@ -41,10 +41,11 @@ body {
 * { scrollbar-width: none; -webkit-tap-highlight-color: transparent; }
 
 .press {
-  transition: transform 180ms cubic-bezier(0.25, 0.1, 0.25, 1), opacity 120ms ease;
-  will-change: transform; user-select: none;
+  transition: opacity 100ms ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.press:active { transform: scale(0.97); opacity: 0.7; }
+.press:active { opacity: 0.6; }
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(12px); }
