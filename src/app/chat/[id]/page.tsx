@@ -8,6 +8,7 @@ import type { ProfileWithContent } from "@/types";
 
 interface ChatMessage { id: string; content: string; sender_id: string; created_at: string; }
 interface OtherProfile { id: string; first_name: string; photo_url: string | null; }
+type MatchData = { id: string; profile1_id: string; profile2_id: string; };
 
 function formatDateSeparator(date: string) {
   const d = new Date(date);
@@ -43,6 +44,7 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"chat" | "profile">("chat");
   const [otherFullProfile, setOtherFullProfile] = useState<ProfileWithContent | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -105,6 +107,12 @@ export default function ChatPage() {
     setTab("profile");
   };
 
+  const handleUnmatch = async () => {
+    await supabase.from("messages").delete().eq("match_id", matchId);
+    await supabase.from("matches").delete().eq("id", matchId);
+    router.push("/matches");
+  };
+
   const send = async () => {
     if (!newMessage.trim() || !myProfileId) return;
     const content = newMessage.trim();
@@ -137,9 +145,21 @@ export default function ChatPage() {
             </button>
             <p className="text-[20px] font-medium">{other?.first_name}</p>
           </div>
-          <button className="press p-1">
-            <MoreHorizontal className="w-6 h-6 text-black" strokeWidth={2} />
-          </button>
+          <div className="relative">
+            <button onClick={() => setShowMenu(!showMenu)} className="press p-1">
+              <MoreHorizontal className="w-6 h-6 text-black" strokeWidth={2} />
+            </button>
+            {showMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                <div className="absolute right-0 top-10 z-50 bg-surface rounded-[12px] py-1 w-[180px] animate-fade-in" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
+                  <button onClick={handleUnmatch} className="w-full text-left px-4 py-3 text-[15px] text-red-500 press">
+                    Unmatch
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Chat / Profile tabs */}

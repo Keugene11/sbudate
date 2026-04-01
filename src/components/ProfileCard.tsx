@@ -131,10 +131,10 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
       </div>
 
       {/* Skip */}
-      <div className="flex justify-center py-8 pb-28">
-        <button onClick={handleSkip} className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press"
+      <div className="flex justify-center pt-4 pb-6">
+        <button onClick={handleSkip} className="w-12 h-12 rounded-full bg-surface flex items-center justify-center press"
           style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
-          <X className="w-6 h-6 text-gray-400" strokeWidth={1.8} />
+          <X className="w-5 h-5 text-gray-400" strokeWidth={1.8} />
         </button>
       </div>
     </div>
