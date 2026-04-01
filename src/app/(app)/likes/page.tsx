@@ -79,7 +79,7 @@ export default function LikesPage() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
-          <h1 className="text-[20px] font-extrabold tracking-tight">Likes You</h1>
+          <h1 className="text-[18px] font-semibold">Likes You</h1>
           {likes.length > 0 && (
             <span className="text-[14px] text-gray-500 font-medium">{likes.length}</span>
           )}

@@ -213,7 +213,7 @@ export default function OnboardingPage() {
                 <div key={idx} className="bg-cream rounded-xl p-4">
                   <select value={prompt.question}
                     onChange={(e) => { const u = [...prompts]; u[idx].question = e.target.value; setPrompts(u); }}
-                    className="w-full bg-transparent text-[13px] font-semibold text-gray-600 uppercase tracking-wide outline-none mb-2 appearance-none cursor-pointer">
+                    className="w-full bg-transparent text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] outline-none mb-2 appearance-none cursor-pointer">
                     <option value="">Choose a prompt...</option>
                     {PROMPT_OPTIONS.filter((o) => !prompts.some((p, i) => i !== idx && p.question === o)).map((o) => (
                       <option key={o} value={o}>{o}</option>
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
                       <textarea value={prompt.answer}
                         onChange={(e) => { const u = [...prompts]; u[idx].answer = e.target.value.slice(0, 225); setPrompts(u); }}
                         placeholder="Your answer..." maxLength={225} rows={3}
-                        className="w-full bg-transparent font-serif text-[18px] font-bold text-black leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:font-sans placeholder:text-[14px] placeholder:font-normal" />
+                        className="w-full bg-transparent font-serif text-[18px] text-black leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:font-sans placeholder:text-[14px] placeholder:font-normal" />
                       <p className="text-[11px] text-gray-400 text-right">{prompt.answer.length}/225</p>
                     </>
                   )}
@@ -254,7 +254,7 @@ export default function OnboardingPage() {
       <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
         <div className="max-w-lg mx-auto">
           <button onClick={next} disabled={!canAdvance() || loading}
-            className={`press w-full h-[52px] rounded-full text-[16px] font-semibold transition-all duration-300 ${
+            className={`press w-full h-[52px] rounded-full text-[14px] font-bold uppercase tracking-[0.08em] transition-all duration-300 ${
               canAdvance() ? "bg-black text-white" : "bg-gray-200 text-gray-400"
             }`}>
             {loading ? "Setting up..." : step === "preferences" ? "Start" : "Continue"}

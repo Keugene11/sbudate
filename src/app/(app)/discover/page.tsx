@@ -125,7 +125,7 @@ export default function DiscoverPage() {
           <p className="text-gray-500 text-[15px] mb-6">
             Check back later for new students on SBUDate.
           </p>
-          <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full font-semibold text-[15px]">
+          <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full font-bold text-[14px] uppercase tracking-[0.08em]">
             Refresh
           </button>
         </div>
@@ -138,7 +138,7 @@ export default function DiscoverPage() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
-          <h1 className="text-[20px] font-extrabold tracking-tight lowercase">sbudate</h1>
+          <h1 className="text-[18px] font-semibold tracking-tight lowercase">sbudate</h1>
           <button className="press w-9 h-9 flex items-center justify-center">
             <SlidersHorizontal className="w-[20px] h-[20px] text-gray-600" strokeWidth={2} />
           </button>

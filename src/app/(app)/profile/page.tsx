@@ -44,7 +44,7 @@ export default function ProfilePage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
-          <h1 className="text-[20px] font-extrabold tracking-tight">Profile</h1>
+          <h1 className="text-[18px] font-semibold">Profile</h1>
           <button onClick={handleLogout} className="press p-2">
             <LogOut className="w-5 h-5 text-gray-500" strokeWidth={2} />
           </button>
@@ -71,10 +71,10 @@ export default function ProfilePage() {
         {/* Prompts */}
         {profile.prompts.map((prompt) => (
           <div key={prompt.id} className="bg-cream px-5 py-6">
-            <p className="text-[13px] font-semibold text-gray-600 uppercase tracking-wide mb-2">
+            <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">
               {prompt.question}
             </p>
-            <p className="font-serif text-[22px] font-bold text-black leading-[1.3]">
+            <p className="font-serif text-[20px] text-black leading-[1.35]">
               {prompt.answer}
             </p>
           </div>
@@ -82,7 +82,7 @@ export default function ProfilePage() {
 
         {/* Vitals */}
         <div className="px-5 py-5">
-          <p className="text-[12px] font-bold text-gray-500 uppercase tracking-wider mb-3">My vitals</p>
+          <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-3">My vitals</p>
           <div className="flex flex-wrap gap-2">
             {heightDisplay && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{heightDisplay}</span>}
             {profile.graduation_year && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">Class of {profile.graduation_year}</span>}
