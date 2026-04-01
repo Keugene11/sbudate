@@ -142,30 +142,48 @@ export default function LikesPage() {
           )}
         </div>
 
-        {/* Full profile */}
+        {/* Full profile — interleaved photos and prompts */}
         {viewingProfile && (
           <div className="px-3 space-y-2.5">
-            {viewingProfile.photos.map((photo, idx) => (
-              <div key={photo.id} className="relative rounded-2xl overflow-hidden">
-                <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
-                {idx === 0 && (
-                  <>
-                    <div className="absolute inset-0 photo-gradient" />
-                    <div className="absolute bottom-5 left-5">
-                      <p className="text-white text-[26px] font-semibold tracking-tight">
-                        {viewingProfile.first_name}, {viewingProfile.age}
-                      </p>
+            {(() => {
+              const items: Array<{ type: "photo" | "prompt"; data: (typeof viewingProfile.photos)[0] | (typeof viewingProfile.prompts)[0] }> = [];
+              const maxLen = Math.max(viewingProfile.photos.length, viewingProfile.prompts.length);
+              for (let i = 0; i < maxLen; i++) {
+                if (viewingProfile.photos[i]) items.push({ type: "photo", data: viewingProfile.photos[i] });
+                if (viewingProfile.prompts[i]) items.push({ type: "prompt", data: viewingProfile.prompts[i] });
+              }
+              let promptCount = 0;
+              return items.map((item, idx) => {
+                if (item.type === "photo") {
+                  const photo = item.data as (typeof viewingProfile.photos)[0];
+                  return (
+                    <div key={photo.id} className="relative rounded-2xl overflow-hidden">
+                      <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                      {idx === 0 && (
+                        <>
+                          <div className="absolute inset-0 photo-gradient" />
+                          <div className="absolute bottom-5 left-5">
+                            <p className="text-white text-[26px] font-semibold tracking-tight">
+                              {viewingProfile.first_name}, {viewingProfile.age}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </>
-                )}
-              </div>
-            ))}
-            {viewingProfile.prompts.map((prompt) => (
-              <div key={prompt.id} className="bg-cream rounded-2xl px-5 py-5">
-                <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
-                <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
-              </div>
-            ))}
+                  );
+                } else {
+                  const prompt = item.data as (typeof viewingProfile.prompts)[0];
+                  const bg = promptCount % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+                  promptCount++;
+                  return (
+                    <div key={prompt.id} className={`${bg} rounded-2xl px-5 py-5`}>
+                      <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
+                      <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
+                    </div>
+                  );
+                }
+              });
+            })()}
           </div>
         )}
 

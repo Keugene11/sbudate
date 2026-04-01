@@ -357,30 +357,46 @@ export default function ChatPage() {
                   </div>
                 )}
 
-                {/* Photos */}
-                {otherFullProfile.photos.map((photo, idx) => (
-                  <div key={photo.id} className="relative rounded-2xl overflow-hidden">
-                    <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
-                    {idx === 0 && (
-                      <>
-                        <div className="absolute inset-0 photo-gradient" />
-                        <div className="absolute bottom-5 left-5">
-                          <p className="text-white text-[26px] font-semibold tracking-tight">
-                            {otherFullProfile.first_name}, {otherFullProfile.age}
-                          </p>
+                {/* Photos + Prompts interleaved */}
+                {(() => {
+                  const items: Array<{ type: "photo" | "prompt"; data: (typeof otherFullProfile.photos)[0] | (typeof otherFullProfile.prompts)[0] }> = [];
+                  const maxLen = Math.max(otherFullProfile.photos.length, otherFullProfile.prompts.length);
+                  for (let i = 0; i < maxLen; i++) {
+                    if (otherFullProfile.photos[i]) items.push({ type: "photo", data: otherFullProfile.photos[i] });
+                    if (otherFullProfile.prompts[i]) items.push({ type: "prompt", data: otherFullProfile.prompts[i] });
+                  }
+                  let promptCount = 0;
+                  return items.map((item, idx) => {
+                    if (item.type === "photo") {
+                      const photo = item.data as (typeof otherFullProfile.photos)[0];
+                      return (
+                        <div key={photo.id} className="relative rounded-2xl overflow-hidden">
+                          <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                          {idx === 0 && (
+                            <>
+                              <div className="absolute inset-0 photo-gradient" />
+                              <div className="absolute bottom-5 left-5">
+                                <p className="text-white text-[26px] font-semibold tracking-tight">
+                                  {otherFullProfile.first_name}, {otherFullProfile.age}
+                                </p>
+                              </div>
+                            </>
+                          )}
                         </div>
-                      </>
-                    )}
-                  </div>
-                ))}
-
-                {/* Prompts */}
-                {otherFullProfile.prompts.map((prompt) => (
-                  <div key={prompt.id} className="bg-cream rounded-2xl px-5 py-5">
-                    <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
-                    <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
-                  </div>
-                ))}
+                      );
+                    } else {
+                      const prompt = item.data as (typeof otherFullProfile.prompts)[0];
+                      const bg = promptCount % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+                      promptCount++;
+                      return (
+                        <div key={prompt.id} className={`${bg} rounded-2xl px-5 py-5`}>
+                          <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
+                          <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
+                        </div>
+                      );
+                    }
+                  });
+                })()}
               </div>
             )}
           </div>
