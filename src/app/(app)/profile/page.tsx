@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil, Target, Church, Wine, Cigarette } from "lucide-react";
+import { Settings, LogOut, ChevronRight, Pencil, Target, Church, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
-import { Cake, User, Ruler, GraduationCap, Home, Building } from "lucide-react";
 
 export default function ProfilePage() {
   const supabase = createClient();
