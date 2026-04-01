@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, Pencil } from "lucide-react";
+import { LogOut, Pencil, Cake, User, Ruler, MapPin, GraduationCap, Home, Building } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import Link from "next/link";
 
@@ -58,10 +58,57 @@ export default function ProfilePage() {
       </div>
 
       <div className="pb-24">
+        {/* Vitals card */}
+        <div className="px-4 pt-4 space-y-3">
+          {(() => {
+            const vitals: { icon: typeof Cake; value: string }[] = [];
+            if (profile.age) vitals.push({ icon: Cake, value: String(profile.age) });
+            if (profile.gender) vitals.push({ icon: User, value: profile.gender });
+            if (heightDisplay) vitals.push({ icon: Ruler, value: heightDisplay });
+            return vitals.length > 0 && (
+              <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+                <div className="flex items-center">
+                  {vitals.map((item, i) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={i} className={`flex items-center gap-2 px-4 py-3.5 flex-shrink-0 ${i < vitals.length - 1 ? "border-r border-gray-200" : ""}`}>
+                        <Icon className="w-[18px] h-[18px] text-gray-600" strokeWidth={1.8} />
+                        <span className="text-[14px] text-black">{item.value}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
+
+          {(() => {
+            const details: { icon: typeof Cake; value: string }[] = [];
+            if (profile.major) details.push({ icon: GraduationCap, value: profile.major });
+            if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
+            if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
+            if (profile.graduation_year) details.push({ icon: GraduationCap, value: `Class of ${profile.graduation_year}` });
+            return details.length > 0 && (
+              <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+                {details.map((item, i) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={i} className={`flex items-center gap-3.5 px-5 py-4 ${i < details.length - 1 ? "border-b border-gray-200" : ""}`}>
+                      <Icon className="w-[20px] h-[20px] text-gray-700" strokeWidth={1.8} />
+                      <span className="text-[15px] text-black">{item.value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* Photos — rounded with padding */}
         {profile.photos.map((photo, idx) => (
-          <div key={photo.id} className="relative">
+          <div key={photo.id} className="relative px-3 pt-3">
             {idx === 0 && (
-              <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent">
+              <div className="absolute bottom-0 left-3 right-3 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent rounded-b-2xl z-10">
                 <div className="flex items-baseline gap-2">
                   <span className="text-white text-[26px] font-medium">{profile.first_name}</span>
                   <span className="text-white/80 text-[24px]">{profile.age}</span>
@@ -69,31 +116,21 @@ export default function ProfilePage() {
                 {profile.major && <p className="text-white/70 text-[14px] mt-0.5">{profile.major}</p>}
               </div>
             )}
-            <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+            <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-2xl" draggable={false} />
           </div>
         ))}
 
+        {/* Prompts — rounded cards */}
         {profile.prompts.map((prompt) => (
-          <div key={prompt.id} className="bg-cream px-5 py-6">
+          <div key={prompt.id} className="bg-cream mx-3 mt-3 px-5 py-5 rounded-2xl">
             <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">
               {prompt.question}
             </p>
-            <p className="font-serif text-[20px] text-black leading-[1.35]">
+            <p className="text-[18px] font-medium text-black leading-[1.4]">
               {prompt.answer}
             </p>
           </div>
         ))}
-
-        <div className="px-5 py-5">
-          <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-3">My vitals</p>
-          <div className="flex flex-wrap gap-2">
-            {heightDisplay && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{heightDisplay}</span>}
-            {profile.graduation_year && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">Class of {profile.graduation_year}</span>}
-            {profile.residence_hall && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.residence_hall}</span>}
-            {profile.hometown && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.hometown}</span>}
-            {profile.major && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{profile.major}</span>}
-          </div>
-        </div>
       </div>
     </div>
   );

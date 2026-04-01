@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, MessageCircle, X } from "lucide-react";
+import { Heart, MessageCircle, X, Cake, User, Ruler, MapPin, GraduationCap, Home, Building } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ProfileCardProps {
@@ -61,17 +61,17 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           const isFirst = idx === 0;
 
           return (
-            <div key={photo.id} className="relative">
+            <div key={photo.id} className="relative px-3 pt-3">
               <img
                 src={photo.url}
                 alt=""
-                className="w-full aspect-[4/5] object-cover"
+                className="w-full aspect-[4/5] object-cover rounded-2xl"
                 draggable={false}
               />
 
               {/* Name overlay — first photo only */}
               {isFirst && (
-                <div className="absolute bottom-0 left-0 right-0 px-5 pb-14 pt-20 bg-gradient-to-t from-black/50 to-transparent">
+                <div className="absolute bottom-0 left-3 right-3 px-5 pb-14 pt-20 bg-gradient-to-t from-black/50 to-transparent rounded-b-2xl">
                   <div className="flex items-baseline gap-2">
                     <span className="text-white text-[26px] font-medium">{profile.first_name}</span>
                     <span className="text-white/80 text-[24px] font-normal">{profile.age}</span>
@@ -85,7 +85,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
               )}
 
               {/* Action buttons — bottom right of every photo */}
-              <div className="absolute bottom-3 right-3 flex items-center gap-2">
+              <div className="absolute bottom-6 right-6 flex items-center gap-2">
                 <button
                   onClick={() => setCommentingOn({ type: "photo", id: photo.id })}
                   className="press w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30"
@@ -121,11 +121,11 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           const isAnim = animating.has(prompt.id);
 
           return (
-            <div key={prompt.id} className="bg-cream px-5 py-6 relative">
+            <div key={prompt.id} className="bg-cream mx-3 mt-3 px-5 py-5 rounded-2xl relative">
               <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">
                 {prompt.question}
               </p>
-              <p className="font-serif text-[20px] text-black leading-[1.35]">
+              <p className="text-[18px] font-medium text-black leading-[1.4]">
                 {prompt.answer}
               </p>
 
@@ -160,41 +160,53 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
         }
       })}
 
-      {/* Vitals section */}
-      <div className="px-5 py-5 bg-white">
-        <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-3">My vitals</p>
-        <div className="flex flex-wrap gap-2">
-          {heightDisplay && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {heightDisplay}
-            </span>
-          )}
-          {profile.graduation_year && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              Class of {profile.graduation_year}
-            </span>
-          )}
-          {profile.residence_hall && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {profile.residence_hall}
-            </span>
-          )}
-          {profile.hometown && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {profile.hometown}
-            </span>
-          )}
-          {profile.religion && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {profile.religion}
-            </span>
-          )}
-          {profile.major && (
-            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
-              {profile.major}
-            </span>
-          )}
-        </div>
+      {/* Vitals — Hinge style cards */}
+      <div className="px-4 py-4 bg-white space-y-3">
+        {/* Horizontal vitals row */}
+        {(() => {
+          const vitals: { icon: typeof Cake; value: string }[] = [];
+          if (profile.age) vitals.push({ icon: Cake, value: String(profile.age) });
+          if (profile.gender) vitals.push({ icon: User, value: profile.gender });
+          if (heightDisplay) vitals.push({ icon: Ruler, value: heightDisplay });
+          if (profile.hometown) vitals.push({ icon: MapPin, value: profile.hometown });
+          return vitals.length > 0 && (
+            <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+              <div className="flex items-center overflow-x-auto">
+                {vitals.map((item, i) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={i} className={`flex items-center gap-2 px-4 py-3.5 flex-shrink-0 ${i < vitals.length - 1 ? "border-r border-gray-200" : ""}`}>
+                      <Icon className="w-[18px] h-[18px] text-gray-600" strokeWidth={1.8} />
+                      <span className="text-[14px] text-black">{item.value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Detail rows */}
+        {(() => {
+          const details: { icon: typeof Cake; value: string }[] = [];
+          if (profile.major) details.push({ icon: GraduationCap, value: profile.major });
+          if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
+          if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
+          if (profile.graduation_year) details.push({ icon: GraduationCap, value: `Class of ${profile.graduation_year}` });
+          return details.length > 0 && (
+            <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+              {details.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i} className={`flex items-center gap-3.5 px-5 py-4 ${i < details.length - 1 ? "border-b border-gray-200" : ""}`}>
+                    <Icon className="w-[20px] h-[20px] text-gray-700" strokeWidth={1.8} />
+                    <span className="text-[15px] text-black">{item.value}</span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Skip (X) button — bottom of entire profile */}

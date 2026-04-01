@@ -240,7 +240,7 @@ export default function OnboardingPage() {
                       <textarea value={prompt.answer}
                         onChange={(e) => { const u = [...prompts]; u[idx].answer = e.target.value.slice(0, 225); setPrompts(u); }}
                         placeholder="Your answer..." maxLength={225} rows={3}
-                        className="w-full bg-transparent font-serif text-[18px] text-black leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:font-sans placeholder:text-[14px] placeholder:font-normal" />
+                        className="w-full bg-transparent text-[18px] font-medium text-black leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:text-[14px] placeholder:font-normal" />
                       <p className="text-[11px] text-gray-400 text-right">{prompt.answer.length}/225</p>
                     </>
                   )}
