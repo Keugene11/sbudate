@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Plus, X } from "lucide-react";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
+import { Plus, X, ChevronRight } from "lucide-react";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
 import type { Photo } from "@/types";
 
 export default function EditProfilePage() {
@@ -81,11 +81,6 @@ export default function EditProfilePage() {
         await supabase.storage.from("photos").upload(path, newPhotos[i].file);
         const { data: { publicUrl } } = supabase.storage.from("photos").getPublicUrl(path);
         await supabase.from("photos").insert({ profile_id: profileId, url: publicUrl, position: existingPhotos.length + i });
-      }
-      await supabase.from("prompts").delete().eq("profile_id", profileId);
-      const valid = prompts.filter((p) => p.question && p.answer);
-      for (let i = 0; i < valid.length; i++) {
-        await supabase.from("prompts").insert({ profile_id: profileId, question: valid[i].question, answer: valid[i].answer, position: i });
       }
       router.push("/profile");
     } catch (err) { console.error(err); } finally { setSaving(false); }
@@ -208,28 +203,27 @@ export default function EditProfilePage() {
             </div>
           </div>
 
-          {/* Prompts */}
+          {/* Prompts — tap to edit on separate page */}
           <div>
             <p className="text-[13px] text-gray-400 mb-3">Prompts</p>
-            <div className="space-y-3">
-              {prompts.map((prompt, idx) => (
-                <div key={idx} className="bg-gray-50 rounded-[10px] p-4 border border-gray-200">
-                  <select value={prompt.question}
-                    onChange={(e) => { const u = [...prompts]; u[idx].question = e.target.value; setPrompts(u); }}
-                    className="w-full bg-transparent text-[13px] text-gray-400 outline-none appearance-none cursor-pointer mb-2">
-                    <option value="">Choose a prompt...</option>
-                    {PROMPT_OPTIONS.filter((o) => !prompts.some((p, i) => i !== idx && p.question === o)).map((o) => (
-                      <option key={o} value={o}>{o}</option>
-                    ))}
-                  </select>
-                  {prompt.question && (
-                    <textarea value={prompt.answer}
-                      onChange={(e) => { const u = [...prompts]; u[idx].answer = e.target.value.slice(0, 225); setPrompts(u); }}
-                      placeholder="Your answer..." maxLength={225} rows={3}
-                      className="w-full bg-transparent text-[16px] text-gray-900 leading-snug outline-none resize-none placeholder:text-gray-400 placeholder:text-[14px]" />
-                  )}
-                </div>
-              ))}
+            <div className="space-y-2">
+              {[0, 1, 2].map((idx) => {
+                const prompt = prompts[idx];
+                return (
+                  <button key={idx} onClick={() => router.push(`/edit-prompt?index=${idx}`)}
+                    className="w-full text-left bg-gray-50 border border-gray-200 rounded-[10px] px-4 py-4 flex items-center justify-between press">
+                    {prompt?.question ? (
+                      <div className="flex-1 min-w-0 mr-3">
+                        <p className="text-[13px] text-gray-400">{prompt.question}</p>
+                        <p className="text-[15px] text-gray-900 mt-0.5 line-clamp-2">{prompt.answer}</p>
+                      </div>
+                    ) : (
+                      <p className="text-[15px] text-gray-400">Add a prompt...</p>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={1.8} />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
