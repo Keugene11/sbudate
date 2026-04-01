@@ -111,35 +111,35 @@ export default function OnboardingPage() {
       <div className="flex-1 overflow-y-auto px-5 pb-32" key={step}>
         {step === "basics" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-bold mb-8">About you</h2>
+            <h2 className="text-[24px] font-medium mb-8">About you</h2>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">First name</label>
+                  <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">First name</label>
                   <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} placeholder="First" />
                 </div>
                 <div>
-                  <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Last name</label>
+                  <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Last name</label>
                   <input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} placeholder="Last" />
                 </div>
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Age</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Age</label>
                 <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} placeholder="21" />
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Gender</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Gender</label>
                 <div className="flex gap-2">
                   {GENDER_OPTIONS.map((g) => (
                     <button key={g} onClick={() => setGender(g)}
-                      className={`press flex-1 h-[48px] rounded-xl text-[14px] font-semibold transition-all duration-200 ${
+                      className={`press flex-1 h-[48px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
                         gender === g ? "bg-black text-white animate-pill" : "bg-gray-100 text-gray-700"
                       }`}>{g}</button>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Height</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Height</label>
                 <div className="flex gap-3">
                   <div className="flex items-center gap-1 flex-1">
                     <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={inputCls} placeholder="5" />
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
                 </div>
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Major</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Major</label>
                 <select
                   value={major}
                   onChange={(e) => setMajor(e.target.value)}
@@ -165,15 +165,15 @@ export default function OnboardingPage() {
                 </select>
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Graduation year</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Graduation year</label>
                 <input type="number" value={gradYear} onChange={(e) => setGradYear(e.target.value)} className={inputCls} placeholder="2027" />
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Hometown</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Hometown</label>
                 <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Residence Hall</label>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Residence Hall</label>
                 <select
                   value={residenceHall}
                   onChange={(e) => setResidenceHall(e.target.value)}
@@ -195,7 +195,7 @@ export default function OnboardingPage() {
 
         {step === "photos" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-bold mb-1">Your photos</h2>
+            <h2 className="text-[24px] font-medium mb-1">Your photos</h2>
             <p className="text-gray-500 text-[14px] mb-6">At least 2, up to 6.</p>
             <div className="grid grid-cols-3 gap-2">
               {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -222,7 +222,7 @@ export default function OnboardingPage() {
 
         {step === "prompts" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-bold mb-1">Your prompts</h2>
+            <h2 className="text-[24px] font-medium mb-1">Your prompts</h2>
             <p className="text-gray-500 text-[14px] mb-6">Answer at least 2.</p>
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
@@ -252,12 +252,12 @@ export default function OnboardingPage() {
 
         {step === "preferences" && (
           <div className="animate-slide-up">
-            <h2 className="text-[24px] font-bold mb-1">Show me</h2>
+            <h2 className="text-[24px] font-medium mb-1">Show me</h2>
             <p className="text-gray-500 text-[14px] mb-6">Who are you interested in?</p>
             <div className="space-y-2">
               {["Women", "Men", "Everyone"].map((p) => (
                 <button key={p} onClick={() => setGenderPreference(p)}
-                  className={`press w-full h-[52px] rounded-xl text-[15px] font-semibold text-left px-5 transition-all duration-200 ${
+                  className={`press w-full h-[52px] rounded-xl text-[15px] font-medium text-left px-5 transition-all duration-200 ${
                     genderPreference === p ? "bg-black text-white animate-pill" : "bg-gray-100 text-black"
                   }`}>{p}</button>
               ))}
@@ -270,7 +270,7 @@ export default function OnboardingPage() {
       <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
         <div className="max-w-lg mx-auto">
           <button onClick={next} disabled={!canAdvance() || loading}
-            className={`press w-full h-[52px] rounded-full text-[14px] font-bold uppercase tracking-[0.08em] transition-all duration-300 ${
+            className={`press w-full h-[52px] rounded-full text-[14px] font-medium uppercase tracking-[0.08em] transition-all duration-300 ${
               canAdvance() ? "bg-black text-white" : "bg-gray-200 text-gray-400"
             }`}>
             {loading ? "Setting up..." : step === "preferences" ? "Start" : "Continue"}

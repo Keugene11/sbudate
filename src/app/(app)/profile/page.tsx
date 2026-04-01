@@ -63,7 +63,7 @@ export default function ProfilePage() {
             {idx === 0 && (
               <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-white text-[26px] font-bold">{profile.first_name}</span>
+                  <span className="text-white text-[26px] font-medium">{profile.first_name}</span>
                   <span className="text-white/80 text-[24px]">{profile.age}</span>
                 </div>
                 {profile.major && <p className="text-white/70 text-[14px] mt-0.5">{profile.major}</p>}

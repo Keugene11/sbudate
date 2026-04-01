@@ -301,7 +301,7 @@ export default function EditProfilePage() {
       <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent">
         <div className="max-w-lg mx-auto">
           <button onClick={handleSave} disabled={saving}
-            className="press w-full h-[52px] rounded-full bg-black text-white text-[14px] font-bold uppercase tracking-[0.08em] disabled:opacity-50">
+            className="press w-full h-[52px] rounded-full bg-black text-white text-[14px] font-medium uppercase tracking-[0.08em] disabled:opacity-50">
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>

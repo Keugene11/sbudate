@@ -121,11 +121,11 @@ export default function DiscoverPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen px-8 text-center">
         <div className="animate-slide-up">
-          <p className="text-[22px] font-bold mb-2">You&apos;ve seen everyone</p>
+          <p className="text-[22px] font-medium mb-2">You&apos;ve seen everyone</p>
           <p className="text-gray-500 text-[15px] mb-6">
             Check back later for new students on SBUDate.
           </p>
-          <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full font-bold text-[14px] uppercase tracking-[0.08em]">
+          <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full font-medium text-[14px] uppercase tracking-[0.08em]">
             Refresh
           </button>
         </div>

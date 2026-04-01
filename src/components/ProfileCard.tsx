@@ -73,7 +73,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
               {isFirst && (
                 <div className="absolute bottom-0 left-0 right-0 px-5 pb-14 pt-20 bg-gradient-to-t from-black/50 to-transparent">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-white text-[26px] font-bold">{profile.first_name}</span>
+                    <span className="text-white text-[26px] font-medium">{profile.first_name}</span>
                     <span className="text-white/80 text-[24px] font-normal">{profile.age}</span>
                   </div>
                   {(profile.major || profile.hometown) && (
@@ -213,7 +213,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           <div className="absolute inset-0 bg-black/40" onClick={() => { setCommentingOn(null); setComment(""); }} />
           <div className="relative w-full bg-white rounded-t-2xl px-5 pt-3 pb-8 animate-sheet-up">
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5" />
-            <p className="text-[15px] font-semibold mb-3">Add a comment</p>
+            <p className="text-[15px] font-medium mb-3">Add a comment</p>
             <div className="flex gap-2.5">
               <input
                 value={comment}

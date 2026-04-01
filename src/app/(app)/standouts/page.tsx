@@ -12,7 +12,7 @@ export default function StandoutsPage() {
       </div>
       <div className="flex flex-col items-center justify-center py-24 px-8 text-center animate-slide-up">
         <Star className="w-10 h-10 text-gray-300 mb-4" strokeWidth={1.5} />
-        <p className="text-[18px] font-bold mb-1">Coming soon</p>
+        <p className="text-[18px] font-medium mb-1">Coming soon</p>
         <p className="text-gray-500 text-[14px]">
           Standout profiles from Stony Brook will appear here.
         </p>

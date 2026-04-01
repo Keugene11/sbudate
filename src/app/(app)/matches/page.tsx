@@ -86,7 +86,7 @@ export default function MatchesPage() {
         </div>
       ) : matches.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 px-8 text-center animate-slide-up">
-          <p className="text-[18px] font-bold mb-1">No matches yet</p>
+          <p className="text-[18px] font-medium mb-1">No matches yet</p>
           <p className="text-gray-500 text-[14px]">
             When you and someone like each other, you can chat here.
           </p>
@@ -108,7 +108,7 @@ export default function MatchesPage() {
               )}
               <div className="flex-1 min-w-0 border-b border-gray-100 pb-3">
                 <div className="flex items-center justify-between">
-                  <p className={`text-[16px] ${match.unread ? "font-bold" : "font-semibold"}`}>
+                  <p className={`text-[16px] ${match.unread ? "font-medium" : "font-normal"}`}>
                     {match.profile.first_name}
                   </p>
                   <span className="text-[12px] text-gray-400">{formatTime(match.last_message_at || "")}</span>

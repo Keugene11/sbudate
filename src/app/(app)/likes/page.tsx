@@ -93,7 +93,7 @@ export default function LikesPage() {
       ) : likes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 px-8 text-center animate-slide-up">
           <Heart className="w-10 h-10 text-gray-300 mb-4" strokeWidth={1.5} />
-          <p className="text-[18px] font-bold mb-1">No likes yet</p>
+          <p className="text-[18px] font-medium mb-1">No likes yet</p>
           <p className="text-gray-500 text-[14px]">
             When someone likes your profile, they&apos;ll show up here.
           </p>
@@ -117,7 +117,7 @@ export default function LikesPage() {
                 )}
                 {/* Gradient + info */}
                 <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                  <p className="text-white font-bold text-[15px]">
+                  <p className="text-white font-medium text-[15px]">
                     {like.from_profile.first_name}, {like.from_profile.age}
                   </p>
                   {like.comment && (
