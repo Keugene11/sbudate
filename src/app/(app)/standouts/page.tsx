@@ -7,7 +7,7 @@ export default function StandoutsPage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="px-4 h-[52px] flex items-center">
-          <h1 className="text-[18px] font-semibold">Standouts</h1>
+          <h1 className="text-[18px] font-medium">Standouts</h1>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center py-24 px-8 text-center animate-slide-up">

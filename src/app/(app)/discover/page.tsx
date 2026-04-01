@@ -138,7 +138,7 @@ export default function DiscoverPage() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
-          <h1 className="text-[18px] font-semibold tracking-tight lowercase">sbudate</h1>
+          <h1 className="text-[18px] font-medium tracking-tight lowercase">sbudate</h1>
           <button className="press w-9 h-9 flex items-center justify-center">
             <SlidersHorizontal className="w-[20px] h-[20px] text-gray-600" strokeWidth={2} />
           </button>

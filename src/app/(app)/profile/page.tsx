@@ -44,7 +44,7 @@ export default function ProfilePage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
-          <h1 className="text-[18px] font-semibold">Profile</h1>
+          <h1 className="text-[18px] font-medium">Profile</h1>
           <button onClick={handleLogout} className="press p-2">
             <LogOut className="w-5 h-5 text-gray-500" strokeWidth={2} />
           </button>

@@ -76,7 +76,7 @@ export default function MatchesPage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="px-4 h-[52px] flex items-center">
-          <h1 className="text-[18px] font-semibold">Matches</h1>
+          <h1 className="text-[18px] font-medium">Matches</h1>
         </div>
       </div>
 
