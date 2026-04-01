@@ -141,9 +141,12 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
         } else {
           const prompt = item.data as (typeof profile.prompts)[0];
           const isOpen = activeHeart?.id === prompt.id;
+          // Alternate between cream backgrounds for visual variety
+          const promptIdx = items.filter((it, ii) => ii < idx && it.type === "prompt").length;
+          const promptBg = promptIdx % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
           return (
             <div key={prompt.id}>
-              <div className="mx-3 mt-2.5 bg-cream rounded-[16px] relative overflow-hidden">
+              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] relative overflow-hidden`}>
                 <div className="px-5 py-5">
                   <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-2">
                     {prompt.question}
