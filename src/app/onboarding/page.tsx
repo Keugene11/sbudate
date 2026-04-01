@@ -167,16 +167,19 @@ export default function OnboardingPage() {
       {/* Progress bar */}
       <div className="flex gap-1.5 px-5 mb-8">
         {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className={`h-1 rounded-full flex-1 transition-colors duration-300 ${
-              i <= stepIndex ? "bg-hinge-black" : "bg-border"
-            }`}
-          />
+          <div key={i} className="h-1 rounded-full flex-1 bg-border overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ease-out ${
+                i < stepIndex ? "w-full bg-hinge-black"
+                : i === stepIndex ? "w-full bg-hinge-black animate-bar-fill"
+                : "w-0 bg-hinge-black"
+              }`}
+            />
+          </div>
         ))}
       </div>
 
-      <div className="flex-1 px-5 pb-32 max-w-md mx-auto w-full animate-fade-in">
+      <div className="flex-1 px-5 pb-32 max-w-md mx-auto w-full animate-page-in" key={step}>
         {step === "basics" && (
           <div className="stagger">
             <h2 className="font-serif text-[28px] font-semibold tracking-tight mb-8">
@@ -190,7 +193,7 @@ export default function OnboardingPage() {
                   <input
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                     placeholder="First"
                   />
                 </div>
@@ -199,7 +202,7 @@ export default function OnboardingPage() {
                   <input
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                     placeholder="Last"
                   />
                 </div>
@@ -211,7 +214,7 @@ export default function OnboardingPage() {
                   type="number"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
-                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                   placeholder="21"
                 />
               </div>
@@ -223,9 +226,9 @@ export default function OnboardingPage() {
                     <button
                       key={g}
                       onClick={() => setGender(g)}
-                      className={`press flex-1 py-3 rounded-xl text-[14px] font-medium border transition-colors ${
+                      className={`press flex-1 py-3 rounded-xl text-[14px] font-medium border transition-all duration-250 ${
                         gender === g
-                          ? "bg-hinge-black text-white border-hinge-black"
+                          ? "bg-hinge-black text-white border-hinge-black animate-pill-select"
                           : "bg-bg-input border-border text-stone"
                       }`}
                     >
@@ -243,7 +246,7 @@ export default function OnboardingPage() {
                       type="number"
                       value={heightFeet}
                       onChange={(e) => setHeightFeet(e.target.value)}
-                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                       placeholder="5"
                     />
                     <span className="text-dove text-[14px]">ft</span>
@@ -253,7 +256,7 @@ export default function OnboardingPage() {
                       type="number"
                       value={heightInches}
                       onChange={(e) => setHeightInches(e.target.value)}
-                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                       placeholder="8"
                     />
                     <span className="text-dove text-[14px]">in</span>
@@ -266,7 +269,7 @@ export default function OnboardingPage() {
                 <input
                   value={major}
                   onChange={(e) => setMajor(e.target.value)}
-                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                   placeholder="Computer Science"
                 />
               </div>
@@ -277,7 +280,7 @@ export default function OnboardingPage() {
                   type="number"
                   value={gradYear}
                   onChange={(e) => setGradYear(e.target.value)}
-                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                   placeholder="2027"
                 />
               </div>
@@ -287,7 +290,7 @@ export default function OnboardingPage() {
                 <input
                   value={hometown}
                   onChange={(e) => setHometown(e.target.value)}
-                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors"
+                  className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge"
                   placeholder="New York, NY"
                 />
               </div>
@@ -299,9 +302,9 @@ export default function OnboardingPage() {
                     <button
                       key={d}
                       onClick={() => setDatingIntention(d)}
-                      className={`press px-4 py-2.5 rounded-full text-[13px] font-medium border transition-colors ${
+                      className={`press px-4 py-2.5 rounded-full text-[13px] font-medium border transition-all duration-250 ${
                         datingIntention === d
-                          ? "bg-hinge-black text-white border-hinge-black"
+                          ? "bg-hinge-black text-white border-hinge-black animate-pill-select"
                           : "bg-bg-input border-border text-stone"
                       }`}
                     >
@@ -327,7 +330,7 @@ export default function OnboardingPage() {
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="aspect-[3/4] relative">
                   {photos[i] ? (
-                    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden animate-fade-in">
                       <img
                         src={photos[i].preview}
                         alt=""
@@ -341,7 +344,7 @@ export default function OnboardingPage() {
                       </button>
                     </div>
                   ) : (
-                    <label className="w-full h-full rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center cursor-pointer hover:border-dove transition-colors">
+                    <label className="w-full h-full rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center cursor-pointer hover:border-dove transition-all duration-250 hover:scale-[1.02] active:scale-[0.97]">
                       {i === 0 ? (
                         <Camera className="w-6 h-6 text-dove" />
                       ) : (
@@ -372,7 +375,7 @@ export default function OnboardingPage() {
 
             <div className="space-y-6">
               {prompts.map((prompt, idx) => (
-                <div key={idx} className="bg-bg-card border border-border rounded-2xl p-5 animate-slide-up">
+                <div key={idx} className="bg-bg-card border border-border rounded-2xl p-5 animate-prompt-in card-lift" style={{ animationDelay: `${idx * 80}ms` }}>
                   <label className="text-[11px] uppercase tracking-wider text-dove font-semibold mb-2 block">
                     Prompt {idx + 1}
                   </label>
@@ -383,7 +386,7 @@ export default function OnboardingPage() {
                       updated[idx].question = e.target.value;
                       setPrompts(updated);
                     }}
-                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors mb-3 appearance-none"
+                    className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge mb-3 appearance-none"
                   >
                     <option value="">Choose a prompt...</option>
                     {PROMPT_OPTIONS.filter(
@@ -403,7 +406,7 @@ export default function OnboardingPage() {
                       placeholder="Your answer..."
                       maxLength={225}
                       rows={3}
-                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none focus:border-dove transition-colors resize-none"
+                      className="w-full bg-bg-input border border-border rounded-xl px-4 py-3 text-[14px] outline-none input-hinge resize-none"
                     />
                   )}
                   {prompt.answer && (
@@ -431,9 +434,9 @@ export default function OnboardingPage() {
                 <button
                   key={pref}
                   onClick={() => setGenderPreference(pref)}
-                  className={`press w-full py-4 rounded-2xl text-[15px] font-medium border transition-colors text-left px-5 ${
+                  className={`press w-full py-4 rounded-2xl text-[15px] font-medium border transition-all duration-250 text-left px-5 ${
                     genderPreference === pref
-                      ? "bg-hinge-black text-white border-hinge-black"
+                      ? "bg-hinge-black text-white border-hinge-black animate-pill-select"
                       : "bg-bg-card border-border text-hinge-black"
                   }`}
                 >
@@ -451,9 +454,9 @@ export default function OnboardingPage() {
           <button
             onClick={nextStep}
             disabled={!canAdvance() || loading}
-            className={`press w-full py-4 rounded-2xl text-[15px] font-semibold tracking-wide transition-all ${
+            className={`press w-full py-4 rounded-2xl text-[15px] font-semibold tracking-wide transition-all duration-400 ${
               canAdvance()
-                ? "bg-hinge-black text-white"
+                ? "bg-hinge-black text-white shadow-lg shadow-black/10"
                 : "bg-border text-dove"
             }`}
           >

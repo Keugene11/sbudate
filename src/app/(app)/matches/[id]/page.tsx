@@ -166,9 +166,9 @@ export default function ChatPage() {
         {messages.map((msg) => {
           const isMine = msg.sender_id === myProfileId;
           return (
-            <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+            <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"} animate-bubble`}>
               <div
-                className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed ${
+                className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed transition-all duration-200 ${
                   isMine
                     ? "bg-hinge-black text-white rounded-br-md"
                     : "bg-bg-input text-hinge-black rounded-bl-md"
@@ -190,12 +190,12 @@ export default function ChatPage() {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type a message..."
-            className="flex-1 bg-bg-input border border-border rounded-full px-4 py-2.5 text-[14px] outline-none focus:border-dove transition-colors"
+            className="flex-1 bg-bg-input border border-border rounded-full px-4 py-2.5 text-[14px] outline-none input-hinge"
           />
           <button
             onClick={sendMessage}
             disabled={!newMessage.trim()}
-            className="press w-10 h-10 rounded-full bg-hinge-black flex items-center justify-center disabled:opacity-30"
+            className="press-sm w-10 h-10 rounded-full bg-hinge-black flex items-center justify-center disabled:opacity-30 transition-opacity duration-200"
           >
             <Send className="w-4.5 h-4.5 text-white" strokeWidth={2} />
           </button>

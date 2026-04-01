@@ -131,7 +131,7 @@ export default function MatchesPage() {
             <Link
               key={match.match_id}
               href={`/matches/${match.match_id}`}
-              className="flex items-center gap-3.5 px-5 py-4 border-b border-border press hover:bg-bg-input/50 transition-colors"
+              className="flex items-center gap-3.5 px-5 py-4 border-b border-border press hover:bg-bg-input/50 transition-all duration-200"
             >
               {match.profile.photo_url ? (
                 <img
@@ -158,7 +158,7 @@ export default function MatchesPage() {
                 </p>
               </div>
               {match.unread && (
-                <div className="w-2.5 h-2.5 rounded-full bg-coral flex-shrink-0" />
+                <div className="w-2.5 h-2.5 rounded-full bg-coral flex-shrink-0 animate-gentle-pulse" />
               )}
             </Link>
           ))}

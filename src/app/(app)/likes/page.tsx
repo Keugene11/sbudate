@@ -146,7 +146,7 @@ export default function LikesPage() {
             {likes.map((like) => (
               <div
                 key={like.id}
-                className="relative rounded-2xl overflow-hidden border border-border bg-bg-card"
+                className="relative rounded-2xl overflow-hidden border border-border bg-bg-card card-lift"
               >
                 {like.from_profile.photos[0] ? (
                   <img
@@ -172,7 +172,7 @@ export default function LikesPage() {
                 </div>
                 <button
                   onClick={() => handleLikeBack(like.from_profile.id)}
-                  className="press absolute top-2 right-2 w-10 h-10 rounded-full bg-coral flex items-center justify-center shadow-lg"
+                  className="press-sm absolute top-2 right-2 w-10 h-10 rounded-full bg-coral flex items-center justify-center shadow-lg shadow-coral/30 hover:shadow-xl hover:shadow-coral/40 transition-shadow duration-300"
                 >
                   <Heart className="w-5 h-5 text-white" fill="white" strokeWidth={0} />
                 </button>

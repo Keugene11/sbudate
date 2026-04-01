@@ -129,8 +129,9 @@ export default function DiscoverPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3 animate-fade-in">
         <Loader2 className="w-8 h-8 text-dove animate-spin" />
+        <p className="text-dove text-[13px] animate-fade-in" style={{ animationDelay: "400ms" }}>Finding people near you...</p>
       </div>
     );
   }

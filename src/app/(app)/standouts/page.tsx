@@ -14,7 +14,7 @@ export default function StandoutsPage() {
       </div>
 
       <div className="flex flex-col items-center justify-center py-20 px-6 text-center animate-slide-up">
-        <div className="w-16 h-16 rounded-full bg-mist flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-full bg-mist flex items-center justify-center mb-4 animate-gentle-pulse">
           <Star className="w-8 h-8 text-midnight" strokeWidth={1.5} />
         </div>
         <h2 className="font-serif text-[22px] font-semibold mb-2">
