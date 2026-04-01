@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, LogOut } from "lucide-react";
+import { Settings, ChevronRight, LogOut } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { Cake, User, Ruler, MapPin, GraduationCap, Home, Building } from "lucide-react";
 
@@ -45,12 +45,28 @@ export default function ProfilePage() {
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 h-[56px]">
-        <div className="w-8" />
+      <div className="flex items-center justify-between px-4 h-[52px]">
+        <span className="text-[18px] font-medium lowercase">sbudate</span>
+        <div className="flex items-center gap-1">
+          <button onClick={handleLogout} className="press p-2">
+            <LogOut className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} />
+          </button>
+          <button className="press p-2">
+            <Settings className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+
+      {/* Profile photo + name centered */}
+      <div className="flex flex-col items-center pt-2 pb-4">
+        <div className="w-[90px] h-[90px] rounded-full overflow-hidden ring-2 ring-[#67295F] ring-offset-2 mb-3">
+          {profile.photos[0] ? (
+            <img src={profile.photos[0].url} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center"><span className="text-[32px]">👤</span></div>
+          )}
+        </div>
         <p className="text-[20px] font-medium">{profile.first_name}</p>
-        <button onClick={handleLogout} className="press p-1">
-          <LogOut className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} />
-        </button>
       </div>
 
       {/* Edit / View tabs */}
@@ -75,7 +91,7 @@ export default function ProfilePage() {
 
       {tab === "edit" ? (
         <div className="pb-24">
-          {/* Photos */}
+          {/* Photos grid */}
           <div className="px-4 py-4">
             <div className="grid grid-cols-3 gap-2">
               {profile.photos.map((photo) => (
@@ -84,10 +100,8 @@ export default function ProfilePage() {
                 </div>
               ))}
               {profile.photos.length < 6 && (
-                <button
-                  onClick={() => router.push("/profile/edit")}
-                  className="aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors"
-                >
+                <button onClick={() => router.push("/profile/edit")}
+                  className="aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors">
                   +
                 </button>
               )}
@@ -101,23 +115,26 @@ export default function ProfilePage() {
               <p className="text-[14px] text-gray-400 mt-0.5">{prompt.answer}</p>
             </div>
           ))}
-          {profile.prompts.length < 3 && (
-            <div onClick={() => router.push("/profile/edit")} className="px-5 py-4 border-t border-gray-100 press cursor-pointer">
-              <p className="text-[15px] text-gray-400">Add a prompt...</p>
-            </div>
-          )}
 
-          {/* My Vitals - flat rows like Hinge */}
-          <div className="mt-4">
+          {/* My Vitals */}
+          <div className="mt-2">
             <div className="px-5 pb-2 pt-4 border-t border-gray-100">
               <p className="text-[13px] text-gray-400">My Vitals</p>
             </div>
-            <Row label="Major" value={profile.major} onTap={() => router.push("/profile/edit")} />
-            <Row label="Graduation Year" value={profile.graduation_year ? `Class of ${profile.graduation_year}` : null} onTap={() => router.push("/profile/edit")} />
-            <Row label="Height" value={heightDisplay} onTap={() => router.push("/profile/edit")} />
-            <Row label="Residence Hall" value={profile.residence_hall} onTap={() => router.push("/profile/edit")} />
-            <Row label="Hometown" value={profile.hometown} onTap={() => router.push("/profile/edit")} />
-            <Row label="Gender" value={profile.gender} onTap={() => router.push("/profile/edit")} />
+            <Row label="Major" value={profile.major} />
+            <Row label="Graduation Year" value={profile.graduation_year ? `Class of ${profile.graduation_year}` : null} />
+            <Row label="Height" value={heightDisplay} />
+            <Row label="Residence Hall" value={profile.residence_hall} />
+            <Row label="Hometown" value={profile.hometown} />
+            <Row label="Gender" value={profile.gender} />
+          </div>
+
+          {/* Edit all button */}
+          <div className="px-5 pt-6">
+            <button onClick={() => router.push("/profile/edit")}
+              className="press w-full h-[48px] border border-gray-300 rounded-full text-[14px] font-medium text-black">
+              Edit full profile
+            </button>
           </div>
         </div>
       ) : (
@@ -129,7 +146,7 @@ export default function ProfilePage() {
               if (profile.age) vitals.push({ icon: Cake, value: String(profile.age) });
               if (profile.gender) vitals.push({ icon: User, value: profile.gender });
               if (heightDisplay) vitals.push({ icon: Ruler, value: heightDisplay });
-              return vitals.length > 0 && (
+              return vitals.length > 0 ? (
                 <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
                   <div className="flex items-center">
                     {vitals.map((item, i) => {
@@ -143,7 +160,7 @@ export default function ProfilePage() {
                     })}
                   </div>
                 </div>
-              );
+              ) : null;
             })()}
             {(() => {
               const details: { icon: typeof Cake; value: string }[] = [];
@@ -151,7 +168,7 @@ export default function ProfilePage() {
               if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
               if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
               if (profile.graduation_year) details.push({ icon: GraduationCap, value: `Class of ${profile.graduation_year}` });
-              return details.length > 0 && (
+              return details.length > 0 ? (
                 <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
                   {details.map((item, i) => {
                     const Icon = item.icon;
@@ -163,7 +180,7 @@ export default function ProfilePage() {
                     );
                   })}
                 </div>
-              );
+              ) : null;
             })()}
           </div>
 
@@ -194,9 +211,9 @@ export default function ProfilePage() {
   );
 }
 
-function Row({ label, value, onTap }: { label: string; value: string | null; onTap: () => void }) {
+function Row({ label, value }: { label: string; value: string | null }) {
   return (
-    <div onClick={onTap} className="px-5 py-4 border-t border-gray-100 press cursor-pointer flex items-center justify-between">
+    <div className="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
       <div>
         <p className="text-[15px] text-black font-medium">{label}</p>
         <p className={`text-[14px] mt-0.5 ${value ? "text-gray-500" : "text-gray-300"}`}>
