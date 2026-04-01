@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, MoreHorizontal, Send } from "lucide-react";
+import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ChatMessage { id: string; content: string; sender_id: string; created_at: string; }
@@ -245,44 +245,68 @@ export default function ChatPage() {
                 <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
               </div>
             ) : (
-              <>
-                {otherFullProfile.photos.map((photo, idx) => (
-                  <div key={photo.id} className="relative">
-                    {idx === 0 && (
-                      <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-16 bg-gradient-to-t from-black/50 to-transparent">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-white text-[26px] font-medium">{otherFullProfile.first_name}</span>
-                          <span className="text-white/80 text-[24px] font-normal">{otherFullProfile.age}</span>
-                        </div>
-                        {(otherFullProfile.major || otherFullProfile.hometown) && (
-                          <p className="text-white/70 text-[14px] mt-0.5">
-                            {otherFullProfile.major}{otherFullProfile.major && otherFullProfile.hometown ? " · " : ""}{otherFullProfile.hometown}
-                          </p>
-                        )}
+              <div className="px-4 py-4 space-y-4 pb-20">
+                {/* Vitals row — horizontal scroll with icon + value, separated by lines */}
+                {(() => {
+                  const vitals: { icon: typeof Cake; value: string }[] = [];
+                  if (otherFullProfile.age) vitals.push({ icon: Cake, value: String(otherFullProfile.age) });
+                  if (otherFullProfile.gender) vitals.push({ icon: User, value: otherFullProfile.gender });
+                  if (ht) vitals.push({ icon: Ruler, value: ht });
+                  if (otherFullProfile.hometown) vitals.push({ icon: MapPin, value: otherFullProfile.hometown });
+                  return vitals.length > 0 && (
+                    <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+                      <div className="flex items-center overflow-x-auto">
+                        {vitals.map((item, i) => {
+                          const Icon = item.icon;
+                          return (
+                            <div key={i} className={`flex items-center gap-2 px-4 py-3.5 flex-shrink-0 ${i < vitals.length - 1 ? "border-r border-gray-200" : ""}`}>
+                              <Icon className="w-[18px] h-[18px] text-gray-600" strokeWidth={1.8} />
+                              <span className="text-[14px] text-black">{item.value}</span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
+                    </div>
+                  );
+                })()}
+
+                {/* Detail rows — icon + text with separator lines */}
+                {(() => {
+                  const details: { icon: typeof Cake; value: string }[] = [];
+                  if (otherFullProfile.major) details.push({ icon: GraduationCap, value: otherFullProfile.major });
+                  if (otherFullProfile.residence_hall) details.push({ icon: Building, value: otherFullProfile.residence_hall });
+                  if (otherFullProfile.hometown) details.push({ icon: Home, value: otherFullProfile.hometown });
+                  if (otherFullProfile.graduation_year) details.push({ icon: GraduationCap, value: `Class of ${otherFullProfile.graduation_year}` });
+                  return details.length > 0 && (
+                    <div className="bg-[#F8F7F5] rounded-2xl overflow-hidden">
+                      {details.map((item, i) => {
+                        const Icon = item.icon;
+                        return (
+                          <div key={i} className={`flex items-center gap-3.5 px-5 py-4 ${i < details.length - 1 ? "border-b border-gray-200" : ""}`}>
+                            <Icon className="w-[20px] h-[20px] text-gray-700" strokeWidth={1.8} />
+                            <span className="text-[15px] text-black">{item.value}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+
+                {/* Photos — rounded with padding */}
+                {otherFullProfile.photos.map((photo) => (
+                  <div key={photo.id} className="rounded-2xl overflow-hidden">
                     <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
                   </div>
                 ))}
 
+                {/* Prompts */}
                 {otherFullProfile.prompts.map((prompt) => (
-                  <div key={prompt.id} className="bg-cream px-5 py-6">
+                  <div key={prompt.id} className="bg-cream rounded-2xl px-5 py-5">
                     <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">{prompt.question}</p>
                     <p className="font-serif text-[20px] text-black leading-[1.35]">{prompt.answer}</p>
                   </div>
                 ))}
-
-                <div className="px-5 py-5 pb-20">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-3">About {otherFullProfile.first_name}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {ht && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{ht}</span>}
-                    {otherFullProfile.graduation_year && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">Class of {otherFullProfile.graduation_year}</span>}
-                    {otherFullProfile.residence_hall && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{otherFullProfile.residence_hall}</span>}
-                    {otherFullProfile.hometown && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{otherFullProfile.hometown}</span>}
-                    {otherFullProfile.major && <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">{otherFullProfile.major}</span>}
-                  </div>
-                </div>
-              </>
+              </div>
             )}
           </div>
         )}
