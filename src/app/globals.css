@@ -146,11 +146,15 @@ body {
 
 /* Photo gradient overlay */
 .photo-gradient {
-  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55) 100%);
+  background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.6) 100%);
 }
 
 .photo-gradient-top {
   background: linear-gradient(0deg, transparent 60%, rgba(0,0,0,0.3) 100%);
+}
+
+.photo-gradient-subtle {
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35) 100%);
 }
 
 /* Glass effect for overlays */

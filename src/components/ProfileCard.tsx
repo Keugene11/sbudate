@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, X, Target, Church, Wine, Cigarette } from "lucide-react";
+import { Heart, X, Target, Church, Wine, Cigarette, MoreHorizontal, Flag } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ProfileCardProps {
@@ -25,6 +25,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
   };
 
   const [likeSent, setLikeSent] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   const sendLike = () => {
     if (!activeHeart) return;
@@ -65,15 +66,37 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                 {isFirst && (
                   <>
                     <div className="absolute inset-0 rounded-[16px] photo-gradient" />
-                    {/* Dating intention badge at top */}
-                    {profile.dating_intention && (
-                      <div className="absolute top-4 left-4">
+                    {/* Top bar: dating intention + more menu */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                      {profile.dating_intention ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 glass rounded-full text-[12px] text-gray-700 font-medium">
                           <Target className="w-3 h-3 text-gray-500" strokeWidth={2} />
                           {profile.dating_intention}
                         </span>
+                      ) : <div />}
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowMore(!showMore)}
+                          className="w-8 h-8 rounded-full bg-black/30 glass flex items-center justify-center press"
+                        >
+                          <MoreHorizontal className="w-4 h-4 text-white" strokeWidth={2} />
+                        </button>
+                        {showMore && (
+                          <>
+                            <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)} />
+                            <div className="absolute right-0 top-10 z-50 bg-surface rounded-2xl py-1.5 w-[160px] animate-scale-in border border-border" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}>
+                              <button
+                                onClick={() => setShowMore(false)}
+                                className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5"
+                              >
+                                <Flag className="w-4 h-4" strokeWidth={1.8} />
+                                Report
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    )}
+                    </div>
                     <div className="absolute bottom-5 left-5 right-16">
                       <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
                         {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
