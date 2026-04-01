@@ -92,7 +92,7 @@ export default function DiscoverPage() {
           <RotateCcw className="w-10 h-10 text-gray-300 mb-4" strokeWidth={1.5} />
           <p className="text-[20px] font-medium mb-2">You&apos;ve seen everyone</p>
           <p className="text-gray-400 text-[14px] mb-6 max-w-[260px]">
-            Check back later for new Stony Brook students joining SBUDate.
+            Check back later for new Stony Brook students joining SBUdate.
           </p>
           <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full text-[14px] font-medium uppercase tracking-[0.08em]">
             Refresh

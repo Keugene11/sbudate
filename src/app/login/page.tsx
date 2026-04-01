@@ -28,8 +28,8 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-8 max-w-md mx-auto w-full">
         {/* Logo */}
         <div className="mb-16 animate-slide-up">
-          <h1 className="text-[28px] font-medium tracking-tight text-black lowercase">
-            sbudate
+          <h1 className="text-[28px] font-medium tracking-tight text-black">
+            SBUdate
           </h1>
         </div>
 

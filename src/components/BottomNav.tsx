@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Star, Heart, MessageSquare } from "lucide-react";
+import { Heart, MessageSquare } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -26,7 +26,6 @@ export default function BottomNav() {
 
   const tabs = [
     { href: "/discover", label: "discover" },
-    { href: "/standouts", label: "standouts" },
     { href: "/likes", label: "likes" },
     { href: "/matches", label: "matches" },
     { href: "/profile", label: "profile" },
@@ -44,13 +43,14 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               onClick={() => { setTapped(tab.href); setTimeout(() => setTapped(null), 350); }}
-              className={`flex items-center justify-center w-12 h-12 ${isTapped ? "animate-icon-bounce" : ""}`}
+              className={`flex items-center justify-center w-14 h-12 ${isTapped ? "animate-icon-bounce" : ""}`}
             >
               {tab.label === "discover" && (
-                <span className={`text-[20px] font-medium ${isActive ? "text-black" : "text-gray-400"}`}>H</span>
-              )}
-              {tab.label === "standouts" && (
-                <Star className={`w-[22px] h-[22px] ${isActive ? "text-black" : "text-gray-400"}`} strokeWidth={isActive ? 2.5 : 1.8} fill={isActive ? "currentColor" : "none"} />
+                <svg className={`w-[22px] h-[22px] ${isActive ? "text-black" : "text-gray-400"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isActive ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3" />
+                  {!isActive && <><line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="13" y2="13" /></>}
+                  {isActive && <rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" />}
+                </svg>
               )}
               {tab.label === "likes" && (
                 <Heart className={`w-[22px] h-[22px] ${isActive ? "text-black" : "text-gray-400"}`} strokeWidth={isActive ? 2.5 : 1.8} fill={isActive ? "currentColor" : "none"} />

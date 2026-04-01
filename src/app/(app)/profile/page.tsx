@@ -46,7 +46,7 @@ export default function ProfilePage() {
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between px-4 h-[52px]">
-        <span className="text-[18px] font-medium lowercase">sbudate</span>
+        <span className="text-[18px] font-medium">SBUdate</span>
         <div className="flex items-center gap-1">
           <button onClick={handleLogout} className="press p-2">
             <LogOut className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} />
