@@ -87,7 +87,7 @@ export default function ProfilePage() {
                 </div>
               ))}
               {profile.photos.length < 6 && (
-                <button onClick={() => router.push("/profile/edit")}
+                <button onClick={() => router.push("/edit-profile")}
                   className="aspect-square rounded-[12px] border-[1.5px] border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[22px] press">
                   +
                 </button>
@@ -101,7 +101,7 @@ export default function ProfilePage() {
               <p className="text-[12px] text-gray-400 uppercase tracking-wider mb-2">Prompts</p>
               <div className="bg-surface rounded-[12px] overflow-hidden">
                 {profile.prompts.map((prompt, i) => (
-                  <button key={prompt.id} onClick={() => router.push("/profile/edit")}
+                  <button key={prompt.id} onClick={() => router.push("/edit-profile")}
                     className={`w-full px-4 py-3.5 flex items-center justify-between press text-left ${i < profile.prompts.length - 1 ? "border-b border-gray-100" : ""}`}>
                     <div className="flex-1 min-w-0 mr-3">
                       <p className="text-[13px] text-gray-400">{prompt.question}</p>
@@ -126,7 +126,7 @@ export default function ProfilePage() {
                 { label: "Hometown", value: profile.hometown },
                 { label: "Gender", value: profile.gender },
               ].map((row, i, arr) => (
-                <button key={row.label} onClick={() => router.push("/profile/edit")}
+                <button key={row.label} onClick={() => router.push("/edit-profile")}
                   className={`w-full px-4 py-3.5 flex items-center justify-between press text-left ${i < arr.length - 1 ? "border-b border-gray-100" : ""}`}>
                   <div>
                     <p className="text-[14px] text-gray-900">{row.label}</p>
