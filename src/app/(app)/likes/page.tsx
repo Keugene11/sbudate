@@ -105,13 +105,21 @@ export default function LikesPage() {
             </div>
           </div>
 
+          {/* What they liked label */}
+          <div className="flex items-center gap-2 mb-3">
+            <Heart className="w-4 h-4 text-rose" fill="currentColor" strokeWidth={0} />
+            <span className="text-[13px] text-gray-400 font-medium">
+              Liked your {likedContent?.type === "photo" ? "photo" : likedContent?.type === "prompt" ? "prompt" : "profile"}
+            </span>
+          </div>
+
           {likedContent?.type === "photo" && (
-            <div className="rounded-2xl overflow-hidden mb-3">
+            <div className="rounded-2xl overflow-hidden mb-3 ring-2 ring-rose/20 ring-offset-2">
               <img src={likedContent.photo.url} alt="" className="w-full aspect-[4/5] object-cover" />
             </div>
           )}
           {likedContent?.type === "prompt" && (
-            <div className="bg-cream rounded-2xl px-5 py-5 mb-3">
+            <div className="bg-cream rounded-2xl px-5 py-5 mb-3 ring-2 ring-rose/20 ring-offset-2">
               <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{likedContent.prompt.question}</p>
               <p className="text-[17px] text-gray-900 leading-[1.4] font-medium">{likedContent.prompt.answer}</p>
             </div>
