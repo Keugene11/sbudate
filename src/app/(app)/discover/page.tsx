@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ProfileCard from "@/components/ProfileCard";
 import type { ProfileWithContent } from "@/types";
-import { SlidersHorizontal, RotateCcw, MoreHorizontal } from "lucide-react";
 
 export default function DiscoverPage() {
   const supabase = createClient();
@@ -76,25 +75,25 @@ export default function DiscoverPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[80vh] gap-3">
-        <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
+      <div className="max-w-lg mx-auto px-4 pt-14">
+        {/* Skeleton */}
+        <div className="mx-0 rounded-[16px] overflow-hidden">
+          <div className="w-full aspect-[4/5] skeleton" />
+        </div>
+        <div className="mt-3 rounded-[16px] h-[120px] skeleton" />
       </div>
     );
   }
 
   if (currentIndex >= profiles.length) {
     return (
-      <div className="max-w-lg mx-auto px-6">
-        <div className="flex items-center justify-between h-[52px]">
-          <SlidersHorizontal className="w-5 h-5 text-gray-400" strokeWidth={2} />
-        </div>
-        <div className="flex flex-col items-center justify-center py-20 text-center animate-slide-up">
-          <RotateCcw className="w-10 h-10 text-gray-300 mb-4" strokeWidth={1.5} />
-          <p className="text-[20px] font-medium mb-2">You&apos;ve seen everyone</p>
-          <p className="text-gray-400 text-[14px] mb-6 max-w-[260px]">
-            Check back later for new Stony Brook students joining SBUdate.
+      <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[70vh] px-8 text-center">
+        <div className="animate-slide-up">
+          <p className="text-[20px] font-semibold text-gray-900 mb-2">You&apos;ve seen everyone</p>
+          <p className="text-gray-400 text-[14px] mb-8 leading-relaxed">
+            Check back later for new Stony Brook students.
           </p>
-          <button onClick={fetchProfiles} className="press h-[48px] bg-black text-white px-8 rounded-full text-[14px] font-medium uppercase tracking-[0.08em]">
+          <button onClick={fetchProfiles} className="press h-[48px] bg-gray-900 text-white px-8 rounded-[14px] text-[15px] font-medium">
             Refresh
           </button>
         </div>
@@ -106,30 +105,13 @@ export default function DiscoverPage() {
 
   return (
     <div className="max-w-lg mx-auto bg-white">
-      {/* Header with filter pills */}
-      <div className="px-4 pt-2 pb-2">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <button className="press flex-shrink-0 w-8 h-8 flex items-center justify-center">
-            <SlidersHorizontal className="w-[18px] h-[18px] text-black" strokeWidth={2} />
-          </button>
-          {["Age", "Height", "Major"].map((filter) => (
-            <button key={filter} className="press flex-shrink-0 px-3.5 h-[34px] rounded-full border border-gray-300 text-[13px] text-black flex items-center gap-1">
-              {filter}
-              <svg className="w-3 h-3 text-gray-500" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 5l3 3 3-3"/></svg>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Name / status row */}
-      <div className="flex items-center justify-between px-4 pb-1">
-        <div>
-          <p className="text-[22px] font-medium">{current.first_name}</p>
-          <p className="text-[12px] text-gray-400">Active today</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="press p-1"><RotateCcw className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} /></button>
-          <button className="press p-1"><MoreHorizontal className="w-[18px] h-[18px] text-gray-400" strokeWidth={2} /></button>
+      {/* Header */}
+      <div className="px-5 pt-3 pb-1">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <p className="text-[24px] font-semibold text-gray-900">{current.first_name}</p>
+            <p className="text-[13px] text-gray-400 mt-0.5">Active today</p>
+          </div>
         </div>
       </div>
 

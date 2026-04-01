@@ -13,39 +13,26 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    }
+    if (error) { setError(error.message); setLoading(false); }
   };
 
   return (
     <div className="h-full flex flex-col bg-white">
-      <div className="flex-1 flex flex-col items-center justify-center px-8 max-w-md mx-auto w-full">
-        {/* Logo */}
-        <div className="mb-16 animate-slide-up">
-          <h1 className="text-[28px] font-medium tracking-tight text-black">
-            SBUdate
-          </h1>
-        </div>
-
-        {/* Tagline */}
-        <div className="text-center mb-12 animate-slide-up" style={{ animationDelay: "80ms" }}>
-          <p className="text-gray-500 text-[15px] tracking-wide">
-            Designed to be Deleted
+      <div className="flex-1 flex flex-col items-center justify-center px-6 max-w-[380px] mx-auto w-full">
+        <div className="animate-slide-up">
+          <h1 className="text-[26px] font-semibold text-gray-900 text-center">SBUdate</h1>
+          <p className="text-gray-400 text-[14px] text-center mt-2 leading-relaxed">
+            Designed to be deleted.
           </p>
         </div>
 
-        {/* Buttons */}
-        <div className="w-full space-y-3 animate-slide-up" style={{ animationDelay: "160ms" }}>
+        <div className="w-full mt-12 animate-slide-up" style={{ animationDelay: "80ms" }}>
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="press w-full h-[52px] bg-black text-white rounded-full font-medium text-[14px] uppercase tracking-[0.08em] flex items-center justify-center gap-2.5 disabled:opacity-50"
+            className="press w-full h-[52px] bg-gray-900 text-white rounded-[14px] text-[15px] font-medium flex items-center justify-center gap-2.5 disabled:opacity-50 transition-opacity"
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -57,16 +44,12 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {error && (
-          <p className="text-red-500 text-[13px] mt-4 text-center">{error}</p>
-        )}
+        {error && <p className="text-coral text-[13px] mt-4 text-center animate-fade-in">{error}</p>}
       </div>
 
-      {/* Footer */}
-      <div className="px-8 pb-10 pt-4 text-center animate-fade-in" style={{ animationDelay: "300ms" }}>
-        <p className="text-gray-400 text-[11px] leading-relaxed">
-          By continuing, you agree to our Terms of Service and Privacy Policy.
-          <br />SBU students only.
+      <div className="px-6 pb-8 text-center animate-fade-in" style={{ animationDelay: "200ms" }}>
+        <p className="text-gray-400 text-[12px] leading-relaxed">
+          By continuing, you agree to our Terms of Service.<br />SBU students only.
         </p>
       </div>
     </div>
