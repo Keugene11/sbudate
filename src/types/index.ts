@@ -11,6 +11,7 @@ export interface Profile {
   graduation_year: number | null;
   hometown: string | null;
   dating_intention: string | null;
+  residence_hall: string | null;
   religion: string | null;
   drinking: string | null;
   smoking: string | null;
@@ -92,6 +93,17 @@ export const PROMPT_OPTIONS = [
   "I'm convinced that",
   "Believe it or not, I",
 ];
+
+export const RESIDENCE_HALLS = {
+  "Eleanor Roosevelt": ["Greeley Hall", "Keller Hall", "Stimson Hall", "Wagner Hall"],
+  "H Community": ["Benedict North", "Benedict South", "James Hall", "Langmuir Hall"],
+  "Mendelsohn": ["Ammann Hall", "Gray Hall", "Irving Hall", "O'Neill Hall"],
+  "Kelly": ["Baruch Hall", "Dewey Hall", "Eisenhower Hall", "Hamilton Hall", "Schick Hall"],
+  "Roth": ["Cardozo Hall", "Gershwin Hall", "Hendrix Hall", "Mount Hall", "Whitman Hall"],
+  "Tabler": ["Chinn Hall", "Douglass Hall", "Dreiser Hall", "Hand Hall", "Toscanini Hall"],
+  "Apartments": ["West Apartments", "Chapin Apartments", "Schomburg Apartments"],
+  "Other": ["Off Campus"],
+};
 
 export const GENDER_OPTIONS = ["Man", "Woman", "Non-binary"];
 export const DATING_INTENTIONS = [

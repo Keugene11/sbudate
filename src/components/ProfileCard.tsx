@@ -179,6 +179,11 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
               {profile.dating_intention}
             </span>
           )}
+          {profile.residence_hall && (
+            <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
+              {profile.residence_hall}
+            </span>
+          )}
           {profile.hometown && (
             <span className="px-3 py-1.5 bg-gray-100 rounded-full text-[13px] text-gray-800 font-medium">
               {profile.hometown}

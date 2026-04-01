@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, DATING_INTENTIONS } from "@/types";
+import { PROMPT_OPTIONS, GENDER_OPTIONS, DATING_INTENTIONS, RESIDENCE_HALLS } from "@/types";
 import { ChevronLeft, Plus, X, Camera } from "lucide-react";
 
 type Step = "basics" | "photos" | "prompts" | "preferences";
@@ -25,6 +25,7 @@ export default function OnboardingPage() {
   const [gradYear, setGradYear] = useState("");
   const [hometown, setHometown] = useState("");
   const [datingIntention, setDatingIntention] = useState("");
+  const [residenceHall, setResidenceHall] = useState("");
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [prompts, setPrompts] = useState([
     { question: "", answer: "" },
@@ -53,6 +54,7 @@ export default function OnboardingPage() {
         height_inches: totalInches, major: major || null,
         graduation_year: gradYear ? parseInt(gradYear) : null,
         hometown: hometown || null, dating_intention: datingIntention || null,
+        residence_hall: residenceHall || null,
       }).select().single();
       if (error) throw error;
 
@@ -161,6 +163,23 @@ export default function OnboardingPage() {
               <div>
                 <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Hometown</label>
                 <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
+              </div>
+              <div>
+                <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Residence Hall</label>
+                <select
+                  value={residenceHall}
+                  onChange={(e) => setResidenceHall(e.target.value)}
+                  className={`${inputCls} appearance-none cursor-pointer`}
+                >
+                  <option value="">Select your dorm...</option>
+                  {Object.entries(RESIDENCE_HALLS).map(([group, halls]) => (
+                    <optgroup key={group} label={group}>
+                      {halls.map((hall) => (
+                        <option key={hall} value={hall}>{hall}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-[12px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5 block">Dating intention</label>
