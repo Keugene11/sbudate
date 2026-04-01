@@ -24,10 +24,15 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
     else { setActiveHeart({ type, id }); setComment(""); }
   };
 
+  const [likeSent, setLikeSent] = useState(false);
+
   const sendLike = () => {
     if (!activeHeart) return;
-    setExiting(true);
-    setTimeout(() => onLike(activeHeart.type, activeHeart.id, comment.trim() || undefined), 250);
+    setLikeSent(true);
+    setTimeout(() => {
+      setExiting(true);
+      setTimeout(() => onLike(activeHeart.type, activeHeart.id, comment.trim() || undefined), 250);
+    }, 400);
   };
 
   const handleSkip = () => { setExiting(true); setTimeout(() => onSkip(), 250); };
@@ -41,7 +46,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
   }
 
   return (
-    <div className={exiting ? "animate-profile-exit" : "animate-profile-enter"}>
+    <div className={`${exiting ? "animate-profile-exit" : "animate-profile-enter"} ${likeSent ? "animate-like-flash" : ""}`}>
       {items.map((item, idx) => {
         if (item.type === "photo") {
           const photo = item.data as (typeof profile.photos)[0];
@@ -116,7 +121,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                         onClick={sendLike}
                         className="w-full h-[44px] bg-gray-900 text-white rounded-xl text-[14px] font-medium press tracking-wide"
                       >
-                        Send Like
+                        {likeSent ? "Sent!" : "Send Like"}
                       </button>
                     </div>
                   </div>
@@ -171,7 +176,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                         onClick={sendLike}
                         className="w-full h-[44px] bg-gray-900 text-white rounded-xl text-[14px] font-medium press tracking-wide"
                       >
-                        Send Like
+                        {likeSent ? "Sent!" : "Send Like"}
                       </button>
                     </div>
                   </div>
