@@ -295,7 +295,7 @@ export default function ChatPage() {
                 {/* Photos — rounded with padding */}
                 {otherFullProfile.photos.map((photo) => (
                   <div key={photo.id} className="rounded-2xl overflow-hidden">
-                    <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                    <img src={photo.url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                   </div>
                 ))}
 

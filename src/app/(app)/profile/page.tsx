@@ -82,13 +82,13 @@ export default function ProfilePage() {
           <div className="px-5 pb-4">
             <div className="grid grid-cols-3 gap-2">
               {profile.photos.map((photo) => (
-                <div key={photo.id} className="aspect-[3/4] rounded-[12px] overflow-hidden">
+                <div key={photo.id} className="aspect-square rounded-[12px] overflow-hidden">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
               {profile.photos.length < 6 && (
                 <button onClick={() => router.push("/profile/edit")}
-                  className="aspect-[3/4] rounded-[12px] border-[1.5px] border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[22px] press">
+                  className="aspect-square rounded-[12px] border-[1.5px] border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[22px] press">
                   +
                 </button>
               )}
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                   {profile.major && <p className="text-white/70 text-[14px] mt-0.5">{profile.major}</p>}
                 </div>
               )}
-              <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-[12px]" draggable={false} />
+              <img src={photo.url} alt="" className="w-full aspect-square object-cover rounded-[12px]" draggable={false} />
             </div>
           ))}
 

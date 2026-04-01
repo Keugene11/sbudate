@@ -192,7 +192,7 @@ export default function OnboardingPage() {
             <p className="text-gray-500 text-[14px] mb-6">At least 2, up to 6.</p>
             <div className="grid grid-cols-3 gap-2">
               {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="aspect-[3/4] relative">
+                <div key={i} className="aspect-square relative">
                   {photos[i] ? (
                     <div className="w-full h-full rounded-xl overflow-hidden animate-fade-in">
                       <img src={photos[i].preview} alt="" className="w-full h-full object-cover" />

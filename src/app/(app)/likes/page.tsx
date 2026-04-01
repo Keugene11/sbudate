@@ -103,7 +103,7 @@ export default function LikesPage() {
           </div>
 
           {likedContent?.type === "photo" && (
-            <div className="rounded-[12px] overflow-hidden mb-3"><img src={likedContent.photo.url} alt="" className="w-full aspect-[4/5] object-cover" /></div>
+            <div className="rounded-[12px] overflow-hidden mb-3"><img src={likedContent.photo.url} alt="" className="w-full aspect-square object-cover" /></div>
           )}
           {likedContent?.type === "prompt" && (
             <div className="bg-surface rounded-[12px] px-5 py-4 mb-3">
@@ -128,7 +128,7 @@ export default function LikesPage() {
         {viewingProfile && (
           <div className="px-4 space-y-2">
             {viewingProfile.photos.map((photo) => (
-              <div key={photo.id} className="rounded-[12px] overflow-hidden"><img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} /></div>
+              <div key={photo.id} className="rounded-[12px] overflow-hidden"><img src={photo.url} alt="" className="w-full aspect-square object-cover" draggable={false} /></div>
             ))}
             {viewingProfile.prompts.map((prompt) => (
               <div key={prompt.id} className="bg-surface rounded-[12px] px-5 py-4">

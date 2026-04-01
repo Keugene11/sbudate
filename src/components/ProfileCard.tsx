@@ -48,7 +48,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           return (
             <div key={photo.id}>
               <div className="relative mx-4 mt-2">
-                <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-[12px]" draggable={false} />
+                <img src={photo.url} alt="" className="w-full aspect-square object-cover rounded-[12px]" draggable={false} />
                 {/* Name on first photo */}
                 {idx === 0 && (
                   <div className="absolute top-4 left-4">

@@ -67,7 +67,7 @@ export default function StandoutsPage() {
             {profiles.map((p) => (
               <div key={p.id} className="flex-shrink-0 w-[280px] snap-start">
                 <div className="relative rounded-2xl overflow-hidden bg-black">
-                  <img src={p.photos[0].url} alt="" className="w-full aspect-[3/4] object-cover" draggable={false} />
+                  <img src={p.photos[0].url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                   {/* Name overlay */}
                   <div className="absolute top-4 left-4">
                     <p className="text-white text-[22px] font-medium">{p.first_name}</p>

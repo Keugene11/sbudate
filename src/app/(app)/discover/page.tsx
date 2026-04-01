@@ -61,7 +61,7 @@ export default function DiscoverPage() {
 
   if (loading) return (
     <div className="max-w-lg mx-auto pt-14 px-4">
-      <div className="rounded-[12px] overflow-hidden"><div className="w-full aspect-[4/5] skeleton" /></div>
+      <div className="rounded-[12px] overflow-hidden"><div className="w-full aspect-square skeleton" /></div>
       <div className="mt-2 rounded-[12px] h-[100px] skeleton" />
     </div>
   );
