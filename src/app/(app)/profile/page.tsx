@@ -245,29 +245,56 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {profile.photos.map((photo, idx) => (
-            <div key={photo.id} className="relative mx-3 mt-2.5">
-              <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-2xl" draggable={false} />
-              {idx === 0 && (
-                <>
-                  <div className="absolute inset-0 rounded-2xl photo-gradient" />
-                  <div className="absolute bottom-5 left-5 right-5">
-                    <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
-                      {profile.first_name}, <span className="font-normal">{profile.age}</span>
-                    </p>
-                    {profile.major && <p className="text-white/75 text-[14px] mt-1.5">{profile.major}</p>}
+          {/* Interleave photos and prompts like the discover feed */}
+          {(() => {
+            const items: Array<{ type: "photo" | "prompt"; data: (typeof profile.photos)[0] | (typeof profile.prompts)[0] }> = [];
+            const maxLen = Math.max(profile.photos.length, profile.prompts.length);
+            for (let i = 0; i < maxLen; i++) {
+              if (profile.photos[i]) items.push({ type: "photo", data: profile.photos[i] });
+              if (profile.prompts[i]) items.push({ type: "prompt", data: profile.prompts[i] });
+            }
+            let promptCount = 0;
+            return items.map((item, idx) => {
+              if (item.type === "photo") {
+                const photo = item.data as (typeof profile.photos)[0];
+                const isFirst = idx === 0;
+                return (
+                  <div key={photo.id} className="relative mx-3 mt-2.5">
+                    <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-2xl" draggable={false} />
+                    {isFirst && (
+                      <>
+                        <div className="absolute inset-0 rounded-2xl photo-gradient" />
+                        {profile.dating_intention && (
+                          <div className="absolute top-4 left-4">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 glass rounded-full text-[12px] text-gray-700 font-medium">
+                              <Target className="w-3 h-3 text-gray-500" strokeWidth={2} />
+                              {profile.dating_intention}
+                            </span>
+                          </div>
+                        )}
+                        <div className="absolute bottom-5 left-5 right-5">
+                          <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
+                            {profile.first_name}, <span className="font-normal">{profile.age}</span>
+                          </p>
+                          {profile.major && <p className="text-white/75 text-[14px] mt-1.5">{profile.major}</p>}
+                        </div>
+                      </>
+                    )}
                   </div>
-                </>
-              )}
-            </div>
-          ))}
-
-          {profile.prompts.map((prompt) => (
-            <div key={prompt.id} className="bg-cream mx-3 mt-2.5 px-5 py-5 rounded-2xl">
-              <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
-              <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
-            </div>
-          ))}
+                );
+              } else {
+                const prompt = item.data as (typeof profile.prompts)[0];
+                const bg = promptCount % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+                promptCount++;
+                return (
+                  <div key={prompt.id} className={`${bg} mx-3 mt-2.5 px-5 py-5 rounded-2xl`}>
+                    <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
+                    <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
+                  </div>
+                );
+              }
+            });
+          })()}
         </div>
       )}
     </div>
