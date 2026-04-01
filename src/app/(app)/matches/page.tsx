@@ -9,6 +9,7 @@ interface MatchWithProfile {
   match_id: string;
   profile: { id: string; first_name: string; age: number; photo_url: string | null; };
   last_message: string | null; last_message_at: string | null; unread: boolean;
+  is_my_turn: boolean; last_sender_is_me: boolean;
 }
 
 export default function MatchesPage() {
@@ -30,11 +31,16 @@ export default function MatchesPage() {
         const { data: profile } = await supabase.from("profiles").select("id, first_name, age").eq("id", otherId).single();
         const { data: photos } = await supabase.from("photos").select("url").eq("profile_id", otherId).order("position").limit(1);
         const { data: lastMsg } = await supabase.from("messages").select("content, created_at, sender_id, read").eq("match_id", match.id).order("created_at", { ascending: false }).limit(1);
-        if (profile) enriched.push({
-          match_id: match.id, profile: { ...profile, photo_url: photos?.[0]?.url || null },
-          last_message: lastMsg?.[0]?.content || null, last_message_at: lastMsg?.[0]?.created_at || match.created_at,
-          unread: lastMsg?.[0] ? !lastMsg[0].read && lastMsg[0].sender_id !== myProfile.id : false,
-        });
+        if (profile) {
+          const lastSenderIsMe = lastMsg?.[0] ? lastMsg[0].sender_id === myProfile.id : false;
+          enriched.push({
+            match_id: match.id, profile: { ...profile, photo_url: photos?.[0]?.url || null },
+            last_message: lastMsg?.[0]?.content || null, last_message_at: lastMsg?.[0]?.created_at || match.created_at,
+            unread: lastMsg?.[0] ? !lastMsg[0].read && lastMsg[0].sender_id !== myProfile.id : false,
+            is_my_turn: lastMsg?.[0] ? lastMsg[0].sender_id !== myProfile.id : true,
+            last_sender_is_me: lastSenderIsMe,
+          });
+        }
       }
       setMatches(enriched); setLoading(false);
     })();
@@ -158,6 +164,7 @@ export default function MatchesPage() {
                         </span>
                       </div>
                       <p className={`text-[14px] truncate mt-0.5 ${match.unread ? "text-gray-700 font-medium" : "text-gray-400"}`}>
+                        {match.last_sender_is_me && <span className="text-gray-400">You: </span>}
                         {match.last_message}
                       </p>
                     </div>

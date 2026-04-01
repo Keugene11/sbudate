@@ -204,3 +204,38 @@ export const SBU_MAJORS = [
 ];
 
 export const GENDER_OPTIONS = ["Man", "Woman", "Non-binary"];
+
+export const DATING_INTENTIONS = [
+  "Life partner",
+  "Long-term relationship",
+  "Long-term, open to short",
+  "Short-term, open to long",
+  "Short-term fun",
+  "Figuring out my dating goals",
+];
+
+export const RELIGION_OPTIONS = [
+  "Agnostic",
+  "Atheist",
+  "Buddhist",
+  "Catholic",
+  "Christian",
+  "Hindu",
+  "Jewish",
+  "Muslim",
+  "Spiritual",
+  "Other",
+  "Prefer not to say",
+];
+
+export const DRINKING_OPTIONS = [
+  "Yes",
+  "Sometimes",
+  "No",
+];
+
+export const SMOKING_OPTIONS = [
+  "Yes",
+  "Sometimes",
+  "No",
+];

@@ -139,6 +139,10 @@ export default function ProfilePage() {
                 { label: "Residence Hall", value: profile.residence_hall },
                 { label: "Hometown", value: profile.hometown },
                 { label: "Gender", value: profile.gender },
+                { label: "Dating Intention", value: profile.dating_intention },
+                { label: "Religion", value: profile.religion },
+                { label: "Drinking", value: profile.drinking },
+                { label: "Smoking", value: profile.smoking },
               ].map((row, i, arr) => (
                 <button key={row.label} onClick={() => router.push("/edit-profile")}
                   className={`w-full px-5 py-4 flex items-center justify-between press text-left hover:bg-gray-50 transition-colors ${

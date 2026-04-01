@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, X } from "lucide-react";
+import { Heart, X, Target, Church, Wine, Cigarette } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ProfileCardProps {
@@ -224,6 +224,38 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           )}
         </div>
       </div>
+
+      {/* Lifestyle section */}
+      {(profile.dating_intention || profile.religion || profile.drinking || profile.smoking) && (
+        <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
+          <div className="px-5 py-4 space-y-3">
+            {profile.dating_intention && (
+              <div className="flex items-center gap-3">
+                <Target className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
+                <span className="text-[14px] text-gray-700">{profile.dating_intention}</span>
+              </div>
+            )}
+            {profile.religion && (
+              <div className="flex items-center gap-3">
+                <Church className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
+                <span className="text-[14px] text-gray-700">{profile.religion}</span>
+              </div>
+            )}
+            {profile.drinking && (
+              <div className="flex items-center gap-3">
+                <Wine className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
+                <span className="text-[14px] text-gray-700">{profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink"}</span>
+              </div>
+            )}
+            {profile.smoking && (
+              <div className="flex items-center gap-3">
+                <Cigarette className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
+                <span className="text-[14px] text-gray-700">{profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke"}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Skip button */}
       <div className="flex justify-center pt-5 pb-8">

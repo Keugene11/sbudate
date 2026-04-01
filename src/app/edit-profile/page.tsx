@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Plus, X, ChevronRight } from "lucide-react";
-import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, RELIGION_OPTIONS, DRINKING_OPTIONS, SMOKING_OPTIONS } from "@/types";
 import type { Photo } from "@/types";
 
 export default function EditProfilePage() {
@@ -26,6 +26,10 @@ export default function EditProfilePage() {
   const [hometown, setHometown] = useState("");
   const [residenceHall, setResidenceHall] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
+  const [datingIntention, setDatingIntention] = useState("");
+  const [religion, setReligion] = useState("");
+  const [drinking, setDrinking] = useState("");
+  const [smoking, setSmoking] = useState("");
   const [existingPhotos, setExistingPhotos] = useState<Photo[]>([]);
   const [newPhotos, setNewPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [prompts, setPrompts] = useState<{ id?: string; question: string; answer: string }[]>([]);
@@ -43,6 +47,8 @@ export default function EditProfilePage() {
       if (p.height_inches) { setHeightFeet(String(Math.floor(p.height_inches / 12))); setHeightInches(String(p.height_inches % 12)); }
       setMajor(p.major || ""); setGradYear(p.graduation_year ? String(p.graduation_year) : "");
       setHometown(p.hometown || ""); setResidenceHall(p.residence_hall || "");
+      setDatingIntention(p.dating_intention || ""); setReligion(p.religion || "");
+      setDrinking(p.drinking || ""); setSmoking(p.smoking || "");
       const { data: photos } = await supabase.from("photos").select("*").eq("profile_id", p.id).order("position");
       setExistingPhotos(photos || []);
       const { data: promptData } = await supabase.from("prompts").select("*").eq("profile_id", p.id).order("position");
@@ -74,6 +80,10 @@ export default function EditProfilePage() {
         gender_preference: genderPreference, height_inches: totalInches, major: major || null,
         graduation_year: gradYear ? parseInt(gradYear) : null, hometown: hometown || null,
         residence_hall: residenceHall || null,
+        dating_intention: datingIntention || null,
+        religion: religion || null,
+        drinking: drinking || null,
+        smoking: smoking || null,
       }).eq("id", profileId);
       for (let i = 0; i < newPhotos.length; i++) {
         const ext = newPhotos[i].file.name.split(".").pop();
@@ -220,6 +230,49 @@ export default function EditProfilePage() {
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Hometown</label>
               <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
+            </div>
+          </div>
+
+          {/* Lifestyle */}
+          <div className="space-y-4">
+            <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium">Lifestyle</p>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Dating intention</label>
+              <select value={datingIntention} onChange={(e) => setDatingIntention(e.target.value)} className={selectCls}>
+                <option value="">Select...</option>
+                {DATING_INTENTIONS.map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Religion</label>
+              <select value={religion} onChange={(e) => setReligion(e.target.value)} className={selectCls}>
+                <option value="">Select...</option>
+                {RELIGION_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Drinking</label>
+              <div className="flex gap-2">
+                {DRINKING_OPTIONS.map((d) => (
+                  <button key={d} onClick={() => setDrinking(d)}
+                    className={`press flex-1 h-[46px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
+                      drinking === d ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Smoking</label>
+              <div className="flex gap-2">
+                {SMOKING_OPTIONS.map((s) => (
+                  <button key={s} onClick={() => setSmoking(s)}
+                    className={`press flex-1 h-[46px] rounded-xl text-[14px] font-medium transition-all duration-200 ${
+                      smoking === s ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
