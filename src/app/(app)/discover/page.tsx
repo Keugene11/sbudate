@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import ProfileCard from "@/components/ProfileCard";
@@ -16,6 +16,7 @@ export default function DiscoverPage() {
   const [loading, setLoading] = useState(true);
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
   const [matchInfo, setMatchInfo] = useState<{ name: string; photoUrl: string | null; matchId: string } | null>(null);
+  const topRef = useRef<HTMLDivElement>(null);
 
   const fetchProfiles = useCallback(async () => {
     setLoading(true);
@@ -49,6 +50,13 @@ export default function DiscoverPage() {
   }, [supabase]);
 
   useEffect(() => { fetchProfiles(); }, [fetchProfiles]);
+
+  // Scroll to top when profile changes
+  useEffect(() => {
+    if (currentIndex > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [currentIndex]);
 
   const handleLike = async (contentType: "photo" | "prompt", contentId: string, comment?: string) => {
     if (!myProfileId || !profiles[currentIndex]) return;
@@ -102,7 +110,7 @@ export default function DiscoverPage() {
   const current = profiles[currentIndex];
 
   return (
-    <div className="max-w-lg mx-auto pb-4">
+    <div ref={topRef} className="max-w-lg mx-auto pb-4">
       {/* Header */}
       <div className="px-5 pt-3 pb-1 flex items-center justify-between">
         <h1 className="text-[15px] font-medium text-gray-900 tracking-tight">Discover</h1>
