@@ -43,6 +43,7 @@ export default function ChatPage() {
   const [tab, setTab] = useState<"chat" | "profile">("chat");
   const [otherFullProfile, setOtherFullProfile] = useState<ProfileWithContent | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [showUnmatchConfirm, setShowUnmatchConfirm] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -158,7 +159,7 @@ export default function ChatPage() {
                     View Profile
                   </button>
                   <div className="h-px bg-border mx-3" />
-                  <button onClick={handleUnmatch} className="w-full text-left px-4 py-3 text-[15px] text-red-500 press">
+                  <button onClick={() => { setShowMenu(false); setShowUnmatchConfirm(true); }} className="w-full text-left px-4 py-3 text-[15px] text-red-500 press">
                     Unmatch
                   </button>
                 </div>
@@ -402,6 +403,33 @@ export default function ChatPage() {
           </div>
         )}
       </div>
+
+      {/* Unmatch confirmation dialog */}
+      {showUnmatchConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => setShowUnmatchConfirm(false)} />
+          <div className="relative z-10 bg-surface rounded-2xl px-6 py-6 mx-6 max-w-[320px] w-full animate-scale-in">
+            <h3 className="text-[18px] font-semibold text-gray-900 text-center mb-2">Unmatch {other?.first_name}?</h3>
+            <p className="text-[14px] text-gray-400 text-center mb-6 leading-relaxed">
+              This will delete your conversation and cannot be undone.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={handleUnmatch}
+                className="w-full h-[48px] bg-red-500 text-white rounded-xl text-[15px] font-semibold press"
+              >
+                Unmatch
+              </button>
+              <button
+                onClick={() => setShowUnmatchConfirm(false)}
+                className="w-full h-[48px] bg-gray-100 text-gray-700 rounded-xl text-[15px] font-medium press"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
