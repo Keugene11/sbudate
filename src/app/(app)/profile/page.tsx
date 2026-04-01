@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Pencil } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const supabase = createClient();
@@ -45,14 +46,18 @@ export default function ProfilePage() {
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 h-[52px]">
           <h1 className="text-[18px] font-medium">Profile</h1>
-          <button onClick={handleLogout} className="press p-2">
-            <LogOut className="w-5 h-5 text-gray-500" strokeWidth={2} />
-          </button>
+          <div className="flex items-center gap-1">
+            <Link href="/profile/edit" className="press p-2">
+              <Pencil className="w-[18px] h-[18px] text-gray-600" strokeWidth={2} />
+            </Link>
+            <button onClick={handleLogout} className="press p-2">
+              <LogOut className="w-[18px] h-[18px] text-gray-500" strokeWidth={2} />
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="pb-24">
-        {/* Photos — interleaved with prompts just like how others see you */}
         {profile.photos.map((photo, idx) => (
           <div key={photo.id} className="relative">
             {idx === 0 && (
@@ -68,7 +73,6 @@ export default function ProfilePage() {
           </div>
         ))}
 
-        {/* Prompts */}
         {profile.prompts.map((prompt) => (
           <div key={prompt.id} className="bg-cream px-5 py-6">
             <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-1.5">
@@ -80,7 +84,6 @@ export default function ProfilePage() {
           </div>
         ))}
 
-        {/* Vitals */}
         <div className="px-5 py-5">
           <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.1em] mb-3">My vitals</p>
           <div className="flex flex-wrap gap-2">

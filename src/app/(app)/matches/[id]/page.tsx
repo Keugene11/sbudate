@@ -46,9 +46,17 @@ export default function ChatPage() {
     };
     init();
 
+    // Realtime — best effort, optimistic update is the primary mechanism
     const channel = supabase.channel(`chat-${matchId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
-        (payload) => setMessages((prev) => [...prev, payload.new as ChatMessage])
+        (payload) => {
+          const newMsg = payload.new as ChatMessage;
+          setMessages((prev) => {
+            // Dedupe — don't add if optimistic version already exists
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            return [...prev, newMsg];
+          });
+        }
       ).subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [supabase, matchId, fetchMessages]);
@@ -59,7 +67,29 @@ export default function ChatPage() {
     if (!newMessage.trim() || !myProfileId) return;
     const content = newMessage.trim();
     setNewMessage("");
-    await supabase.from("messages").insert({ match_id: matchId, sender_id: myProfileId, content });
+
+    // Optimistic: show message immediately
+    const optimisticId = `temp-${Date.now()}`;
+    const optimisticMsg: ChatMessage = {
+      id: optimisticId,
+      match_id: matchId,
+      sender_id: myProfileId,
+      content,
+      created_at: new Date().toISOString(),
+    } as ChatMessage;
+    setMessages((prev) => [...prev, optimisticMsg]);
+
+    // Insert into DB
+    const { data, error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: myProfileId, content }).select().single();
+
+    if (data) {
+      // Replace optimistic message with real one
+      setMessages((prev) => prev.map((m) => m.id === optimisticId ? data : m));
+    } else if (error) {
+      // Remove optimistic message on error
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
+      console.error("Send failed:", error);
+    }
   };
 
   if (loading) return <div className="flex items-center justify-center h-screen"><div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" /></div>;
@@ -76,7 +106,7 @@ export default function ChatPage() {
         ) : (
           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><span className="text-sm">👤</span></div>
         )}
-        <p className="font-bold text-[16px]">{other?.first_name}</p>
+        <p className="font-medium text-[16px]">{other?.first_name}</p>
       </div>
 
       {/* Messages */}
