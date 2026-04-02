@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
+import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap, Cake, User, Ruler, Calendar, Briefcase, Home, Globe } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { REPORT_REASONS } from "@/types";
 import { createClient } from "@/lib/supabase/client";
@@ -39,7 +39,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
   const handleDoubleTap = (photoId: string) => {
     const now = Date.now();
     if (lastTapRef.current && lastTapRef.current.id === photoId && now - lastTapRef.current.time < 300) {
-      // Double tap detected
       handleHeartTap("photo", photoId);
       setDoubleTapHeart(photoId);
       setTimeout(() => setDoubleTapHeart(null), 600);
@@ -107,19 +106,15 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                   draggable={false}
                   onClick={() => handleDoubleTap(photo.id)}
                 />
-                {/* Double-tap heart animation */}
                 {doubleTapHeart === photo.id && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Heart className="w-20 h-20 text-white drop-shadow-lg animate-heart-pop" fill="white" strokeWidth={0} />
                   </div>
                 )}
-                {/* Name + info overlay on first photo */}
                 {isFirst && (
                   <>
                     <div className="absolute inset-0 rounded-[16px] photo-gradient" />
-                    {/* Top bar: more menu */}
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-end">
-
                       <div className="relative">
                         <button
                           onClick={() => setShowMore(!showMore)}
@@ -169,7 +164,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                     </div>
                   </>
                 )}
-                {/* Heart button */}
                 <button
                   onClick={() => handleHeartTap("photo", photo.id)}
                   className={`absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -187,7 +181,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                   />
                 </button>
               </div>
-              {/* Comment input when heart is active */}
               {isOpen && (
                 <div className="mx-3 mt-2.5 animate-slide-up">
                   <div className="bg-surface rounded-[14px] border border-border overflow-hidden">
@@ -215,7 +208,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
         } else {
           const prompt = item.data as (typeof profile.prompts)[0];
           const isOpen = activeHeart?.id === prompt.id;
-          // Alternate between cream backgrounds for visual variety
           const promptIdx = items.filter((it, ii) => ii < idx && it.type === "prompt").length;
           const promptBg = promptIdx % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
           return (
@@ -273,73 +265,60 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
         }
       })}
 
-      {/* Vitals section */}
-      <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
-        <div className="px-5 py-4">
-          {/* Quick vitals row */}
-          <div className="flex items-center gap-3 flex-wrap">
-            {profile.age && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
-                {profile.age}
-              </span>
-            )}
-            {profile.gender && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
-                {profile.gender}
-              </span>
-            )}
-            {heightDisplay && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
-                {heightDisplay}
-              </span>
-            )}
-            {profile.graduation_year && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700">
-                Class of {profile.graduation_year}
-              </span>
-            )}
-          </div>
-          {profile.ethnicity && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700 mt-1">
-              {profile.ethnicity}
-            </span>
-          )}
-          {/* Detail rows */}
-          {(profile.major || profile.residence_hall || profile.hometown) && (
-            <div className="mt-3 space-y-2">
-              {profile.major && (
-                <p className="text-[15px] text-gray-900 font-medium">{profile.major}</p>
-              )}
-              {profile.residence_hall && (
-                <p className="text-[14px] text-gray-500">{profile.residence_hall}</p>
-              )}
-              {profile.hometown && (
-                <p className="text-[14px] text-gray-500">{profile.hometown}</p>
-              )}
+      {/* Vitals section — Hinge style card */}
+      <div className="mx-3 mt-2.5 bg-surface rounded-[16px] border border-border overflow-hidden">
+        {/* Top row — quick stats with icon dividers */}
+        {(() => {
+          const pills: { icon: typeof Cake; value: string }[] = [];
+          if (profile.age) pills.push({ icon: Cake, value: String(profile.age) });
+          if (profile.gender) pills.push({ icon: User, value: profile.gender });
+          if (heightDisplay) pills.push({ icon: Ruler, value: heightDisplay });
+          if (profile.graduation_year) pills.push({ icon: Calendar, value: `Class of ${profile.graduation_year}` });
+          return pills.length > 0 ? (
+            <div className="flex items-center overflow-x-auto">
+              {pills.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i} className="flex items-center">
+                    <div className="flex items-center gap-2.5 px-4 py-3.5 flex-shrink-0">
+                      <Icon className="w-[18px] h-[18px] text-gray-900" strokeWidth={1.5} />
+                      <span className="text-[15px] text-gray-900 whitespace-nowrap">{item.value}</span>
+                    </div>
+                    {i < pills.length - 1 && <div className="w-px h-5 bg-gray-200 flex-shrink-0" />}
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </div>
-      </div>
+          ) : null;
+        })()}
 
-      {/* Lifestyle section */}
-      {(profile.drinking || profile.smoking) && (
-        <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
-          <div className="px-5 py-4 space-y-3">
-            {profile.drinking && (
-              <div className="flex items-center gap-3">
-                <Wine className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
-                <span className="text-[14px] text-gray-700">{profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink"}</span>
-              </div>
-            )}
-            {profile.smoking && (
-              <div className="flex items-center gap-3">
-                <Cigarette className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
-                <span className="text-[14px] text-gray-700">{profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke"}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+        {/* Detail rows with icons and dividers */}
+        {(() => {
+          const details: { icon: typeof Briefcase; value: string }[] = [];
+          if (profile.major) details.push({ icon: Briefcase, value: profile.major });
+          if (profile.residence_hall) details.push({ icon: Home, value: profile.residence_hall });
+          if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
+          if (profile.ethnicity) details.push({ icon: Globe, value: profile.ethnicity });
+          if (profile.drinking) details.push({ icon: Wine, value: profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink" });
+          if (profile.smoking) details.push({ icon: Cigarette, value: profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke" });
+          return details.length > 0 ? (
+            <>
+              {details.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i}>
+                    <div className="h-px bg-gray-100 mx-4" />
+                    <div className="flex items-center gap-3.5 px-5 py-3.5">
+                      <Icon className="w-[18px] h-[18px] text-gray-900 flex-shrink-0" strokeWidth={1.5} />
+                      <span className="text-[15px] text-gray-900">{item.value}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          ) : null;
+        })()}
+      </div>
 
       {/* Skip button */}
       <div className="flex justify-center pt-5 pb-8">
