@@ -196,6 +196,13 @@ body {
 /* Smooth number counter */
 .tabular-nums { font-variant-numeric: tabular-nums; }
 
+/* Floating hearts for match celebration */
+@keyframes float-up {
+  0%   { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
+  15%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-200px) scale(1) rotate(20deg); }
+}
+
 /* Selection color */
 ::selection {
   background-color: rgba(230, 73, 128, 0.15);

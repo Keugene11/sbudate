@@ -3,7 +3,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SBUdate",
-  description: "Dating for Stony Brook University students.",
+  description: "Dating for Stony Brook University students. Designed to be deleted.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SBUdate",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
@@ -12,6 +20,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
+  themeColor: "#FFFFFF",
 };
 
 export default function RootLayout({
