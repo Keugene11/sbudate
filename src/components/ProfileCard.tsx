@@ -108,10 +108,21 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
               <div className="absolute right-0 top-10 z-50 bg-surface rounded-2xl py-1.5 w-[160px] animate-scale-in border border-border" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}>
                 <button
                   onClick={() => { setShowMore(false); setShowReport(true); }}
-                  className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5"
+                  className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5 border-b border-border"
                 >
                   <Flag className="w-4 h-4" strokeWidth={1.8} />
                   Report
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowMore(false);
+                    await fetch("/api/block", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ blockedProfileId: profile.id }) });
+                    onSkip();
+                  }}
+                  className="w-full text-left px-4 py-3 text-[14px] text-red-500 press flex items-center gap-2.5"
+                >
+                  <X className="w-4 h-4" strokeWidth={1.8} />
+                  Block
                 </button>
               </div>
             </>

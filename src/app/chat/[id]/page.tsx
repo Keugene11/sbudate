@@ -190,6 +190,16 @@ export default function ChatPage() {
                   <button onClick={() => { setShowMenu(false); setShowUnmatchConfirm(true); }} className="w-full text-left px-4 py-3 text-[15px] text-red-500 press">
                     Unmatch
                   </button>
+                  <div className="h-px bg-border mx-3" />
+                  <button onClick={async () => {
+                    setShowMenu(false);
+                    if (other) {
+                      await fetch("/api/block", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ blockedProfileId: other.id }) });
+                      router.replace("/matches");
+                    }
+                  }} className="w-full text-left px-4 py-3 text-[15px] text-red-500 press">
+                    Block
+                  </button>
                 </div>
               </>
             )}
