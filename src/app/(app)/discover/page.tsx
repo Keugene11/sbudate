@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import ProfileCard from "@/components/ProfileCard";
 import MatchCelebration from "@/components/MatchCelebration";
 import type { ProfileWithContent } from "@/types";
+import { X } from "lucide-react";
 
 export default function DiscoverPage() {
   const supabase = createClient();
@@ -102,6 +103,14 @@ export default function DiscoverPage() {
       {/* Minimal spacer — Hinge shows almost no header */}
       <div className="h-2" />
       <ProfileCard key={current.id} profile={current} myProfileId={myProfileId || undefined} onLike={handleLike} onSkip={handleSkip} />
+
+      {/* Fixed skip button — always visible bottom left */}
+      <button
+        onClick={handleSkip}
+        className="fixed bottom-[76px] left-4 z-40 w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card"
+      >
+        <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
+      </button>
 
       {/* Match celebration */}
       {matchInfo && (
