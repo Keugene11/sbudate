@@ -54,7 +54,8 @@ jobs:
           TEAM_ID: SDA728W6D9
         run: |
           cd ios/App
-          cat > Fastfile << 'RUBY'
+          mkdir -p fastlane
+          cat > fastlane/Fastfile << 'RUBY'
           default_platform(:ios)
 
           platform :ios do
