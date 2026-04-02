@@ -38,91 +38,72 @@ jobs:
         env:
           API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          mkdir -p ~/.appstoreconnect/private_keys
-          echo -n "$API_KEY_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8
+          mkdir -p ~/.private_keys
+          echo -n "$API_KEY_BASE64" | base64 --decode > ~/.private_keys/AuthKey_${API_KEY_ID}.p8
 
-      - name: Generate certificate & provisioning profile
+      - name: Install Fastlane
+        run: gem install fastlane
+
+      - name: Build & Upload with Fastlane
         env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          # Create a temporary keychain
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-
-          # Use Xcode's automatic signing with App Store Connect API key
-          # The API key allows Xcode to manage signing automatically
-
-      - name: Build archive
-        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           BUILD_NUMBER: ${{ github.event.inputs.build_number }}
           VERSION: ${{ github.event.inputs.version }}
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          TEAM_ID: SDA728W6D9
         run: |
           cd ios/App
-          xcodebuild -project App.xcodeproj \
-            -scheme App \
-            -destination 'generic/platform=iOS' \
-            -configuration Release \
-            -archivePath $RUNNER_TEMP/App.xcarchive \
-            -authenticationKeyPath ~/".appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8" \
-            -authenticationKeyID "$API_KEY_ID" \
-            -authenticationKeyIssuerID "$API_ISSUER_ID" \
-            -allowProvisioningUpdates \
-            CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
-            MARKETING_VERSION=$VERSION \
-            CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            archive
+          cat > Fastfile << 'RUBY'
+          default_platform(:ios)
 
-      - name: Export IPA
-        env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-        run: |
-          cat > $RUNNER_TEMP/ExportOptions.plist << 'PLIST'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store-connect</string>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>signingStyle</key>
-            <string>automatic</string>
-          </dict>
-          </plist>
-          PLIST
-          xcodebuild -exportArchive \
-            -archivePath $RUNNER_TEMP/App.xcarchive \
-            -exportOptionsPlist $RUNNER_TEMP/ExportOptions.plist \
-            -exportPath $RUNNER_TEMP/export \
-            -authenticationKeyPath ~/".appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8" \
-            -authenticationKeyID "$API_KEY_ID" \
-            -authenticationKeyIssuerID "$API_ISSUER_ID" \
-            -allowProvisioningUpdates
+          platform :ios do
+            desc "Build and upload to App Store Connect"
+            lane :release do
+              api_key = app_store_connect_api_key(
+                key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+                issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+                key_filepath: File.expand_path("~/.private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8"),
+              )
 
-      - name: Upload to App Store Connect
-        env:
-          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-        run: |
-          xcrun altool --upload-app \
-            -f $RUNNER_TEMP/export/App.ipa \
-            -t ios \
-            --apiKey "$API_KEY_ID" \
-            --apiIssuer "$API_ISSUER_ID"
+              increment_build_number(
+                build_number: ENV["BUILD_NUMBER"],
+                xcodeproj: "App.xcodeproj"
+              )
+
+              increment_version_number(
+                version_number: ENV["VERSION"],
+                xcodeproj: "App.xcodeproj"
+              )
+
+              update_code_signing_settings(
+                use_automatic_signing: true,
+                team_id: ENV["TEAM_ID"],
+                path: "App.xcodeproj"
+              )
+
+              build_app(
+                project: "App.xcodeproj",
+                scheme: "App",
+                destination: "generic/platform=iOS",
+                export_method: "app-store",
+                export_options: {
+                  signingStyle: "automatic",
+                },
+                xcargs: "-authenticationKeyPath '#{File.expand_path("~/.private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")}' -authenticationKeyID '#{ENV['APP_STORE_CONNECT_API_KEY_ID']}' -authenticationKeyIssuerID '#{ENV['APP_STORE_CONNECT_ISSUER_ID']}' -allowProvisioningUpdates",
+              )
+
+              upload_to_app_store(
+                api_key: api_key,
+                skip_metadata: true,
+                skip_screenshots: true,
+                force: true,
+              )
+            end
+          end
+          RUBY
+          fastlane release
 
       - name: Cleanup
         if: always()
-        run: |
-          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db 2>/dev/null || true
-          rm -rf ~/.appstoreconnect 2>/dev/null || true
+        run: rm -rf ~/.private_keys 2>/dev/null || true
