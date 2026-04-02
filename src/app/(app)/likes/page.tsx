@@ -190,6 +190,9 @@ export default function LikesPage() {
         {/* Bottom action bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-surface/95 glass z-50 border-t border-border">
           <div className="max-w-lg mx-auto px-4 py-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
+            <p className="text-[12px] text-gray-400 text-center mb-2">
+              Reply to match with {viewing.from_profile.first_name}
+            </p>
             <div className="flex items-center gap-2.5">
               <button onClick={handleDismiss} className="press w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
                 <X className="w-5 h-5 text-gray-400" strokeWidth={2} />
@@ -197,19 +200,16 @@ export default function LikesPage() {
               <input
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (reply.trim() ? handleMatch(reply.trim()) : handleMatch())}
-                placeholder="Type a reply..."
+                onKeyDown={(e) => e.key === "Enter" && reply.trim() && handleMatch(reply.trim())}
+                placeholder="Say something..."
                 className="flex-1 h-12 bg-gray-50 border border-border rounded-full px-4 text-[15px] outline-none input-hinge"
               />
               <button
-                onClick={() => reply.trim() ? handleMatch(reply.trim()) : handleMatch()}
-                className="press w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 shadow-md shadow-black/10"
+                onClick={() => reply.trim() && handleMatch(reply.trim())}
+                disabled={!reply.trim()}
+                className="press w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 shadow-md shadow-black/10 disabled:opacity-30 transition-opacity"
               >
-                {reply.trim() ? (
-                  <Send className="w-5 h-5 text-white" strokeWidth={2} />
-                ) : (
-                  <Heart className="w-5 h-5 text-white" fill="white" strokeWidth={0} />
-                )}
+                <Send className="w-5 h-5 text-white" strokeWidth={2} />
               </button>
             </div>
           </div>
