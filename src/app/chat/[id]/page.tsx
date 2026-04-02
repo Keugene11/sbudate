@@ -108,17 +108,12 @@ export default function ChatPage() {
   const switchToProfile = () => { loadProfile(); setTab("profile"); };
 
   const handleUnmatch = async () => {
-    // Delete messages first, then likes between the two profiles, then the match
-    const { error: msgErr } = await supabase.from("messages").delete().eq("match_id", matchId);
-    if (msgErr) console.error("messages delete:", msgErr);
-    if (myProfileId && other) {
-      const { error: likeErr1 } = await supabase.from("likes").delete().eq("from_profile_id", myProfileId).eq("to_profile_id", other.id);
-      if (likeErr1) console.error("likes delete 1:", likeErr1);
-      const { error: likeErr2 } = await supabase.from("likes").delete().eq("from_profile_id", other.id).eq("to_profile_id", myProfileId);
-      if (likeErr2) console.error("likes delete 2:", likeErr2);
-    }
-    const { error: matchErr } = await supabase.from("matches").delete().eq("id", matchId);
-    if (matchErr) console.error("match delete:", matchErr);
+    const res = await fetch("/api/unmatch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ matchId }),
+    });
+    if (!res.ok) console.error("unmatch failed:", await res.json());
     setShowUnmatchConfirm(false);
     router.replace("/matches");
   };
