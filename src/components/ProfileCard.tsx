@@ -91,11 +91,37 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
         ))}
       </div>
 
+      {/* Name header — Hinge style */}
+      <div className="flex items-center justify-between px-5 pt-1 pb-2">
+        <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</h2>
+        <div className="relative">
+          <button
+            onClick={() => setShowMore(!showMore)}
+            className="w-8 h-8 rounded-full flex items-center justify-center press hover:bg-gray-100 transition-colors"
+          >
+            <MoreHorizontal className="w-5 h-5 text-gray-900" strokeWidth={2} />
+          </button>
+          {showMore && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)} />
+              <div className="absolute right-0 top-10 z-50 bg-surface rounded-2xl py-1.5 w-[160px] animate-scale-in border border-border" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}>
+                <button
+                  onClick={() => { setShowMore(false); setShowReport(true); }}
+                  className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5"
+                >
+                  <Flag className="w-4 h-4" strokeWidth={1.8} />
+                  Report
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
       {items.map((item, idx) => {
         if (item.type === "photo") {
           const photo = item.data as (typeof profile.photos)[0];
           const isOpen = activeHeart?.id === photo.id;
-          const isFirst = idx === 0;
           return (
             <div key={photo.id}>
               <div className="relative mx-3 mt-2.5">
@@ -110,59 +136,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <Heart className="w-20 h-20 text-white drop-shadow-lg animate-heart-pop" fill="white" strokeWidth={0} />
                   </div>
-                )}
-                {isFirst && (
-                  <>
-                    <div className="absolute inset-0 rounded-[16px] photo-gradient" />
-                    <div className="absolute top-4 left-4 right-4 flex items-center justify-end">
-                      <div className="relative">
-                        <button
-                          onClick={() => setShowMore(!showMore)}
-                          className="w-8 h-8 rounded-full bg-black/30 glass flex items-center justify-center press"
-                        >
-                          <MoreHorizontal className="w-4 h-4 text-white" strokeWidth={2} />
-                        </button>
-                        {showMore && (
-                          <>
-                            <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)} />
-                            <div className="absolute right-0 top-10 z-50 bg-surface rounded-2xl py-1.5 w-[160px] animate-scale-in border border-border" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}>
-                              <button
-                                onClick={() => { setShowMore(false); setShowReport(true); }}
-                                className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5"
-                              >
-                                <Flag className="w-4 h-4" strokeWidth={1.8} />
-                                Report
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <div className="absolute bottom-5 left-5 right-16">
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
-                          {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
-                        </h2>
-                        <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0" title="Stony Brook Student">
-                          <GraduationCap className="w-3 h-3 text-white" strokeWidth={2.5} />
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                        {profile.major && (
-                          <span className="text-white/80 text-[14px]">{profile.major}</span>
-                        )}
-                        {profile.major && (profile.residence_hall || profile.hometown) && (
-                          <span className="text-white/40">·</span>
-                        )}
-                        {profile.residence_hall && (
-                          <span className="text-white/70 text-[14px]">{profile.residence_hall}</span>
-                        )}
-                        {!profile.residence_hall && profile.hometown && (
-                          <span className="text-white/70 text-[14px]">{profile.hometown}</span>
-                        )}
-                      </div>
-                    </div>
-                  </>
                 )}
                 <button
                   onClick={() => handleHeartTap("photo", photo.id)}
