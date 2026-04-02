@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Heart, X, Target, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
+import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { REPORT_REASONS } from "@/types";
 import { createClient } from "@/lib/supabase/client";
@@ -117,14 +117,9 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                 {isFirst && (
                   <>
                     <div className="absolute inset-0 rounded-[16px] photo-gradient" />
-                    {/* Top bar: dating intention + more menu */}
-                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                      {profile.dating_intention ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 glass rounded-full text-[12px] text-gray-700 font-medium">
-                          <Target className="w-3 h-3 text-gray-500" strokeWidth={2} />
-                          {profile.dating_intention}
-                        </span>
-                      ) : <div />}
+                    {/* Top bar: more menu */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-end">
+
                       <div className="relative">
                         <button
                           onClick={() => setShowMore(!showMore)}
@@ -327,15 +322,9 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
       </div>
 
       {/* Lifestyle section */}
-      {(profile.dating_intention || profile.drinking || profile.smoking) && (
+      {(profile.drinking || profile.smoking) && (
         <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
           <div className="px-5 py-4 space-y-3">
-            {profile.dating_intention && (
-              <div className="flex items-center gap-3">
-                <Target className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
-                <span className="text-[14px] text-gray-700">{profile.dating_intention}</span>
-              </div>
-            )}
             {profile.drinking && (
               <div className="flex items-center gap-3">
                 <Wine className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />

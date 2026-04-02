@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Plus, X, ChevronRight } from "lucide-react";
-import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, DRINKING_OPTIONS, SMOKING_OPTIONS, ETHNICITY_OPTIONS } from "@/types";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DRINKING_OPTIONS, SMOKING_OPTIONS, ETHNICITY_OPTIONS } from "@/types";
 import type { Photo } from "@/types";
 import Dropdown from "@/components/Dropdown";
 
@@ -27,7 +27,6 @@ export default function EditProfilePage() {
   const [hometown, setHometown] = useState("");
   const [residenceHall, setResidenceHall] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
-  const [datingIntention, setDatingIntention] = useState("");
   const [drinking, setDrinking] = useState("");
   const [smoking, setSmoking] = useState("");
   const [ethnicity, setEthnicity] = useState("");
@@ -49,7 +48,6 @@ export default function EditProfilePage() {
       if (p.height_inches) { setHeightFeet(String(Math.floor(p.height_inches / 12))); setHeightInches(String(p.height_inches % 12)); }
       setMajor(p.major || ""); setGradYear(p.graduation_year ? String(p.graduation_year) : "");
       setHometown(p.hometown || ""); setResidenceHall(p.residence_hall || "");
-      setDatingIntention(p.dating_intention || "");
       setDrinking(p.drinking || ""); setSmoking(p.smoking || "");
       setEthnicity(p.ethnicity || ""); setEthnicityPreference(p.ethnicity_preference || []);
       const { data: photos } = await supabase.from("photos").select("*").eq("profile_id", p.id).order("position");
@@ -83,7 +81,6 @@ export default function EditProfilePage() {
         gender_preference: genderPreference, height_inches: totalInches, major: major || null,
         graduation_year: gradYear ? parseInt(gradYear) : null, hometown: hometown || null,
         residence_hall: residenceHall || null,
-        dating_intention: datingIntention || null,
         drinking: drinking || null,
         smoking: smoking || null,
         ethnicity: ethnicity || null,
@@ -280,15 +277,6 @@ export default function EditProfilePage() {
           {/* Lifestyle */}
           <div className="space-y-4">
             <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium">Lifestyle</p>
-            <div>
-              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Dating intention</label>
-              <Dropdown
-                value={datingIntention}
-                onChange={setDatingIntention}
-                options={DATING_INTENTIONS.map((d) => ({ value: d, label: d }))}
-                placeholder="Select your intention..."
-              />
-            </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Drinking</label>
               <div className="flex gap-2">

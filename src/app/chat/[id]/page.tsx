@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building, Target, Wine, Cigarette, Globe, Flag } from "lucide-react";
+import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building, Wine, Cigarette, Globe, Flag } from "lucide-react";
 import { REPORT_REASONS } from "@/types";
 import type { ProfileWithContent } from "@/types";
 
@@ -362,10 +362,9 @@ export default function ChatPage() {
                 })()}
 
                 {/* Lifestyle */}
-                {(otherFullProfile.dating_intention || otherFullProfile.drinking || otherFullProfile.smoking) && (
+                {(otherFullProfile.drinking || otherFullProfile.smoking) && (
                   <div className="bg-gray-50 rounded-2xl overflow-hidden">
                     {[
-                      { icon: Target, value: otherFullProfile.dating_intention },
                       { icon: Wine, value: otherFullProfile.drinking ? (otherFullProfile.drinking === "Yes" ? "Drinks" : otherFullProfile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink") : null },
                       { icon: Cigarette, value: otherFullProfile.smoking ? (otherFullProfile.smoking === "Yes" ? "Smokes" : otherFullProfile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke") : null },
                     ].filter((item) => item.value).map((item, i, arr) => {

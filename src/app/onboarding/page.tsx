@@ -3,12 +3,12 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, ETHNICITY_OPTIONS } from "@/types";
+import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, ETHNICITY_OPTIONS } from "@/types";
 import { ChevronLeft, Plus, X } from "lucide-react";
 import Dropdown from "@/components/Dropdown";
 
-type Step = "basics" | "photos" | "prompts" | "intentions" | "preferences";
-const STEPS: Step[] = ["basics", "photos", "prompts", "intentions", "preferences"];
+type Step = "basics" | "photos" | "prompts" | "preferences";
+const STEPS: Step[] = ["basics", "photos", "prompts", "preferences"];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -35,7 +35,6 @@ export default function OnboardingPage() {
   const [ethnicity, setEthnicity] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
   const [ethnicityPreference, setEthnicityPreference] = useState<string[]>([]);
-  const [datingIntention, setDatingIntention] = useState("");
 
   const stepIdx = STEPS.indexOf(step);
 
@@ -58,7 +57,6 @@ export default function OnboardingPage() {
         graduation_year: gradYear ? parseInt(gradYear) : null,
         hometown: hometown || null,
         residence_hall: residenceHall || null,
-        dating_intention: datingIntention || null,
         ethnicity: ethnicity || null,
         ethnicity_preference: ethnicityPreference.length > 0 ? ethnicityPreference : null,
       }).select().single();
@@ -85,7 +83,6 @@ export default function OnboardingPage() {
       case "basics": return firstName && lastName && age && gender;
       case "photos": return photos.length >= 2;
       case "prompts": return prompts.filter((p) => p.question && p.answer).length >= 2;
-      case "intentions": return true; // Optional step
       case "preferences": return genderPreference;
     }
   };
@@ -271,22 +268,7 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {step === "intentions" && (
-          <div className="animate-slide-up">
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Dating goals</h2>
-            <p className="text-gray-400 text-[15px] mb-8">What are you looking for? This is optional.</p>
-            <div className="space-y-2.5">
-              {DATING_INTENTIONS.map((d) => (
-                <button key={d} onClick={() => setDatingIntention(datingIntention === d ? "" : d)}
-                  className={`press w-full h-[56px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
-                    datingIntention === d ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
-                  }`}>{d}</button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {step === "preferences" && (
+{step === "preferences" && (
           <div className="animate-slide-up">
             <h2 className="text-[28px] font-semibold tracking-tight mb-2">Show me</h2>
             <p className="text-gray-400 text-[15px] mb-8">Who are you interested in?</p>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil, Target, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe } from "lucide-react";
+import { Settings, LogOut, ChevronRight, Pencil, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 export default function ProfilePage() {
@@ -78,7 +78,6 @@ export default function ProfilePage() {
       {/* Profile completeness prompt */}
       {(() => {
         const missing: string[] = [];
-        if (!profile.dating_intention) missing.push("dating intention");
         if (!profile.height_inches) missing.push("height");
         if (!profile.hometown) missing.push("hometown");
         if (profile.photos.length < 4) missing.push("more photos");
@@ -166,7 +165,6 @@ export default function ProfilePage() {
                 { label: "Hometown", value: profile.hometown },
                 { label: "Ethnicity", value: profile.ethnicity },
                 { label: "Gender", value: profile.gender },
-                { label: "Dating Intention", value: profile.dating_intention },
                 { label: "Drinking", value: profile.drinking },
                 { label: "Smoking", value: profile.smoking },
               ].map((row, i, arr) => (
@@ -225,10 +223,9 @@ export default function ProfilePage() {
           </div>
 
           {/* Lifestyle in view */}
-          {(profile.dating_intention || profile.drinking || profile.smoking) && (
+          {(profile.drinking || profile.smoking) && (
             <div className="mx-3 mt-2.5 bg-gray-50 rounded-2xl overflow-hidden">
               {[
-                { icon: Target, value: profile.dating_intention },
                 { icon: Wine, value: profile.drinking ? (profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink") : null },
                 { icon: Cigarette, value: profile.smoking ? (profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke") : null },
               ].filter((item) => item.value).map((item, i, arr) => {
@@ -262,14 +259,6 @@ export default function ProfilePage() {
                     {isFirst && (
                       <>
                         <div className="absolute inset-0 rounded-2xl photo-gradient" />
-                        {profile.dating_intention && (
-                          <div className="absolute top-4 left-4">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 glass rounded-full text-[12px] text-gray-700 font-medium">
-                              <Target className="w-3 h-3 text-gray-500" strokeWidth={2} />
-                              {profile.dating_intention}
-                            </span>
-                          </div>
-                        )}
                         <div className="absolute bottom-5 left-5 right-5">
                           <div className="flex items-center gap-2">
                             <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
