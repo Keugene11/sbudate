@@ -1,10 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Settings, LogOut, ChevronRight, Pencil, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe, X, Check } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DRINKING_OPTIONS, SMOKING_OPTIONS } from "@/types";
+import Dropdown from "@/components/Dropdown";
+
+type EditField = {
+  label: string;
+  key: string;
+  type: "text" | "select" | "dropdown" | "height" | "pills";
+  options?: string[];
+  dropdownOptions?: { value: string; label: string; group?: string }[];
+  searchable?: boolean;
+} | null;
 
 export default function ProfilePage() {
   const supabase = createClient();
@@ -12,23 +24,58 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileWithContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"edit" | "view">("edit");
+  const [editing, setEditing] = useState<EditField>(null);
+  const [editValue, setEditValue] = useState("");
+  const [editFeet, setEditFeet] = useState("");
+  const [editInches, setEditInches] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: p } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
-      if (!p) return;
-      const [{ data: photos }, { data: prompts }] = await Promise.all([
-        supabase.from("photos").select("*").eq("profile_id", p.id).order("position"),
-        supabase.from("prompts").select("*").eq("profile_id", p.id).order("position"),
-      ]);
-      setProfile({ ...p, photos: photos || [], prompts: prompts || [] });
-      setLoading(false);
-    })();
+  const fetchProfile = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data: p } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
+    if (!p) return;
+    const [{ data: photos }, { data: prompts }] = await Promise.all([
+      supabase.from("photos").select("*").eq("profile_id", p.id).order("position"),
+      supabase.from("prompts").select("*").eq("profile_id", p.id).order("position"),
+    ]);
+    setProfile({ ...p, photos: photos || [], prompts: prompts || [] });
+    setLoading(false);
   }, [supabase]);
 
+  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+
   const handleLogout = async () => { await supabase.auth.signOut(); router.push("/login"); };
+
+  const openEdit = (field: NonNullable<EditField>) => {
+    setEditing(field);
+    if (field.type === "height" && profile?.height_inches) {
+      setEditFeet(String(Math.floor(profile.height_inches / 12)));
+      setEditInches(String(profile.height_inches % 12));
+    } else if (field.key === "graduation_year") {
+      setEditValue(profile?.graduation_year ? String(profile.graduation_year) : "");
+    } else {
+      setEditValue((profile as unknown as Record<string, string>)?.[field.key] || "");
+    }
+  };
+
+  const saveEdit = async () => {
+    if (!editing || !profile) return;
+    setSaving(true);
+    let updateData: Record<string, unknown> = {};
+    if (editing.type === "height") {
+      const totalInches = editFeet && editInches ? parseInt(editFeet) * 12 + parseInt(editInches) : null;
+      updateData = { height_inches: totalInches };
+    } else if (editing.key === "graduation_year") {
+      updateData = { graduation_year: editValue ? parseInt(editValue) : null };
+    } else {
+      updateData = { [editing.key]: editValue || null };
+    }
+    await supabase.from("profiles").update(updateData).eq("id", profile.id);
+    setEditing(null);
+    setSaving(false);
+    fetchProfile();
+  };
 
   if (loading) return (
     <div className="max-w-lg mx-auto pt-8 flex flex-col items-center">
@@ -41,6 +88,23 @@ export default function ProfilePage() {
   const heightDisplay = profile.height_inches
     ? `${Math.floor(profile.height_inches / 12)}'${profile.height_inches % 12}"`
     : null;
+
+  const detailFields: NonNullable<EditField>[] = [
+    { label: "Major", key: "major", type: "dropdown", dropdownOptions: SBU_MAJORS.map(m => ({ value: m, label: m })), searchable: true },
+    { label: "Graduation Year", key: "graduation_year", type: "dropdown", dropdownOptions: ["2025","2026","2027","2028","2029","2030"].map(y => ({ value: y, label: `Class of ${y}` })) },
+    { label: "Height", key: "height_inches", type: "height" },
+    { label: "Residence Hall", key: "residence_hall", type: "dropdown", dropdownOptions: Object.entries(RESIDENCE_HALLS).flatMap(([group, halls]) => halls.map(h => ({ value: h, label: h, group }))), searchable: true },
+    { label: "Hometown", key: "hometown", type: "text" },
+    { label: "Gender", key: "gender", type: "pills", options: GENDER_OPTIONS },
+    { label: "Drinking", key: "drinking", type: "pills", options: DRINKING_OPTIONS },
+    { label: "Smoking", key: "smoking", type: "pills", options: SMOKING_OPTIONS },
+  ];
+
+  const getDetailValue = (field: NonNullable<EditField>) => {
+    if (field.key === "height_inches") return heightDisplay;
+    if (field.key === "graduation_year") return profile.graduation_year ? `Class of ${profile.graduation_year}` : null;
+    return (profile as unknown as Record<string, string>)?.[field.key] || null;
+  };
 
   return (
     <div className="max-w-lg mx-auto min-h-screen animate-tab-in">
@@ -138,7 +202,7 @@ export default function ProfilePage() {
               <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-2.5">Prompts</p>
               <div className="bg-surface rounded-2xl overflow-hidden border border-border">
                 {profile.prompts.map((prompt, i) => (
-                  <button key={prompt.id} onClick={() => router.push("/edit-profile")}
+                  <button key={prompt.id} onClick={() => router.push(`/edit-prompt?index=${i}`)}
                     className={`w-full px-5 py-4 flex items-center justify-between press text-left hover:bg-gray-50 transition-colors ${
                       i < profile.prompts.length - 1 ? "border-b border-border" : ""
                     }`}>
@@ -153,28 +217,20 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Vitals */}
+          {/* Details — tap to edit individually */}
           <div className="mx-5">
             <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-2.5">Details</p>
             <div className="bg-surface rounded-2xl overflow-hidden border border-border">
-              {[
-                { label: "Major", value: profile.major },
-                { label: "Graduation Year", value: profile.graduation_year ? `Class of ${profile.graduation_year}` : null },
-                { label: "Height", value: heightDisplay },
-                { label: "Residence Hall", value: profile.residence_hall },
-                { label: "Hometown", value: profile.hometown },
-                { label: "Ethnicity", value: profile.ethnicity },
-                { label: "Gender", value: profile.gender },
-                { label: "Drinking", value: profile.drinking },
-                { label: "Smoking", value: profile.smoking },
-              ].map((row, i, arr) => (
-                <button key={row.label} onClick={() => router.push("/edit-profile")}
+              {detailFields.map((field, i) => (
+                <button key={field.key} onClick={() => openEdit(field)}
                   className={`w-full px-5 py-4 flex items-center justify-between press text-left hover:bg-gray-50 transition-colors ${
-                    i < arr.length - 1 ? "border-b border-border" : ""
+                    i < detailFields.length - 1 ? "border-b border-border" : ""
                   }`}>
                   <div>
-                    <p className="text-[15px] text-gray-900 font-medium">{row.label}</p>
-                    <p className={`text-[13px] mt-0.5 ${row.value ? "text-gray-500" : "text-gray-300"}`}>{row.value || "Not set"}</p>
+                    <p className="text-[15px] text-gray-900 font-medium">{field.label}</p>
+                    <p className={`text-[13px] mt-0.5 ${getDetailValue(field) ? "text-gray-500" : "text-gray-300"}`}>
+                      {getDetailValue(field) || "Not set"}
+                    </p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={2} />
                 </button>
@@ -186,7 +242,6 @@ export default function ProfilePage() {
         <div className="pb-24 animate-fade-in">
           {/* View — as others see you */}
           <div className="mx-3 space-y-2.5">
-            {/* Vitals pills */}
             {(() => {
               const vitals: { icon: typeof Cake; value: string }[] = [];
               if (profile.age) vitals.push({ icon: Cake, value: String(profile.age) });
@@ -208,7 +263,6 @@ export default function ProfilePage() {
               if (profile.major) details.push({ icon: GraduationCap, value: profile.major });
               if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
               if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
-              if (profile.ethnicity) details.push({ icon: Globe, value: profile.ethnicity });
               return details.length > 0 ? (
                 <div className="bg-gray-50 rounded-2xl overflow-hidden">
                   {details.map((item, i) => { const Icon = item.icon; return (
@@ -240,7 +294,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Interleave photos and prompts like the discover feed */}
+          {/* Interleave photos and prompts */}
           {(() => {
             const items: Array<{ type: "photo" | "prompt"; data: (typeof profile.photos)[0] | (typeof profile.prompts)[0] }> = [];
             const maxLen = Math.max(profile.photos.length, profile.prompts.length);
@@ -252,34 +306,16 @@ export default function ProfilePage() {
             return items.map((item, idx) => {
               if (item.type === "photo") {
                 const photo = item.data as (typeof profile.photos)[0];
-                const isFirst = idx === 0;
                 return (
                   <div key={photo.id} className="relative mx-3 mt-2.5">
                     <img src={photo.url} alt="" className="w-full aspect-square object-cover rounded-2xl" draggable={false} />
-                    {isFirst && (
-                      <>
-                        <div className="absolute inset-0 rounded-2xl photo-gradient" />
-                        <div className="absolute bottom-5 left-5 right-5">
-                          <div className="flex items-center gap-2">
-                            <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
-                              {profile.first_name}, <span className="font-normal">{profile.age}</span>
-                            </p>
-                            <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-                              <GraduationCap className="w-3 h-3 text-white" strokeWidth={2.5} />
-                            </div>
-                          </div>
-                          {profile.major && <p className="text-white/75 text-[14px] mt-1.5">{profile.major}</p>}
-                        </div>
-                      </>
-                    )}
                   </div>
                 );
               } else {
                 const prompt = item.data as (typeof profile.prompts)[0];
-                const bg = promptCount % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
                 promptCount++;
                 return (
-                  <div key={prompt.id} className={`${bg} mx-3 mt-2.5 px-5 py-5 rounded-2xl`}>
+                  <div key={prompt.id} className="bg-surface mx-3 mt-2.5 px-5 py-5 rounded-2xl border border-border">
                     <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
                     <p className="text-[18px] text-gray-900 leading-[1.4] font-medium">{prompt.answer}</p>
                   </div>
@@ -288,6 +324,72 @@ export default function ProfilePage() {
             });
           })()}
         </div>
+      )}
+
+      {/* Inline edit modal */}
+      {editing && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-end justify-center">
+          <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => setEditing(null)} />
+          <div className="relative z-10 bg-surface rounded-t-2xl w-full max-w-lg animate-sheet-up" style={{ maxHeight: "70vh" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <button onClick={() => setEditing(null)} className="press text-[15px] text-gray-400 font-medium">Cancel</button>
+              <p className="text-[16px] font-semibold text-gray-900">{editing.label}</p>
+              <button onClick={saveEdit} disabled={saving} className="press text-[15px] text-rose font-semibold disabled:text-gray-300">
+                {saving ? "..." : "Save"}
+              </button>
+            </div>
+
+            <div className="px-5 py-5">
+              {editing.type === "text" && (
+                <input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  placeholder={editing.label}
+                  className="w-full h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge"
+                  autoFocus
+                />
+              )}
+
+              {editing.type === "dropdown" && (
+                <Dropdown
+                  value={editValue}
+                  onChange={setEditValue}
+                  options={editing.dropdownOptions || []}
+                  placeholder={`Select ${editing.label.toLowerCase()}...`}
+                  searchable={editing.searchable}
+                />
+              )}
+
+              {editing.type === "height" && (
+                <div className="flex gap-2.5 items-center">
+                  <input type="number" value={editFeet} onChange={(e) => setEditFeet(e.target.value)}
+                    className="flex-1 h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge text-center"
+                    placeholder="5" autoFocus />
+                  <span className="text-gray-400 text-[13px] font-medium">ft</span>
+                  <input type="number" value={editInches} onChange={(e) => setEditInches(e.target.value)}
+                    className="flex-1 h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge text-center"
+                    placeholder="8" />
+                  <span className="text-gray-400 text-[13px] font-medium">in</span>
+                </div>
+              )}
+
+              {editing.type === "pills" && (
+                <div className="flex flex-wrap gap-2">
+                  {editing.options?.map((opt) => (
+                    <button key={opt} onClick={() => setEditValue(editValue === opt ? "" : opt)}
+                      className={`press px-5 py-3 rounded-xl text-[15px] font-medium transition-all duration-200 ${
+                        editValue === opt ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"
+                      }`}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
