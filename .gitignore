@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Apple
+*.p8
+ios/App/Pods/
+ios/App/App/public/

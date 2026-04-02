@@ -1,0 +1,127 @@
+name: iOS Build & Upload to App Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'Build number'
+        required: true
+        default: '1'
+      version:
+        description: 'Version (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Setup App Store Connect API Key
+        env:
+          API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo -n "$API_KEY_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8
+
+      - name: Generate certificate & provisioning profile
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create a temporary keychain
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Use Xcode's automatic signing with App Store Connect API key
+          # The API key allows Xcode to manage signing automatically
+
+      - name: Build archive
+        env:
+          BUILD_NUMBER: ${{ github.event.inputs.build_number }}
+          VERSION: ${{ github.event.inputs.version }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/App.xcarchive \
+            -authenticationKeyPath ~/".appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8" \
+            -authenticationKeyID "$API_KEY_ID" \
+            -authenticationKeyIssuerID "$API_ISSUER_ID" \
+            -allowProvisioningUpdates \
+            CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
+            MARKETING_VERSION=$VERSION \
+            CODE_SIGN_STYLE=Automatic \
+            archive
+
+      - name: Export IPA
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          cat > $RUNNER_TEMP/ExportOptions.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>signingStyle</key>
+            <string>automatic</string>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath $RUNNER_TEMP/App.xcarchive \
+            -exportOptionsPlist $RUNNER_TEMP/ExportOptions.plist \
+            -exportPath $RUNNER_TEMP/export \
+            -authenticationKeyPath ~/".appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8" \
+            -authenticationKeyID "$API_KEY_ID" \
+            -authenticationKeyIssuerID "$API_ISSUER_ID" \
+            -allowProvisioningUpdates
+
+      - name: Upload to App Store Connect
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app \
+            -f $RUNNER_TEMP/export/App.ipa \
+            -t ios \
+            --apiKey "$API_KEY_ID" \
+            --apiIssuer "$API_ISSUER_ID"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db 2>/dev/null || true
+          rm -rf ~/.appstoreconnect 2>/dev/null || true
