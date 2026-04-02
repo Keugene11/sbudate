@@ -119,7 +119,7 @@ export default function LikesPage() {
             </div>
           )}
           {likedContent?.type === "prompt" && (
-            <div className="bg-cream rounded-2xl px-5 py-5 mb-3 ring-2 ring-rose/20 ring-offset-2">
+            <div className="bg-gray-50 rounded-2xl px-5 py-5 mb-3 ring-2 ring-rose/20 ring-offset-2">
               <p className="text-[12px] text-gray-500 uppercase tracking-[0.08em] font-medium mb-2">{likedContent.prompt.question}</p>
               <p className="text-[17px] text-gray-900 leading-[1.4] font-medium">{likedContent.prompt.answer}</p>
             </div>
@@ -173,7 +173,7 @@ export default function LikesPage() {
                   );
                 } else {
                   const prompt = item.data as (typeof viewingProfile.prompts)[0];
-                  const bg = promptCount % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+                  const bg = promptCount % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
                   promptCount++;
                   return (
                     <div key={prompt.id} className={`${bg} rounded-2xl px-5 py-5`}>

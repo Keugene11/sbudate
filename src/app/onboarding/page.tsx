@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS } from "@/types";
+import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, ETHNICITY_OPTIONS } from "@/types";
 import { ChevronLeft, Plus, X } from "lucide-react";
 import Dropdown from "@/components/Dropdown";
 
@@ -32,7 +32,9 @@ export default function OnboardingPage() {
     { question: "", answer: "" },
     { question: "", answer: "" },
   ]);
+  const [ethnicity, setEthnicity] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
+  const [ethnicityPreference, setEthnicityPreference] = useState<string[]>([]);
   const [datingIntention, setDatingIntention] = useState("");
 
   const stepIdx = STEPS.indexOf(step);
@@ -57,6 +59,8 @@ export default function OnboardingPage() {
         hometown: hometown || null,
         residence_hall: residenceHall || null,
         dating_intention: datingIntention || null,
+        ethnicity: ethnicity || null,
+        ethnicity_preference: ethnicityPreference.length > 0 ? ethnicityPreference : null,
       }).select().single();
       if (error) throw error;
 
@@ -179,6 +183,15 @@ export default function OnboardingPage() {
                 <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
               </div>
               <div>
+                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Ethnicity</label>
+                <Dropdown
+                  value={ethnicity}
+                  onChange={setEthnicity}
+                  options={ETHNICITY_OPTIONS.map((e) => ({ value: e, label: e }))}
+                  placeholder="Select your ethnicity..."
+                />
+              </div>
+              <div>
                 <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Residence Hall</label>
                 <Dropdown
                   value={residenceHall}
@@ -234,7 +247,7 @@ export default function OnboardingPage() {
             <p className="text-gray-400 text-[15px] mb-8">Answer at least 2. Be creative!</p>
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
-                <div key={idx} className={`${idx % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]"} rounded-2xl p-5`}>
+                <div key={idx} className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-gray-100"} rounded-2xl p-5`}>
                   <Dropdown
                     value={prompt.question}
                     onChange={(v) => { const u = [...prompts]; u[idx].question = v; setPrompts(u); }}
@@ -284,6 +297,22 @@ export default function OnboardingPage() {
                     genderPreference === p ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
                   }`}>{p}</button>
               ))}
+            </div>
+
+            <h2 className="text-[28px] font-semibold tracking-tight mb-2 mt-10">Ethnicity preference</h2>
+            <p className="text-gray-400 text-[15px] mb-6">Select all that apply, or skip for no preference.</p>
+            <div className="space-y-2.5">
+              {ETHNICITY_OPTIONS.filter((e) => e !== "Prefer not to say").map((e) => {
+                const selected = ethnicityPreference.includes(e);
+                return (
+                  <button key={e} onClick={() => setEthnicityPreference((prev) =>
+                    selected ? prev.filter((x) => x !== e) : [...prev, e]
+                  )}
+                    className={`press w-full h-[52px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
+                      selected ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
+                    }`}>{e}</button>
+                );
+              })}
             </div>
           </div>
         )}

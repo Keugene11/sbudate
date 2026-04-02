@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Sparkles } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -55,19 +54,7 @@ export default function BottomNav() {
         </svg>
       ),
     },
-    {
-      href: "/standouts",
-      label: "Standouts",
-      badge: 0,
-      icon: (active: boolean) => (
-        <Sparkles
-          className={`w-[22px] h-[22px] ${active ? "text-gray-900" : "text-gray-300"}`}
-          strokeWidth={1.8}
-          fill={active ? "currentColor" : "none"}
-        />
-      ),
-    },
-    {
+{
       href: "/likes",
       label: "Likes",
       badge: likeCount,
@@ -91,7 +78,7 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-surface/95 glass z-50 border-t border-border">
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface/95 glass z-50 border-t border-border shadow-nav">
       <div
         className="max-w-lg mx-auto flex items-center justify-around h-[56px]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}

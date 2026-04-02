@@ -32,7 +32,7 @@ export default function DiscoverPage() {
     if (myProfile.gender_preference === "Women") genderFilter = ["Woman"];
     else if (myProfile.gender_preference === "Men") genderFilter = ["Man"];
     else genderFilter = ["Man", "Woman", "Non-binary"];
-    const { data: candidateProfiles } = await supabase.from("profiles").select("*").in("gender", genderFilter).neq("id", myProfile.id).limit(50);
+    const { data: candidateProfiles } = await supabase.from("profiles").select("*").in("gender", genderFilter).neq("id", myProfile.id).neq("is_paused", true).limit(50);
     if (!candidateProfiles) { setLoading(false); return; }
     const filtered = candidateProfiles.filter((p) => !excludeIds.has(p.id));
     const fullProfiles: ProfileWithContent[] = await Promise.all(
@@ -116,7 +116,7 @@ export default function DiscoverPage() {
     <div ref={topRef} className="max-w-lg mx-auto pb-4">
       {/* Minimal spacer — Hinge shows almost no header */}
       <div className="h-2" />
-      <ProfileCard key={current.id} profile={current} onLike={handleLike} onSkip={handleSkip} />
+      <ProfileCard key={current.id} profile={current} myProfileId={myProfileId || undefined} onLike={handleLike} onSkip={handleSkip} />
 
       {/* Match celebration */}
       {matchInfo && (

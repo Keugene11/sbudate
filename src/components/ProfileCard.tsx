@@ -1,19 +1,26 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Heart, X, Target, Church, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
+import { Heart, X, Target, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
+import { REPORT_REASONS } from "@/types";
+import { createClient } from "@/lib/supabase/client";
 
 interface ProfileCardProps {
   profile: ProfileWithContent;
+  myProfileId?: string;
   onLike: (contentType: "photo" | "prompt", contentId: string, comment?: string) => void;
   onSkip: () => void;
 }
 
-export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProps) {
+export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: ProfileCardProps) {
   const [activeHeart, setActiveHeart] = useState<{ type: "photo" | "prompt"; id: string } | null>(null);
   const [comment, setComment] = useState("");
   const [exiting, setExiting] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [reportSent, setReportSent] = useState(false);
 
   const heightDisplay = profile.height_inches
     ? `${Math.floor(profile.height_inches / 12)}'${profile.height_inches % 12}"`
@@ -52,6 +59,19 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
   };
 
   const handleSkip = () => { setExiting(true); setTimeout(() => onSkip(), 250); };
+
+  const submitReport = async () => {
+    if (!reportReason || !myProfileId) return;
+    const supabase = createClient();
+    await supabase.from("reports").insert({
+      reporter_profile_id: myProfileId,
+      reported_profile_id: profile.id,
+      reason: reportReason,
+      details: reportDetails.trim() || null,
+    });
+    setReportSent(true);
+    setTimeout(() => { setShowReport(false); setReportSent(false); setReportReason(""); setReportDetails(""); }, 1500);
+  };
 
   // Interleave photos and prompts like Hinge
   const items: Array<{ type: "photo" | "prompt"; data: (typeof profile.photos)[0] | (typeof profile.prompts)[0] }> = [];
@@ -117,7 +137,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                             <div className="fixed inset-0 z-40" onClick={() => setShowMore(false)} />
                             <div className="absolute right-0 top-10 z-50 bg-surface rounded-2xl py-1.5 w-[160px] animate-scale-in border border-border" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}>
                               <button
-                                onClick={() => setShowMore(false)}
+                                onClick={() => { setShowMore(false); setShowReport(true); }}
                                 className="w-full text-left px-4 py-3 text-[14px] text-gray-400 press flex items-center gap-2.5"
                               >
                                 <Flag className="w-4 h-4" strokeWidth={1.8} />
@@ -202,7 +222,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           const isOpen = activeHeart?.id === prompt.id;
           // Alternate between cream backgrounds for visual variety
           const promptIdx = items.filter((it, ii) => ii < idx && it.type === "prompt").length;
-          const promptBg = promptIdx % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+          const promptBg = promptIdx % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
           return (
             <div key={prompt.id}>
               <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] relative overflow-hidden`}>
@@ -284,6 +304,11 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
               </span>
             )}
           </div>
+          {profile.ethnicity && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-full text-[13px] text-gray-700 mt-1">
+              {profile.ethnicity}
+            </span>
+          )}
           {/* Detail rows */}
           {(profile.major || profile.residence_hall || profile.hometown) && (
             <div className="mt-3 space-y-2">
@@ -302,19 +327,13 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
       </div>
 
       {/* Lifestyle section */}
-      {(profile.dating_intention || profile.religion || profile.drinking || profile.smoking) && (
+      {(profile.dating_intention || profile.drinking || profile.smoking) && (
         <div className="mx-3 mt-2.5 bg-surface rounded-[16px]">
           <div className="px-5 py-4 space-y-3">
             {profile.dating_intention && (
               <div className="flex items-center gap-3">
                 <Target className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
                 <span className="text-[14px] text-gray-700">{profile.dating_intention}</span>
-              </div>
-            )}
-            {profile.religion && (
-              <div className="flex items-center gap-3">
-                <Church className="w-[18px] h-[18px] text-gray-400 flex-shrink-0" strokeWidth={1.6} />
-                <span className="text-[14px] text-gray-700">{profile.religion}</span>
               </div>
             )}
             {profile.drinking && (
@@ -342,6 +361,61 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
           <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
         </button>
       </div>
+
+      {/* Report modal */}
+      {showReport && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center">
+          <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => { setShowReport(false); setReportReason(""); setReportDetails(""); }} />
+          <div className="relative z-10 bg-surface rounded-t-2xl px-6 py-6 w-full max-w-lg animate-slide-up" style={{ maxHeight: "85vh", overflowY: "auto" }}>
+            {reportSent ? (
+              <div className="text-center py-8">
+                <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
+                  <Flag className="w-6 h-6 text-green-500" strokeWidth={1.8} />
+                </div>
+                <p className="text-[18px] font-semibold text-gray-900">Report submitted</p>
+                <p className="text-[14px] text-gray-400 mt-1">Thanks for helping keep SBUdate safe.</p>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-[18px] font-semibold text-gray-900 mb-1">Report {profile.first_name}</h3>
+                <p className="text-[14px] text-gray-400 mb-5">Why are you reporting this profile?</p>
+                <div className="space-y-2 mb-5">
+                  {REPORT_REASONS.map((reason) => (
+                    <button key={reason} onClick={() => setReportReason(reason)}
+                      className={`press w-full h-[48px] rounded-xl text-[14px] font-medium text-left px-5 transition-all duration-200 ${
+                        reportReason === reason ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-700 border border-border"
+                      }`}>{reason}</button>
+                  ))}
+                </div>
+                {reportReason && (
+                  <div className="mb-5 animate-slide-up">
+                    <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Additional details (optional)</label>
+                    <textarea
+                      value={reportDetails}
+                      onChange={(e) => setReportDetails(e.target.value)}
+                      placeholder="Tell us more..."
+                      rows={3}
+                      className="w-full bg-gray-50 border border-border rounded-xl px-4 py-3 text-[14px] outline-none resize-none placeholder:text-gray-400 input-hinge transition-colors"
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <button onClick={submitReport} disabled={!reportReason}
+                    className={`w-full h-[48px] rounded-xl text-[15px] font-semibold press transition-all duration-200 ${
+                      reportReason ? "bg-red-500 text-white" : "bg-gray-200 text-gray-400"
+                    }`}>
+                    Submit Report
+                  </button>
+                  <button onClick={() => { setShowReport(false); setReportReason(""); setReportDetails(""); }}
+                    className="w-full h-[48px] bg-gray-100 text-gray-700 rounded-xl text-[15px] font-medium press">
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

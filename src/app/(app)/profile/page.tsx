@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil, Target, Church, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building } from "lucide-react";
+import { Settings, LogOut, ChevronRight, Pencil, Target, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 export default function ProfilePage() {
@@ -51,7 +51,7 @@ export default function ProfilePage() {
           <button onClick={handleLogout} className="press p-2.5 rounded-full hover:bg-gray-100 transition-colors">
             <LogOut className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.8} />
           </button>
-          <button className="press p-2.5 rounded-full hover:bg-gray-100 transition-colors">
+          <button onClick={() => router.push("/settings")} className="press p-2.5 rounded-full hover:bg-gray-100 transition-colors">
             <Settings className="w-[18px] h-[18px] text-gray-400" strokeWidth={1.8} />
           </button>
         </div>
@@ -81,13 +81,12 @@ export default function ProfilePage() {
         if (!profile.dating_intention) missing.push("dating intention");
         if (!profile.height_inches) missing.push("height");
         if (!profile.hometown) missing.push("hometown");
-        if (!profile.religion) missing.push("religion");
         if (profile.photos.length < 4) missing.push("more photos");
         if (profile.prompts.length < 3) missing.push("more prompts");
         return missing.length > 0 ? (
           <button
             onClick={() => router.push("/edit-profile")}
-            className="mx-5 mb-4 px-5 py-3.5 bg-cream rounded-2xl flex items-center gap-3 press text-left"
+            className="mx-5 mb-4 px-5 py-3.5 bg-gray-50 rounded-2xl flex items-center gap-3 press text-left"
           >
             <div className="w-9 h-9 bg-rose/10 rounded-full flex items-center justify-center flex-shrink-0">
               <Pencil className="w-4 h-4 text-rose" strokeWidth={2} />
@@ -165,9 +164,9 @@ export default function ProfilePage() {
                 { label: "Height", value: heightDisplay },
                 { label: "Residence Hall", value: profile.residence_hall },
                 { label: "Hometown", value: profile.hometown },
+                { label: "Ethnicity", value: profile.ethnicity },
                 { label: "Gender", value: profile.gender },
                 { label: "Dating Intention", value: profile.dating_intention },
-                { label: "Religion", value: profile.religion },
                 { label: "Drinking", value: profile.drinking },
                 { label: "Smoking", value: profile.smoking },
               ].map((row, i, arr) => (
@@ -211,6 +210,7 @@ export default function ProfilePage() {
               if (profile.major) details.push({ icon: GraduationCap, value: profile.major });
               if (profile.residence_hall) details.push({ icon: Building, value: profile.residence_hall });
               if (profile.hometown) details.push({ icon: Home, value: profile.hometown });
+              if (profile.ethnicity) details.push({ icon: Globe, value: profile.ethnicity });
               return details.length > 0 ? (
                 <div className="bg-gray-50 rounded-2xl overflow-hidden">
                   {details.map((item, i) => { const Icon = item.icon; return (
@@ -225,11 +225,10 @@ export default function ProfilePage() {
           </div>
 
           {/* Lifestyle in view */}
-          {(profile.dating_intention || profile.religion || profile.drinking || profile.smoking) && (
+          {(profile.dating_intention || profile.drinking || profile.smoking) && (
             <div className="mx-3 mt-2.5 bg-gray-50 rounded-2xl overflow-hidden">
               {[
                 { icon: Target, value: profile.dating_intention },
-                { icon: Church, value: profile.religion },
                 { icon: Wine, value: profile.drinking ? (profile.drinking === "Yes" ? "Drinks" : profile.drinking === "Sometimes" ? "Drinks sometimes" : "Doesn't drink") : null },
                 { icon: Cigarette, value: profile.smoking ? (profile.smoking === "Yes" ? "Smokes" : profile.smoking === "Sometimes" ? "Smokes sometimes" : "Doesn't smoke") : null },
               ].filter((item) => item.value).map((item, i, arr) => {
@@ -288,7 +287,7 @@ export default function ProfilePage() {
                 );
               } else {
                 const prompt = item.data as (typeof profile.prompts)[0];
-                const bg = promptCount % 2 === 0 ? "bg-cream" : "bg-[#EDE8F5]";
+                const bg = promptCount % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
                 promptCount++;
                 return (
                   <div key={prompt.id} className={`${bg} mx-3 mt-2.5 px-5 py-5 rounded-2xl`}>

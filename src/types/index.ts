@@ -12,9 +12,12 @@ export interface Profile {
   hometown: string | null;
   dating_intention: string | null;
   residence_hall: string | null;
+  ethnicity: string | null;
+  ethnicity_preference: string[] | null;
   religion: string | null;
   drinking: string | null;
   smoking: string | null;
+  is_paused: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -239,3 +242,36 @@ export const SMOKING_OPTIONS = [
   "Sometimes",
   "No",
 ];
+
+export const ETHNICITY_OPTIONS = [
+  "Black/African American",
+  "East Asian",
+  "Hispanic/Latino",
+  "Middle Eastern",
+  "Native American",
+  "Pacific Islander",
+  "South Asian",
+  "Southeast Asian",
+  "White/Caucasian",
+  "Other",
+  "Prefer not to say",
+];
+
+export const REPORT_REASONS = [
+  "Inappropriate photos",
+  "Inappropriate messages",
+  "Spam or fake profile",
+  "Underage user",
+  "Harassment or bullying",
+  "Impersonation",
+  "Other",
+];
+
+export interface Report {
+  id: string;
+  reporter_profile_id: string;
+  reported_profile_id: string;
+  reason: string;
+  details: string | null;
+  created_at: string;
+}

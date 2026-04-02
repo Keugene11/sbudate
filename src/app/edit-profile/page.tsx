@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Plus, X, ChevronRight } from "lucide-react";
-import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, RELIGION_OPTIONS, DRINKING_OPTIONS, SMOKING_OPTIONS } from "@/types";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DATING_INTENTIONS, DRINKING_OPTIONS, SMOKING_OPTIONS, ETHNICITY_OPTIONS } from "@/types";
 import type { Photo } from "@/types";
+import Dropdown from "@/components/Dropdown";
 
 export default function EditProfilePage() {
   const supabase = createClient();
@@ -27,9 +28,10 @@ export default function EditProfilePage() {
   const [residenceHall, setResidenceHall] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
   const [datingIntention, setDatingIntention] = useState("");
-  const [religion, setReligion] = useState("");
   const [drinking, setDrinking] = useState("");
   const [smoking, setSmoking] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
+  const [ethnicityPreference, setEthnicityPreference] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<Photo[]>([]);
   const [newPhotos, setNewPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [prompts, setPrompts] = useState<{ id?: string; question: string; answer: string }[]>([]);
@@ -47,8 +49,9 @@ export default function EditProfilePage() {
       if (p.height_inches) { setHeightFeet(String(Math.floor(p.height_inches / 12))); setHeightInches(String(p.height_inches % 12)); }
       setMajor(p.major || ""); setGradYear(p.graduation_year ? String(p.graduation_year) : "");
       setHometown(p.hometown || ""); setResidenceHall(p.residence_hall || "");
-      setDatingIntention(p.dating_intention || ""); setReligion(p.religion || "");
+      setDatingIntention(p.dating_intention || "");
       setDrinking(p.drinking || ""); setSmoking(p.smoking || "");
+      setEthnicity(p.ethnicity || ""); setEthnicityPreference(p.ethnicity_preference || []);
       const { data: photos } = await supabase.from("photos").select("*").eq("profile_id", p.id).order("position");
       setExistingPhotos(photos || []);
       const { data: promptData } = await supabase.from("prompts").select("*").eq("profile_id", p.id).order("position");
@@ -81,9 +84,10 @@ export default function EditProfilePage() {
         graduation_year: gradYear ? parseInt(gradYear) : null, hometown: hometown || null,
         residence_hall: residenceHall || null,
         dating_intention: datingIntention || null,
-        religion: religion || null,
         drinking: drinking || null,
         smoking: smoking || null,
+        ethnicity: ethnicity || null,
+        ethnicity_preference: ethnicityPreference.length > 0 ? ethnicityPreference : null,
       }).eq("id", profileId);
       for (let i = 0; i < newPhotos.length; i++) {
         const ext = newPhotos[i].file.name.split(".").pop();
@@ -104,7 +108,6 @@ export default function EditProfilePage() {
 
   const totalPhotos = existingPhotos.length + newPhotos.length;
   const inputCls = "w-full h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge transition-colors";
-  const selectCls = `${inputCls} appearance-none cursor-pointer`;
 
   return (
     <div className="h-[100dvh] flex flex-col bg-surface">
@@ -214,10 +217,13 @@ export default function EditProfilePage() {
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Major</label>
-              <select value={major} onChange={(e) => setMajor(e.target.value)} className={selectCls}>
-                <option value="">Select...</option>
-                {SBU_MAJORS.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
+              <Dropdown
+                value={major}
+                onChange={setMajor}
+                options={SBU_MAJORS.map((m) => ({ value: m, label: m }))}
+                placeholder="Select your major..."
+                searchable
+              />
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Graduation year</label>
@@ -225,14 +231,45 @@ export default function EditProfilePage() {
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Residence hall</label>
-              <select value={residenceHall} onChange={(e) => setResidenceHall(e.target.value)} className={selectCls}>
-                <option value="">Select...</option>
-                {Object.entries(RESIDENCE_HALLS).map(([group, halls]) => (
-                  <optgroup key={group} label={group}>
-                    {halls.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </optgroup>
-                ))}
-              </select>
+              <Dropdown
+                value={residenceHall}
+                onChange={setResidenceHall}
+                options={Object.entries(RESIDENCE_HALLS).flatMap(([group, halls]) =>
+                  halls.map((h) => ({ value: h, label: h, group }))
+                )}
+                placeholder="Select your residence..."
+              />
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Ethnicity</label>
+              <Dropdown
+                value={ethnicity}
+                onChange={setEthnicity}
+                options={ETHNICITY_OPTIONS.map((e) => ({ value: e, label: e }))}
+                placeholder="Select your ethnicity..."
+              />
+            </div>
+            <div>
+              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Ethnicity preference</label>
+              <div className="flex flex-wrap gap-2">
+                {ETHNICITY_OPTIONS.filter((e) => e !== "Prefer not to say").map((e) => {
+                  const selected = ethnicityPreference.includes(e);
+                  return (
+                    <button key={e} onClick={() => setEthnicityPreference((prev) =>
+                      selected ? prev.filter((x) => x !== e) : [...prev, e]
+                    )}
+                      className={`press px-3.5 py-2 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                        selected ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
+                      {e}
+                    </button>
+                  );
+                })}
+              </div>
+              {ethnicityPreference.length > 0 && (
+                <button onClick={() => setEthnicityPreference([])} className="text-[12px] text-gray-400 mt-2 press">
+                  Clear preferences
+                </button>
+              )}
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Hometown</label>
@@ -245,17 +282,12 @@ export default function EditProfilePage() {
             <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium">Lifestyle</p>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Dating intention</label>
-              <select value={datingIntention} onChange={(e) => setDatingIntention(e.target.value)} className={selectCls}>
-                <option value="">Select...</option>
-                {DATING_INTENTIONS.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Religion</label>
-              <select value={religion} onChange={(e) => setReligion(e.target.value)} className={selectCls}>
-                <option value="">Select...</option>
-                {RELIGION_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
-              </select>
+              <Dropdown
+                value={datingIntention}
+                onChange={setDatingIntention}
+                options={DATING_INTENTIONS.map((d) => ({ value: d, label: d }))}
+                placeholder="Select your intention..."
+              />
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Drinking</label>

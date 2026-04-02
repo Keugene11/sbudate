@@ -89,7 +89,7 @@ function EditPromptInner() {
           {/* Selected prompt question */}
           <button
             onClick={() => setStep("pick")}
-            className="w-full flex items-center justify-between bg-cream rounded-2xl px-5 py-4 mb-5 press text-left"
+            className="w-full flex items-center justify-between bg-gray-50 rounded-2xl px-5 py-4 mb-5 press text-left"
           >
             <p className="text-[15px] text-gray-900 font-medium flex-1">{selectedQuestion}</p>
             <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0 ml-3" strokeWidth={1.8} />
