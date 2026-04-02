@@ -42,6 +42,7 @@ jobs:
                 api_key: api_key,
                 team_id: ENV["TEAM_ID"],
                 app_identifier: "com.sbudate.app",
+                app_version: "1.0.0",
                 skip_binary_upload: true,
                 skip_screenshots: false,
                 precheck_include_in_app_purchases: false,
