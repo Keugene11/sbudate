@@ -49,8 +49,6 @@ jobs:
                 submit_for_review: false,
                 force: true,
                 automatic_release: true,
-                primary_category: "SOCIAL_NETWORKING",
-                secondary_category: "LIFESTYLE",
               )
             end
           end
