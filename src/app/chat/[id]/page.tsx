@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, MoreHorizontal, Send, Cake, User, Ruler, MapPin, GraduationCap, Home, Building, Wine, Cigarette, Globe, Flag } from "lucide-react";
@@ -426,7 +427,7 @@ export default function ChatPage() {
       </div>
 
       {/* Report modal */}
-      {showReport && (
+      {showReport && createPortal(
         <div className="fixed inset-0 z-[100] flex items-end justify-center">
           <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => { setShowReport(false); setReportReason(""); setReportDetails(""); }} />
           <div className="relative z-10 bg-surface rounded-t-2xl px-6 py-6 w-full max-w-lg animate-slide-up" style={{ maxHeight: "85vh", overflowY: "auto" }}>
@@ -477,11 +478,12 @@ export default function ChatPage() {
               </>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Unmatch confirmation dialog */}
-      {showUnmatchConfirm && (
+      {showUnmatchConfirm && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => setShowUnmatchConfirm(false)} />
           <div className="relative z-10 bg-surface rounded-2xl px-6 py-6 mx-6 max-w-[320px] w-full animate-scale-in">
@@ -504,7 +506,8 @@ export default function ChatPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

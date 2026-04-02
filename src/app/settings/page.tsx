@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Pause, Play, Trash2, LogOut } from "lucide-react";
+import { ChevronLeft, Pause, Play, Trash2, LogOut, Mail } from "lucide-react";
 
 export default function SettingsPage() {
   const supabase = createClient();
@@ -122,6 +122,23 @@ export default function SettingsPage() {
                   <p className="text-[12px] text-gray-400 mt-0.5">Permanently delete your account and data</p>
                 </div>
               </button>
+            </div>
+          </div>
+
+          {/* Support */}
+          <div>
+            <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">Support</p>
+            <div className="bg-surface rounded-2xl overflow-hidden border border-border">
+              <a
+                href="mailto:keugenelee11@gmail.com"
+                className="w-full px-5 py-4 flex items-center gap-3 press text-left hover:bg-gray-50 transition-colors block"
+              >
+                <Mail className="w-[18px] h-[18px] text-gray-500" strokeWidth={1.8} />
+                <div>
+                  <p className="text-[15px] text-gray-900 font-medium">Contact Support</p>
+                  <p className="text-[12px] text-gray-400 mt-0.5">keugenelee11@gmail.com</p>
+                </div>
+              </a>
             </div>
           </div>
         </div>
