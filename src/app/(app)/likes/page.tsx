@@ -84,15 +84,13 @@ export default function LikesPage() {
     return (
       <div className="max-w-lg mx-auto min-h-screen pb-24">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-surface/95 glass border-b border-border">
-          <div className="flex items-center justify-between px-3 h-[52px]">
-            <button onClick={() => { setViewing(null); setViewingProfile(null); }} className="press p-1.5">
-              <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
-            </button>
-            <button onClick={handleDismiss} className="press text-[14px] text-gray-400 font-medium px-2">
-              Remove
-            </button>
-          </div>
+        <div className="flex items-center justify-between px-3 h-[52px]">
+          <button onClick={() => { setViewing(null); setViewingProfile(null); }} className="press p-1.5">
+            <ChevronLeft className="w-6 h-6 text-gray-900" strokeWidth={2} />
+          </button>
+          <button onClick={handleDismiss} className="press text-[14px] text-gray-400 font-medium px-2">
+            Remove
+          </button>
         </div>
 
         {/* Hero: the liked content front and center */}
