@@ -88,12 +88,16 @@ export default function MatchesPage() {
           ))}
         </div>
       ) : matches.length === 0 ? (
-        <div className="flex flex-col items-center pt-24 px-8 text-center animate-slide-up">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-5">
-            <MessageSquare className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
+        <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
+          <div className="relative mb-6">
+            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+              <MessageSquare className="w-9 h-9 text-gray-300" strokeWidth={1.5} />
+            </div>
           </div>
-          <p className="text-[20px] font-semibold text-gray-900 mb-2 tracking-tight">No matches yet</p>
-          <p className="text-gray-400 text-[15px] leading-relaxed">When you and someone like each other,<br />you can chat here.</p>
+          <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">No matches yet</p>
+          <p className="text-gray-400 text-[15px] leading-relaxed max-w-[260px]">
+            When you and someone like each other, you can start chatting here.
+          </p>
         </div>
       ) : (
         <div className="animate-fade-in">

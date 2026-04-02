@@ -229,12 +229,19 @@ export default function LikesPage() {
           {[0,1,2,3].map((i) => <div key={i} className="aspect-[3/4] rounded-2xl skeleton" />)}
         </div>
       ) : likes.length === 0 ? (
-        <div className="flex flex-col items-center pt-24 px-8 text-center animate-slide-up">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-5">
-            <Heart className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
+        <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
+          <div className="relative mb-6">
+            <div className="w-20 h-20 rounded-full bg-rose/5 flex items-center justify-center">
+              <Heart className="w-9 h-9 text-rose/30" strokeWidth={1.5} />
+            </div>
+            <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-rose/10 flex items-center justify-center">
+              <Heart className="w-4 h-4 text-rose/40" strokeWidth={1.5} />
+            </div>
           </div>
-          <p className="text-[20px] font-semibold text-gray-900 mb-2 tracking-tight">No likes yet</p>
-          <p className="text-gray-400 text-[15px] leading-relaxed">When someone likes your profile,<br />they&apos;ll appear here.</p>
+          <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">No likes yet</p>
+          <p className="text-gray-400 text-[15px] leading-relaxed max-w-[240px]">
+            When someone likes your profile, they&apos;ll appear here.
+          </p>
         </div>
       ) : (
         <div className="px-4 pb-24">
