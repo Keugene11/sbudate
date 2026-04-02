@@ -28,7 +28,7 @@ export default function DiscoverPage() {
     if (myProfile.gender_preference === "Women") genderFilter = ["Woman"];
     else if (myProfile.gender_preference === "Men") genderFilter = ["Man"];
     else genderFilter = ["Man", "Woman", "Non-binary"];
-    const { data: candidateProfiles } = await supabase.from("profiles").select("*").in("gender", genderFilter).neq("id", myProfile.id).neq("is_paused", true).limit(50);
+    const { data: candidateProfiles } = await supabase.from("profiles").select("*").in("gender", genderFilter).neq("id", myProfile.id).limit(50);
     if (!candidateProfiles) { setLoading(false); return; }
     const filtered = candidateProfiles;
     const fullProfiles: ProfileWithContent[] = await Promise.all(
