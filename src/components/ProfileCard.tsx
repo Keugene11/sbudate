@@ -61,8 +61,17 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
     if (profile.prompts[i]) items.push({ type: "prompt", data: profile.prompts[i] });
   }
 
+  const totalItems = items.length + 1; // +1 for vitals section
+
   return (
     <div className={`${exiting ? "animate-profile-exit" : "animate-profile-enter"} ${likeSent ? "animate-like-flash" : ""}`}>
+      {/* Content progress dots */}
+      <div className="flex justify-center gap-1 px-4 py-2">
+        {Array.from({ length: totalItems }, (_, i) => (
+          <div key={i} className="h-[3px] flex-1 max-w-[28px] rounded-full bg-gray-300" />
+        ))}
+      </div>
+
       {items.map((item, idx) => {
         if (item.type === "photo") {
           const photo = item.data as (typeof profile.photos)[0];
