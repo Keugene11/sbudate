@@ -219,7 +219,12 @@ export default function EditProfilePage() {
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Graduation year</label>
-              <input type="number" value={gradYear} onChange={(e) => setGradYear(e.target.value)} className={inputCls} placeholder="2027" />
+              <Dropdown
+                value={gradYear}
+                onChange={setGradYear}
+                options={["2025", "2026", "2027", "2028", "2029", "2030"].map((y) => ({ value: y, label: `Class of ${y}` }))}
+                placeholder="Select year..."
+              />
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Residence hall</label>
@@ -230,6 +235,7 @@ export default function EditProfilePage() {
                   halls.map((h) => ({ value: h, label: h, group }))
                 )}
                 placeholder="Select your residence..."
+                searchable
               />
             </div>
             <div>
