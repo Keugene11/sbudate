@@ -75,18 +75,12 @@ jobs:
                 key_filepath: File.expand_path("~/.private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8"),
               )
 
-              # Revoke all existing distribution certs, then create a fresh one
-              require 'spaceship'
-              Spaceship::ConnectAPI.token = api_key
-              certs = Spaceship::ConnectAPI::Certificate.all(filter: { certificateType: "DISTRIBUTION" })
-              certs.each { |c| c.delete! rescue nil }
-              UI.message("Revoked #{certs.length} old distribution certificates")
-
               cert(
                 api_key: api_key,
                 team_id: ENV["TEAM_ID"],
                 keychain_path: ENV["KEYCHAIN_PATH"],
                 keychain_password: ENV["KEYCHAIN_PASSWORD"],
+                force: true,
               )
 
               sigh(
