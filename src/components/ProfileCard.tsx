@@ -182,7 +182,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
           const prompt = item.data as (typeof profile.prompts)[0];
           const isOpen = activeHeart?.id === prompt.id;
           const promptIdx = items.filter((it, ii) => ii < idx && it.type === "prompt").length;
-          const promptBg = promptIdx % 2 === 0 ? "bg-gray-50" : "bg-gray-100";
+          const promptBg = "bg-surface";
           return (
             <div key={prompt.id}>
               <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] relative overflow-hidden`}>
