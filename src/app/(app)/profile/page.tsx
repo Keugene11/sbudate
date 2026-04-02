@@ -129,17 +129,19 @@ export default function ProfilePage() {
           {/* Photos */}
           <div className="px-5 pb-5">
             <div className="grid grid-cols-3 gap-2">
-              {profile.photos.map((photo) => (
-                <div key={photo.id} className="aspect-square rounded-xl overflow-hidden">
-                  <img src={photo.url} alt="" className="w-full h-full object-cover" />
-                </div>
-              ))}
-              {profile.photos.length < 6 && (
-                <button onClick={() => router.push("/edit-profile")}
-                  className="aspect-square rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors">
-                  +
-                </button>
-              )}
+              {Array.from({ length: 6 }, (_, i) => {
+                const photo = profile.photos[i];
+                return photo ? (
+                  <div key={photo.id} className="aspect-square rounded-xl overflow-hidden">
+                    <img src={photo.url} alt="" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <button key={`empty-${i}`} onClick={() => router.push("/edit-profile")}
+                    className="aspect-square rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors">
+                    +
+                  </button>
+                );
+              })}
             </div>
           </div>
 
