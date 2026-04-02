@@ -46,3 +46,7 @@ next-env.d.ts
 *.p8
 ios/App/Pods/
 ios/App/App/public/
+
+# Android
+*.keystore
+android/app/release.keystore

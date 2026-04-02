@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SBUdate</string>
+    <string name="title_activity_main">SBUdate</string>
+    <string name="package_name">com.sbudate.app</string>
+    <string name="custom_url_scheme">com.sbudate.app</string>
+</resources>
