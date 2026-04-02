@@ -81,21 +81,20 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
     if (profile.prompts[i]) items.push({ type: "prompt", data: profile.prompts[i] });
   }
 
-  const totalItems = items.length + 1; // +1 for vitals section
 
   return (
     <div className={`${exiting ? "animate-profile-exit" : "animate-profile-enter"} ${likeSent ? "animate-like-flash" : ""}`}>
-      {/* Content progress dots */}
-      <div className="flex justify-center gap-1 px-4 py-2">
-        {Array.from({ length: totalItems }, (_, i) => (
-          <div key={i} className="h-[3px] flex-1 max-w-[28px] rounded-full bg-gray-300" />
-        ))}
-      </div>
-
       {/* Name header — Hinge style */}
       <div className="flex items-center justify-between px-5 pt-1 pb-2">
         <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</h2>
-        <div className="relative">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleSkip}
+            className="w-8 h-8 rounded-full flex items-center justify-center press hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-400" strokeWidth={2} />
+          </button>
+          <div className="relative">
           <button
             onClick={() => setShowMore(!showMore)}
             className="w-8 h-8 rounded-full flex items-center justify-center press hover:bg-gray-100 transition-colors"
@@ -116,6 +115,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
               </div>
             </>
           )}
+          </div>
         </div>
       </div>
 
@@ -294,15 +294,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
         })()}
       </div>
 
-      {/* Skip button */}
-      <div className="flex justify-center pt-5 pb-8">
-        <button
-          onClick={handleSkip}
-          className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card-hover"
-        >
-          <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
-        </button>
-      </div>
+      <div className="h-8" />
 
       {/* Report modal */}
       {showReport && (
