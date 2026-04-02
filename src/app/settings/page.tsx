@@ -64,7 +64,7 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-surface">
+    <div className="h-[100dvh] flex flex-col bg-surface animate-push-in">
       {/* Header */}
       <div className="flex items-center px-4 h-[56px] flex-shrink-0 border-b border-border">
         <button onClick={() => router.push("/profile")} className="press p-1.5 -ml-1">

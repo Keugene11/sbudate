@@ -102,7 +102,7 @@ export default function EditProfilePage() {
   const inputCls = "w-full h-[48px] bg-gray-50 rounded-xl px-4 text-[15px] text-gray-900 outline-none border border-border input-hinge transition-colors";
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-surface">
+    <div className="h-[100dvh] flex flex-col bg-surface animate-push-in">
       {/* Header */}
       <div className="flex items-center justify-between px-4 h-[56px] flex-shrink-0 border-b border-border max-w-lg mx-auto w-full">
         <button onClick={() => router.push("/profile")} className="press text-[15px] text-gray-400 font-medium w-16 text-left">

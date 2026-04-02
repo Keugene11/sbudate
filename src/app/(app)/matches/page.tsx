@@ -60,7 +60,7 @@ export default function MatchesPage() {
     .sort((a, b) => new Date(b.last_message_at || "").getTime() - new Date(a.last_message_at || "").getTime());
 
   return (
-    <div className="max-w-lg mx-auto min-h-screen">
+    <div className="max-w-lg mx-auto min-h-screen animate-tab-in">
       <div className="px-5 pt-4 pb-2">
         <h1 className="text-[26px] font-semibold text-gray-900 tracking-tight">Messages</h1>
       </div>

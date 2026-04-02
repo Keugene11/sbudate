@@ -146,7 +146,7 @@ export default function ChatPage() {
     : null;
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-surface">
+    <div className="h-[100dvh] flex flex-col bg-surface animate-push-in">
       <div className="max-w-lg mx-auto w-full flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between px-3 h-[56px] flex-shrink-0 border-b border-border">

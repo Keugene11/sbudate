@@ -43,7 +43,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <div className="max-w-lg mx-auto min-h-screen">
+    <div className="max-w-lg mx-auto min-h-screen animate-tab-in">
       {/* Header */}
       <div className="flex items-center justify-between px-5 h-[52px]">
         <span className="text-[18px] text-gray-900 font-semibold tracking-tight">SBUdate</span>
