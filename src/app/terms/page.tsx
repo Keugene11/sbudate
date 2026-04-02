@@ -49,6 +49,11 @@ export default function TermsPage() {
         </section>
 
         <section>
+          <h2 className="text-[18px] font-semibold text-gray-900 mb-2">Child Safety</h2>
+          <p>SBUdate has zero tolerance for child sexual abuse and exploitation (CSAE). All users must be 18 or older. Any content or behavior that exploits or endangers minors will result in immediate account termination and reporting to the National Center for Missing &amp; Exploited Children (NCMEC) and relevant law enforcement authorities. Users can report child safety concerns via the in-app report feature or by contacting keugenelee11@gmail.com.</p>
+        </section>
+
+        <section>
           <h2 className="text-[18px] font-semibold text-gray-900 mb-2">Termination</h2>
           <p>We may suspend or terminate your account at any time for any reason, including violation of these terms. You may delete your account at any time from the Settings page.</p>
         </section>
