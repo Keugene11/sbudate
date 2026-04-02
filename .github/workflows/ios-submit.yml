@@ -44,7 +44,7 @@ jobs:
                 app_identifier: "com.sbudate.app",
                 app_version: "1.0.0",
                 skip_binary_upload: true,
-                skip_screenshots: false,
+                skip_screenshots: true,
                 precheck_include_in_app_purchases: false,
                 submit_for_review: false,
                 force: true,
