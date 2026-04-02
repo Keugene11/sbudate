@@ -186,12 +186,12 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
           const promptBg = "bg-surface";
           return (
             <div key={prompt.id}>
-              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] relative overflow-hidden`}>
-                <div className="px-5 py-5">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-2">
+              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] border border-border relative overflow-hidden`}>
+                <div className="px-6 pt-7 pb-14">
+                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-3">
                     {prompt.question}
                   </p>
-                  <p className="text-[20px] text-gray-900 leading-[1.35] font-medium pr-10">
+                  <p className="text-[24px] text-gray-900 leading-[1.4] font-medium">
                     {prompt.answer}
                   </p>
                 </div>
