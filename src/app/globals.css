@@ -23,9 +23,11 @@
   --color-border: #efefef;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', system-ui, sans-serif;
   --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', system-ui, sans-serif;
-  --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 6px 20px 0 rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.05);
-  --shadow-nav: 0 -2px 10px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 4px 0 rgba(0, 0, 0, 0.04), 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 16px 0 rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.04);
+  --shadow-photo: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  --shadow-nav: 0 -1px 8px 0 rgba(0, 0, 0, 0.06);
 }
 
 body {

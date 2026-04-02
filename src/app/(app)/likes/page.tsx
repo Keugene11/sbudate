@@ -246,7 +246,7 @@ export default function LikesPage() {
               <button
                 key={like.id}
                 onClick={() => openLike(like)}
-                className="relative rounded-2xl overflow-hidden bg-gray-200 aspect-square text-left press"
+                className="relative rounded-2xl overflow-hidden bg-gray-200 aspect-square text-left press shadow-photo"
               >
                 {like.from_profile.photo_url ? (
                   <img src={like.from_profile.photo_url} alt="" className="w-full h-full object-cover" draggable={false} />

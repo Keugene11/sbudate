@@ -129,7 +129,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                 <img
                   src={photo.url}
                   alt=""
-                  className="w-full aspect-square object-cover rounded-[16px]"
+                  className="w-full aspect-square object-cover rounded-[16px] shadow-photo"
                   draggable={false}
                   onClick={() => handleDoubleTap(photo.id)}
                 />
@@ -157,7 +157,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
               </div>
               {isOpen && (
                 <div className="mx-3 mt-2.5 animate-slide-up">
-                  <div className="bg-surface rounded-[14px] border border-border overflow-hidden">
+                  <div className="bg-surface rounded-[14px] border border-border shadow-soft overflow-hidden">
                     <textarea
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
@@ -186,7 +186,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
           const promptBg = "bg-surface";
           return (
             <div key={prompt.id}>
-              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] border border-border relative overflow-hidden`}>
+              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] border border-border shadow-card relative overflow-hidden`}>
                 <div className="px-6 pt-7 pb-14">
                   <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-3">
                     {prompt.question}
@@ -214,7 +214,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
               </div>
               {isOpen && (
                 <div className="mx-3 mt-2.5 animate-slide-up">
-                  <div className="bg-surface rounded-[14px] border border-border overflow-hidden">
+                  <div className="bg-surface rounded-[14px] border border-border shadow-soft overflow-hidden">
                     <textarea
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
@@ -240,7 +240,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
       })}
 
       {/* Vitals section — Hinge style card */}
-      <div className="mx-3 mt-2.5 bg-surface rounded-[16px] border border-border overflow-hidden">
+      <div className="mx-3 mt-2.5 bg-surface rounded-[16px] border border-border shadow-card overflow-hidden">
         {/* Top row — quick stats with icon dividers */}
         {(() => {
           const pills: { icon: typeof Cake; value: string }[] = [];
@@ -298,7 +298,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
       <div className="flex justify-center pt-5 pb-8">
         <button
           onClick={handleSkip}
-          className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card"
+          className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card-hover"
         >
           <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
         </button>
