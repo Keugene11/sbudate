@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import ProfileCard from "@/components/ProfileCard";
 import MatchCelebration from "@/components/MatchCelebration";
 import type { ProfileWithContent } from "@/types";
-import { RefreshCw } from "lucide-react";
 
 export default function DiscoverPage() {
   const supabase = createClient();
@@ -73,13 +72,13 @@ export default function DiscoverPage() {
         });
       }
     }
-    setCurrentIndex((prev) => prev + 1);
+    setCurrentIndex((prev) => prev + 1 >= profiles.length ? 0 : prev + 1);
   };
 
   const handleSkip = async () => {
     if (!myProfileId || !profiles[currentIndex]) return;
     await supabase.from("skips").insert({ from_profile_id: myProfileId, to_profile_id: profiles[currentIndex].id });
-    setCurrentIndex((prev) => prev + 1);
+    setCurrentIndex((prev) => prev + 1 >= profiles.length ? 0 : prev + 1);
   };
 
   if (loading) return (
@@ -89,24 +88,6 @@ export default function DiscoverPage() {
       </div>
       <div className="mt-2.5 rounded-[16px] skeleton" style={{ height: "120px" }} />
       <div className="mt-2.5 rounded-[16px] skeleton" style={{ height: "80px" }} />
-    </div>
-  );
-
-  if (currentIndex >= profiles.length) return (
-    <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[75vh] px-10 text-center">
-      <div className="animate-slide-up">
-        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-5">
-          <RefreshCw className="w-7 h-7 text-gray-300" strokeWidth={1.5} />
-        </div>
-        <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">You&apos;ve seen everyone</p>
-        <p className="text-gray-400 text-[15px] mb-10 leading-relaxed">Check back later for new<br />Stony Brook students.</p>
-        <button
-          onClick={fetchProfiles}
-          className="press h-[52px] bg-gray-900 text-white px-12 rounded-2xl text-[15px] font-medium tracking-[-0.2px] shadow-lg shadow-black/10"
-        >
-          Refresh
-        </button>
-      </div>
     </div>
   );
 
