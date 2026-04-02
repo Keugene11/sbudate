@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap, Cake, User, Ruler, Calendar, Briefcase, Home, Globe } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { REPORT_REASONS } from "@/types";
@@ -296,8 +297,8 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
 
       <div className="h-8" />
 
-      {/* Report modal */}
-      {showReport && (
+      {/* Report modal — portal to body so fixed positioning works */}
+      {showReport && createPortal(
         <div className="fixed inset-0 z-[100] flex items-end justify-center">
           <div className="absolute inset-0 bg-black/40 animate-backdrop" onClick={() => { setShowReport(false); setReportReason(""); setReportDetails(""); }} />
           <div className="relative z-10 bg-surface rounded-t-2xl px-6 py-6 w-full max-w-lg animate-slide-up" style={{ maxHeight: "85vh", overflowY: "auto" }}>
@@ -348,7 +349,8 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
               </>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
