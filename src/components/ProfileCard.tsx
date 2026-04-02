@@ -187,31 +187,33 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
           const promptBg = "bg-surface";
           return (
             <div key={prompt.id}>
-              <div className={`mx-3 mt-2.5 ${promptBg} rounded-[16px] border border-border shadow-card relative overflow-hidden`}>
-                <div className="px-6 pt-7 pb-14">
-                  <p className="text-[12px] font-medium text-gray-500 uppercase tracking-[0.08em] mb-3">
+              <div className={`mx-3 mt-3 ${promptBg} rounded-[16px] border border-border shadow-card relative`}>
+                <div className="px-6 pt-10 pb-8">
+                  <p className="text-[15px] text-gray-500 mb-3">
                     {prompt.question}
                   </p>
-                  <p className="text-[24px] text-gray-900 leading-[1.4] font-medium">
+                  <p className="text-[28px] text-gray-900 leading-[1.3] font-bold tracking-tight">
                     {prompt.answer}
                   </p>
                 </div>
-                <button
-                  onClick={() => handleHeartTap("prompt", prompt.id)}
-                  className={`absolute bottom-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    isOpen
-                      ? "bg-rose scale-110 shadow-lg shadow-rose/30"
-                      : "bg-white shadow-sm"
-                  }`}
-                >
-                  <Heart
-                    className={`w-[17px] h-[17px] transition-colors duration-150 ${
-                      isOpen ? "text-white" : "text-gray-400"
-                    } ${isOpen ? "animate-heart-pop" : ""}`}
-                    strokeWidth={isOpen ? 0 : 1.5}
-                    fill={isOpen ? "currentColor" : "none"}
-                  />
-                </button>
+                <div className="flex justify-end px-5 pb-5">
+                  <button
+                    onClick={() => handleHeartTap("prompt", prompt.id)}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      isOpen
+                        ? "bg-rose scale-110 shadow-lg shadow-rose/30"
+                        : "bg-gray-100 shadow-sm"
+                    }`}
+                  >
+                    <Heart
+                      className={`w-[20px] h-[20px] transition-colors duration-150 ${
+                        isOpen ? "text-white" : "text-gray-900"
+                      } ${isOpen ? "animate-heart-pop" : ""}`}
+                      strokeWidth={isOpen ? 0 : 1.5}
+                      fill={isOpen ? "currentColor" : "none"}
+                    />
+                  </button>
+                </div>
               </div>
               {isOpen && (
                 <div className="mx-3 mt-2.5 animate-slide-up">
