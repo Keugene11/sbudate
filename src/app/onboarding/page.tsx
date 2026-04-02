@@ -49,7 +49,7 @@ export default function OnboardingPage() {
       const totalInches = heightFeet && heightInches ? parseInt(heightFeet) * 12 + parseInt(heightInches) : null;
 
       const { data: profile, error } = await supabase.from("profiles").insert({
-        user_id: user.id, first_name: firstName, last_name: lastName,
+        user_id: user.id, first_name: firstName, last_name: "",
         age: parseInt(age), gender, gender_preference: genderPreference,
         height_inches: totalInches, major: major || null,
         graduation_year: gradYear ? parseInt(gradYear) : null,
@@ -76,7 +76,7 @@ export default function OnboardingPage() {
 
   const canAdvance = () => {
     switch (step) {
-      case "firstName": return firstName && lastName;
+      case "firstName": return firstName;
       case "age": return age;
       case "gender": return gender;
       case "height": return true; // optional
@@ -123,12 +123,9 @@ export default function OnboardingPage() {
       <div className="flex-1 overflow-y-auto px-6 pb-32" key={step}>
         {step === "firstName" && (
           <div className="animate-slide-up">
-            <h2 className="text-[28px] font-bold tracking-tight mb-2">What's your name?</h2>
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">What's your first name?</h2>
             <p className="text-gray-400 text-[15px] mb-8">This is how you'll appear on SBUdate.</p>
-            <div className="space-y-4">
-              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} placeholder="First name" autoFocus />
-              <input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} placeholder="Last name" />
-            </div>
+            <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} placeholder="First name" autoFocus />
           </div>
         )}
 
