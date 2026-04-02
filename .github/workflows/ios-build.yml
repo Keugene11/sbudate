@@ -75,7 +75,6 @@ jobs:
                 key_filepath: File.expand_path("~/.private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8"),
               )
 
-              # Get or create distribution certificate
               cert(
                 api_key: api_key,
                 team_id: ENV["TEAM_ID"],
@@ -83,7 +82,6 @@ jobs:
                 keychain_password: ENV["KEYCHAIN_PASSWORD"],
               )
 
-              # Get or create App Store provisioning profile
               sigh(
                 api_key: api_key,
                 team_id: ENV["TEAM_ID"],
@@ -91,13 +89,16 @@ jobs:
                 readonly: false,
               )
 
-              # Update project signing to manual with the profile we just got
+              profile_uuid = lane_context[SharedValues::SIGH_UUID]
+              profile_name = lane_context[SharedValues::SIGH_NAME]
+
               update_code_signing_settings(
                 use_automatic_signing: false,
                 team_id: ENV["TEAM_ID"],
                 path: "App.xcodeproj",
                 code_sign_identity: "Apple Distribution",
-                profile_name: ENV["sigh_com.sbudate.app_appstore_profile-name"],
+                profile_uuid: profile_uuid,
+                bundle_identifier: "com.sbudate.app",
               )
 
               increment_build_number(
@@ -115,10 +116,7 @@ jobs:
                 scheme: "App",
                 destination: "generic/platform=iOS",
                 export_method: "app-store",
-                export_options: {
-                  signingStyle: "manual",
-                  teamID: ENV["TEAM_ID"],
-                },
+                xcargs: "PROVISIONING_PROFILE_SPECIFIER='#{profile_name}'",
               )
 
               upload_to_app_store(
