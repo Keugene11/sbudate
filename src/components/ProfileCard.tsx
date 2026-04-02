@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Heart, X, Target, Church, Wine, Cigarette, MoreHorizontal, Flag } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
@@ -26,6 +26,21 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
 
   const [likeSent, setLikeSent] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [doubleTapHeart, setDoubleTapHeart] = useState<string | null>(null);
+  const lastTapRef = useRef<{ id: string; time: number } | null>(null);
+
+  const handleDoubleTap = (photoId: string) => {
+    const now = Date.now();
+    if (lastTapRef.current && lastTapRef.current.id === photoId && now - lastTapRef.current.time < 300) {
+      // Double tap detected
+      handleHeartTap("photo", photoId);
+      setDoubleTapHeart(photoId);
+      setTimeout(() => setDoubleTapHeart(null), 600);
+      lastTapRef.current = null;
+    } else {
+      lastTapRef.current = { id: photoId, time: now };
+    }
+  };
 
   const sendLike = () => {
     if (!activeHeart) return;
@@ -61,7 +76,14 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                   alt=""
                   className="w-full aspect-[4/5] object-cover rounded-[16px]"
                   draggable={false}
+                  onClick={() => handleDoubleTap(photo.id)}
                 />
+                {/* Double-tap heart animation */}
+                {doubleTapHeart === photo.id && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <Heart className="w-20 h-20 text-white drop-shadow-lg animate-heart-pop" fill="white" strokeWidth={0} />
+                  </div>
+                )}
                 {/* Name + info overlay on first photo */}
                 {isFirst && (
                   <>

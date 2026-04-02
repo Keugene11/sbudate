@@ -53,9 +53,11 @@ export default function MatchesPage() {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
-  // Separate new matches (no messages) from conversations
+  // Separate new matches (no messages) from conversations, sort by recency
   const newMatches = matches.filter((m) => !m.last_message);
-  const conversations = matches.filter((m) => m.last_message);
+  const conversations = matches
+    .filter((m) => m.last_message)
+    .sort((a, b) => new Date(b.last_message_at || "").getTime() - new Date(a.last_message_at || "").getTime());
 
   return (
     <div className="max-w-lg mx-auto min-h-screen">
