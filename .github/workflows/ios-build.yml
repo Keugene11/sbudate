@@ -69,7 +69,7 @@ jobs:
           cd ios/App
           xcodebuild -project App.xcodeproj \
             -scheme App \
-            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -configuration Release \
             -archivePath $RUNNER_TEMP/App.xcarchive \
             -authenticationKeyPath ~/".appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8" \
@@ -79,6 +79,7 @@ jobs:
             CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
             MARKETING_VERSION=$VERSION \
             CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             archive
 
       - name: Export IPA
