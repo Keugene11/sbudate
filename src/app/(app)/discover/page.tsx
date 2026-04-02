@@ -24,16 +24,13 @@ export default function DiscoverPage() {
     const { data: myProfile } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
     if (!myProfile) return;
     setMyProfileId(myProfile.id);
-    const { data: interactions } = await supabase.from("likes").select("to_profile_id").eq("from_profile_id", myProfile.id);
-    const { data: skips } = await supabase.from("skips").select("to_profile_id").eq("from_profile_id", myProfile.id);
-    const excludeIds = new Set([myProfile.id, ...(interactions?.map((i) => i.to_profile_id) || []), ...(skips?.map((s) => s.to_profile_id) || [])]);
     let genderFilter: string[] = [];
     if (myProfile.gender_preference === "Women") genderFilter = ["Woman"];
     else if (myProfile.gender_preference === "Men") genderFilter = ["Man"];
     else genderFilter = ["Man", "Woman", "Non-binary"];
     const { data: candidateProfiles } = await supabase.from("profiles").select("*").in("gender", genderFilter).neq("id", myProfile.id).neq("is_paused", true).limit(50);
     if (!candidateProfiles) { setLoading(false); return; }
-    const filtered = candidateProfiles.filter((p) => !excludeIds.has(p.id));
+    const filtered = candidateProfiles;
     const fullProfiles: ProfileWithContent[] = await Promise.all(
       filtered.map(async (p) => {
         const [{ data: photos }, { data: prompts }] = await Promise.all([
