@@ -114,10 +114,8 @@ export default function DiscoverPage() {
 
   return (
     <div ref={topRef} className="max-w-lg mx-auto pb-4">
-      {/* Header — minimal like Hinge */}
-      <div className="px-5 pt-2 pb-0.5 flex items-center justify-between">
-        <h1 className="text-[18px] font-semibold text-gray-900 tracking-tight">Discover</h1>
-      </div>
+      {/* Minimal spacer — Hinge shows almost no header */}
+      <div className="h-2" />
       <ProfileCard key={current.id} profile={current} onLike={handleLike} onSkip={handleSkip} />
 
       {/* Match celebration */}

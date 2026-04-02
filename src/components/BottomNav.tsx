@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Sparkles } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -23,14 +24,14 @@ export default function BottomNav() {
       const { data: photos } = await supabase.from("photos").select("url").eq("profile_id", profile.id).order("position").limit(1);
       if (photos?.[0]) setAvatarUrl(photos[0].url);
 
-      // Like count (incoming likes that haven't been matched)
+      // Like count
       const { data: matches } = await supabase.from("matches").select("profile1_id, profile2_id").or(`profile1_id.eq.${profile.id},profile2_id.eq.${profile.id}`);
       const matchedIds = new Set(matches?.flatMap((m) => m.profile1_id === profile.id ? [m.profile2_id] : [m.profile1_id]) || []);
       const { data: likes } = await supabase.from("likes").select("id, from_profile_id").eq("to_profile_id", profile.id);
       const unmatchedLikes = likes?.filter((l) => !matchedIds.has(l.from_profile_id)) || [];
       setLikeCount(unmatchedLikes.length);
 
-      // Unread message count
+      // Unread count
       const { data: matchData } = await supabase.from("matches").select("id").or(`profile1_id.eq.${profile.id},profile2_id.eq.${profile.id}`);
       if (matchData) {
         let unread = 0;
@@ -41,7 +42,7 @@ export default function BottomNav() {
         setUnreadCount(unread);
       }
     })();
-  }, [pathname]); // Re-check on navigation
+  }, [pathname]);
 
   const tabs = [
     {
@@ -52,6 +53,18 @@ export default function BottomNav() {
         <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "#1A1A1A" : "#CDCCC8"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="4" />
         </svg>
+      ),
+    },
+    {
+      href: "/standouts",
+      label: "Standouts",
+      badge: 0,
+      icon: (active: boolean) => (
+        <Sparkles
+          className={`w-[22px] h-[22px] ${active ? "text-gray-900" : "text-gray-300"}`}
+          strokeWidth={1.8}
+          fill={active ? "currentColor" : "none"}
+        />
       ),
     },
     {
@@ -66,7 +79,7 @@ export default function BottomNav() {
     },
     {
       href: "/matches",
-      label: "Chat",
+      label: "Matches",
       badge: unreadCount,
       icon: (active: boolean) => (
         <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "#1A1A1A" : "none"} stroke={active ? "none" : "#CDCCC8"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -74,7 +87,7 @@ export default function BottomNav() {
         </svg>
       ),
     },
-    { href: "/profile", label: "Me", badge: 0, icon: null },
+    { href: "/profile", label: "Profile", badge: 0, icon: null },
   ];
 
   return (
@@ -89,30 +102,29 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className="flex flex-col items-center justify-center gap-1 w-16 h-full press"
+              className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full press"
             >
               <div className="relative">
                 {tab.icon ? (
                   tab.icon(isActive)
                 ) : avatarUrl ? (
-                  <div className={`w-[24px] h-[24px] rounded-full overflow-hidden transition-all duration-200 ${
-                    isActive ? "ring-[2px] ring-gray-900 ring-offset-[1.5px]" : "opacity-50"
+                  <div className={`w-[22px] h-[22px] rounded-full overflow-hidden transition-all duration-200 ${
+                    isActive ? "ring-[1.5px] ring-gray-900 ring-offset-[1.5px]" : "opacity-50"
                   }`}>
                     <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className={`w-[24px] h-[24px] rounded-full transition-colors ${
+                  <div className={`w-[22px] h-[22px] rounded-full transition-colors ${
                     isActive ? "bg-gray-900" : "bg-gray-300"
                   }`} />
                 )}
-                {/* Badge */}
                 {tab.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-[16px] bg-rose text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] bg-rose text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
                     {tab.badge > 9 ? "9+" : tab.badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] leading-none transition-colors ${
+              <span className={`text-[9px] leading-none transition-colors ${
                 isActive ? "text-gray-900 font-medium" : "text-gray-400"
               }`}>
                 {tab.label}
