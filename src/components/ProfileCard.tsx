@@ -83,7 +83,7 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                 <img
                   src={photo.url}
                   alt=""
-                  className="w-full aspect-[4/5] object-cover rounded-[16px]"
+                  className="w-full aspect-square object-cover rounded-[16px]"
                   draggable={false}
                   onClick={() => handleDoubleTap(photo.id)}
                 />

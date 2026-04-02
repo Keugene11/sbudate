@@ -60,7 +60,7 @@ export default function StandoutsPage() {
       {loading ? (
         <div className="px-4 grid grid-cols-2 gap-3">
           {[0,1,2,3].map((i) => (
-            <div key={i} className="aspect-[3/4] rounded-2xl skeleton opacity-20" />
+            <div key={i} className="aspect-square rounded-2xl skeleton opacity-20" />
           ))}
         </div>
       ) : profiles.length === 0 ? (
@@ -75,7 +75,7 @@ export default function StandoutsPage() {
           {profiles[0] && (
             <div className="mb-3">
               <div className="relative rounded-2xl overflow-hidden">
-                <img src={profiles[0].photos[0].url} alt="" className="w-full aspect-[3/4] object-cover" draggable={false} />
+                <img src={profiles[0].photos[0].url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                 <div className="absolute inset-0 photo-gradient" />
                 <div className="absolute top-4 left-4">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-400/90 glass rounded-full text-[12px] text-black font-semibold">
@@ -108,7 +108,7 @@ export default function StandoutsPage() {
           <div className="grid grid-cols-2 gap-3">
             {profiles.slice(1).map((p) => (
               <div key={p.id} className="relative rounded-2xl overflow-hidden">
-                <img src={p.photos[0].url} alt="" className="w-full aspect-[3/4] object-cover" draggable={false} />
+                <img src={p.photos[0].url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                 <div className="absolute inset-0 photo-gradient" />
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <p className="text-white text-[16px] font-semibold tracking-tight">{p.first_name}</p>

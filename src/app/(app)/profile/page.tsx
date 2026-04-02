@@ -121,13 +121,13 @@ export default function ProfilePage() {
           <div className="px-5 pb-5">
             <div className="grid grid-cols-3 gap-2">
               {profile.photos.map((photo) => (
-                <div key={photo.id} className="aspect-[3/4] rounded-xl overflow-hidden">
+                <div key={photo.id} className="aspect-square rounded-xl overflow-hidden">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                 </div>
               ))}
               {profile.photos.length < 6 && (
                 <button onClick={() => router.push("/edit-profile")}
-                  className="aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors">
+                  className="aspect-square rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[24px] press hover:border-gray-400 transition-colors">
                   +
                 </button>
               )}
@@ -259,7 +259,7 @@ export default function ProfilePage() {
                 const isFirst = idx === 0;
                 return (
                   <div key={photo.id} className="relative mx-3 mt-2.5">
-                    <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover rounded-2xl" draggable={false} />
+                    <img src={photo.url} alt="" className="w-full aspect-square object-cover rounded-2xl" draggable={false} />
                     {isFirst && (
                       <>
                         <div className="absolute inset-0 rounded-2xl photo-gradient" />

@@ -115,7 +115,7 @@ export default function LikesPage() {
 
           {likedContent?.type === "photo" && (
             <div className="rounded-2xl overflow-hidden mb-3 ring-2 ring-rose/20 ring-offset-2">
-              <img src={likedContent.photo.url} alt="" className="w-full aspect-[4/5] object-cover" />
+              <img src={likedContent.photo.url} alt="" className="w-full aspect-square object-cover" />
             </div>
           )}
           {likedContent?.type === "prompt" && (
@@ -158,7 +158,7 @@ export default function LikesPage() {
                   const photo = item.data as (typeof viewingProfile.photos)[0];
                   return (
                     <div key={photo.id} className="relative rounded-2xl overflow-hidden">
-                      <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                      <img src={photo.url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                       {idx === 0 && (
                         <>
                           <div className="absolute inset-0 photo-gradient" />
@@ -226,7 +226,7 @@ export default function LikesPage() {
 
       {loading ? (
         <div className="px-4 grid grid-cols-2 gap-2.5">
-          {[0,1,2,3].map((i) => <div key={i} className="aspect-[3/4] rounded-2xl skeleton" />)}
+          {[0,1,2,3].map((i) => <div key={i} className="aspect-square rounded-2xl skeleton" />)}
         </div>
       ) : likes.length === 0 ? (
         <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
@@ -253,7 +253,7 @@ export default function LikesPage() {
               <button
                 key={like.id}
                 onClick={() => openLike(like)}
-                className="relative rounded-2xl overflow-hidden bg-gray-200 aspect-[3/4] text-left press"
+                className="relative rounded-2xl overflow-hidden bg-gray-200 aspect-square text-left press"
               >
                 {like.from_profile.photo_url ? (
                   <img src={like.from_profile.photo_url} alt="" className="w-full h-full object-cover" draggable={false} />

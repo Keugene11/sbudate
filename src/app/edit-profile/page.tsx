@@ -129,7 +129,7 @@ export default function EditProfilePage() {
             <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-3">Photos</p>
             <div className="grid grid-cols-3 gap-2.5">
               {existingPhotos.map((photo, idx) => (
-                <div key={photo.id} className="aspect-[3/4] relative rounded-xl overflow-hidden">
+                <div key={photo.id} className="aspect-square relative rounded-xl overflow-hidden">
                   <img src={photo.url} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => removeExistingPhoto(photo.id)}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
@@ -145,7 +145,7 @@ export default function EditProfilePage() {
                 </div>
               ))}
               {newPhotos.map((photo, idx) => (
-                <div key={`new-${idx}`} className="aspect-[3/4] relative rounded-xl overflow-hidden">
+                <div key={`new-${idx}`} className="aspect-square relative rounded-xl overflow-hidden">
                   <img src={photo.preview} alt="" className="w-full h-full object-cover" />
                   <button onClick={() => setNewPhotos((p) => p.filter((_, i) => i !== idx))}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/50 glass rounded-full flex items-center justify-center press">
@@ -154,7 +154,7 @@ export default function EditProfilePage() {
                 </div>
               ))}
               {totalPhotos < 6 && (
-                <label className="aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer press hover:border-gray-400 transition-colors">
+                <label className="aspect-square rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer press hover:border-gray-400 transition-colors">
                   <Plus className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
                   <input type="file" accept="image/*" onChange={handleNewPhoto} className="hidden" />
                 </label>

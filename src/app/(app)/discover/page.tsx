@@ -85,7 +85,7 @@ export default function DiscoverPage() {
   if (loading) return (
     <div className="max-w-lg mx-auto pt-6 px-3 animate-fade-in">
       <div className="rounded-[16px] overflow-hidden">
-        <div className="w-full aspect-[4/5] skeleton" />
+        <div className="w-full aspect-square skeleton" />
       </div>
       <div className="mt-2.5 rounded-[16px] skeleton" style={{ height: "120px" }} />
       <div className="mt-2.5 rounded-[16px] skeleton" style={{ height: "80px" }} />

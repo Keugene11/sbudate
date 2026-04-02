@@ -372,7 +372,7 @@ export default function ChatPage() {
                       const photo = item.data as (typeof otherFullProfile.photos)[0];
                       return (
                         <div key={photo.id} className="relative rounded-2xl overflow-hidden">
-                          <img src={photo.url} alt="" className="w-full aspect-[4/5] object-cover" draggable={false} />
+                          <img src={photo.url} alt="" className="w-full aspect-square object-cover" draggable={false} />
                           {idx === 0 && (
                             <>
                               <div className="absolute inset-0 photo-gradient" />
