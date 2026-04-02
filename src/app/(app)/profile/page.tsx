@@ -272,9 +272,14 @@ export default function ProfilePage() {
                           </div>
                         )}
                         <div className="absolute bottom-5 left-5 right-5">
-                          <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
-                            {profile.first_name}, <span className="font-normal">{profile.age}</span>
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-white text-[28px] font-semibold tracking-tight leading-none">
+                              {profile.first_name}, <span className="font-normal">{profile.age}</span>
+                            </p>
+                            <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                              <GraduationCap className="w-3 h-3 text-white" strokeWidth={2.5} />
+                            </div>
+                          </div>
                           {profile.major && <p className="text-white/75 text-[14px] mt-1.5">{profile.major}</p>}
                         </div>
                       </>
