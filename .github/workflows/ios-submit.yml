@@ -19,7 +19,7 @@ jobs:
           mkdir -p ~/.private_keys
           echo -n "$API_KEY_BASE64" | base64 --decode > ~/.private_keys/AuthKey_${API_KEY_ID}.p8
 
-      - name: Upload metadata & submit for review
+      - name: Upload metadata
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
@@ -45,38 +45,15 @@ jobs:
                 skip_binary_upload: true,
                 skip_screenshots: false,
                 precheck_include_in_app_purchases: false,
-                submission_information: {
-                  add_id_info_uses_idfa: false,
-                },
+                submit_for_review: false,
                 force: true,
                 automatic_release: true,
-                phased_release: true,
                 primary_category: "SOCIAL_NETWORKING",
                 secondary_category: "LIFESTYLE",
-                app_rating_config_path: "fastlane/rating.json",
               )
             end
           end
           RUBY
-
-          cat > fastlane/rating.json << 'JSON'
-          {
-            "CARTOON_FANTASY_VIOLENCE": 0,
-            "REALISTIC_VIOLENCE": 0,
-            "PROLONGED_GRAPHIC_SADISTIC_REALISTIC_VIOLENCE": 0,
-            "PROFANITY_CRUDE_HUMOR": 0,
-            "MATURE_SUGGESTIVE": 1,
-            "HORROR": 0,
-            "MEDICAL_TREATMENT_INFO": 0,
-            "ALCOHOL_TOBACCO_DRUGS": 0,
-            "GAMBLING": 0,
-            "SEXUAL_CONTENT_NUDITY": 0,
-            "GRAPHIC_SEXUAL_CONTENT_NUDITY": 0,
-            "UNRESTRICTED_WEB_ACCESS": 1,
-            "GAMBLING_CONTESTS": 0
-          }
-          JSON
-
           fastlane submit
 
       - name: Cleanup
