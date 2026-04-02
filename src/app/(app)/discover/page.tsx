@@ -105,7 +105,7 @@ export default function DiscoverPage() {
       <ProfileCard key={current.id} profile={current} myProfileId={myProfileId || undefined} onLike={handleLike} onSkip={handleSkip} />
 
       {/* Skip button — visible on wide screens beside the card */}
-      <div className="hidden md:block fixed bottom-[100px] z-40" style={{ left: "max(16px, calc(50% - 304px))" }}>
+      <div className="hidden md:block fixed bottom-[100px] z-40" style={{ left: "max(16px, calc(50% - 360px))" }}>
         <button
           onClick={handleSkip}
           className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card-hover"
