@@ -108,9 +108,19 @@ export default function ChatPage() {
   const switchToProfile = () => { loadProfile(); setTab("profile"); };
 
   const handleUnmatch = async () => {
-    await supabase.from("messages").delete().eq("match_id", matchId);
-    await supabase.from("matches").delete().eq("id", matchId);
-    router.push("/matches");
+    // Delete messages first, then likes between the two profiles, then the match
+    const { error: msgErr } = await supabase.from("messages").delete().eq("match_id", matchId);
+    if (msgErr) console.error("messages delete:", msgErr);
+    if (myProfileId && other) {
+      const { error: likeErr1 } = await supabase.from("likes").delete().eq("from_profile_id", myProfileId).eq("to_profile_id", other.id);
+      if (likeErr1) console.error("likes delete 1:", likeErr1);
+      const { error: likeErr2 } = await supabase.from("likes").delete().eq("from_profile_id", other.id).eq("to_profile_id", myProfileId);
+      if (likeErr2) console.error("likes delete 2:", likeErr2);
+    }
+    const { error: matchErr } = await supabase.from("matches").delete().eq("id", matchId);
+    if (matchErr) console.error("match delete:", matchErr);
+    setShowUnmatchConfirm(false);
+    router.replace("/matches");
   };
 
   const submitReport = async () => {
