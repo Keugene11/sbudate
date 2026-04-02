@@ -57,8 +57,6 @@ export default function OnboardingPage() {
         graduation_year: gradYear ? parseInt(gradYear) : null,
         hometown: hometown || null,
         residence_hall: residenceHall || null,
-        ethnicity: ethnicity || null,
-        ethnicity_preference: ethnicityPreference.length > 0 ? ethnicityPreference : null,
       }).select().single();
       if (error) throw error;
 

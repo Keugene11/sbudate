@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Plus, X, ChevronRight } from "lucide-react";
-import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DRINKING_OPTIONS, SMOKING_OPTIONS, ETHNICITY_OPTIONS } from "@/types";
+import { GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, DRINKING_OPTIONS, SMOKING_OPTIONS } from "@/types";
 import type { Photo } from "@/types";
 import Dropdown from "@/components/Dropdown";
 
@@ -29,8 +29,6 @@ export default function EditProfilePage() {
   const [genderPreference, setGenderPreference] = useState("");
   const [drinking, setDrinking] = useState("");
   const [smoking, setSmoking] = useState("");
-  const [ethnicity, setEthnicity] = useState("");
-  const [ethnicityPreference, setEthnicityPreference] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<Photo[]>([]);
   const [newPhotos, setNewPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [prompts, setPrompts] = useState<{ id?: string; question: string; answer: string }[]>([]);
@@ -49,7 +47,6 @@ export default function EditProfilePage() {
       setMajor(p.major || ""); setGradYear(p.graduation_year ? String(p.graduation_year) : "");
       setHometown(p.hometown || ""); setResidenceHall(p.residence_hall || "");
       setDrinking(p.drinking || ""); setSmoking(p.smoking || "");
-      setEthnicity(p.ethnicity || ""); setEthnicityPreference(p.ethnicity_preference || []);
       const { data: photos } = await supabase.from("photos").select("*").eq("profile_id", p.id).order("position");
       setExistingPhotos(photos || []);
       const { data: promptData } = await supabase.from("prompts").select("*").eq("profile_id", p.id).order("position");
@@ -83,8 +80,6 @@ export default function EditProfilePage() {
         residence_hall: residenceHall || null,
         drinking: drinking || null,
         smoking: smoking || null,
-        ethnicity: ethnicity || null,
-        ethnicity_preference: ethnicityPreference.length > 0 ? ethnicityPreference : null,
       }).eq("id", profileId);
       for (let i = 0; i < newPhotos.length; i++) {
         const ext = newPhotos[i].file.name.split(".").pop();
@@ -236,37 +231,6 @@ export default function EditProfilePage() {
                 )}
                 placeholder="Select your residence..."
               />
-            </div>
-            <div>
-              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Ethnicity</label>
-              <Dropdown
-                value={ethnicity}
-                onChange={setEthnicity}
-                options={ETHNICITY_OPTIONS.map((e) => ({ value: e, label: e }))}
-                placeholder="Select your ethnicity..."
-              />
-            </div>
-            <div>
-              <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Ethnicity preference</label>
-              <div className="flex flex-wrap gap-2">
-                {ETHNICITY_OPTIONS.filter((e) => e !== "Prefer not to say").map((e) => {
-                  const selected = ethnicityPreference.includes(e);
-                  return (
-                    <button key={e} onClick={() => setEthnicityPreference((prev) =>
-                      selected ? prev.filter((x) => x !== e) : [...prev, e]
-                    )}
-                      className={`press px-3.5 py-2 rounded-full text-[13px] font-medium transition-all duration-200 ${
-                        selected ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 border border-border"}`}>
-                      {e}
-                    </button>
-                  );
-                })}
-              </div>
-              {ethnicityPreference.length > 0 && (
-                <button onClick={() => setEthnicityPreference([])} className="text-[12px] text-gray-400 mt-2 press">
-                  Clear preferences
-                </button>
-              )}
             </div>
             <div>
               <label className="text-[12px] text-gray-500 font-medium mb-1.5 block">Hometown</label>
