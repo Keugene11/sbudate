@@ -293,15 +293,16 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
         })()}
       </div>
 
-      {/* Skip button */}
-      <div className="flex justify-center pt-5 pb-8">
-        <button
-          onClick={handleSkip}
-          className="w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border"
-        >
-          <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
-        </button>
-      </div>
+      {/* Bottom spacer for fixed skip button */}
+      <div className="h-24" />
+
+      {/* Fixed skip button — bottom left */}
+      <button
+        onClick={handleSkip}
+        className="fixed bottom-[76px] left-4 z-40 w-14 h-14 rounded-full bg-surface flex items-center justify-center press border border-border shadow-card"
+      >
+        <X className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
+      </button>
 
       {/* Report modal */}
       {showReport && (
