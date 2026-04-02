@@ -22,25 +22,34 @@ export default function Dropdown({ value, onChange, options, placeholder = "Sele
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selected = options.find((o) => o.value === value);
 
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden";
-      if (searchable) setTimeout(() => searchRef.current?.focus(), 100);
-      // Scroll to selected item
+      if (searchable) setTimeout(() => searchRef.current?.focus(), 50);
       if (value && listRef.current) {
         setTimeout(() => {
           const el = listRef.current?.querySelector("[data-selected='true']");
           if (el) el.scrollIntoView({ block: "center" });
-        }, 150);
+        }, 50);
       }
     } else {
-      document.body.style.overflow = "";
       setSearch("");
     }
-    return () => { document.body.style.overflow = ""; };
   }, [open, searchable, value]);
 
   const filtered = search
@@ -61,118 +70,83 @@ export default function Dropdown({ value, onChange, options, placeholder = "Sele
   };
 
   return (
-    <>
+    <div ref={containerRef} className="relative">
       {/* Trigger */}
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen(!open)}
         className="press w-full h-[50px] bg-gray-50 rounded-xl px-4 text-[15px] outline-none border border-border flex items-center justify-between gap-2 text-left transition-all duration-200"
       >
         <span className={selected ? "text-gray-900 truncate font-medium" : "text-gray-400 truncate"}>
           {selected ? selected.label : placeholder}
         </span>
-        <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={2} />
+        <ChevronDown className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} strokeWidth={2} />
       </button>
 
-      {/* Full-screen bottom sheet */}
+      {/* Dropdown panel */}
       {open && (
-        <div className="fixed inset-0 z-[90] flex flex-col justify-end">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 animate-backdrop"
-            onClick={() => setOpen(false)}
-          />
-
-          {/* Sheet */}
-          <div className="relative z-10 bg-surface rounded-t-[20px] max-h-[85vh] flex flex-col animate-sheet-up">
-            {/* Handle + header */}
-            <div className="flex-shrink-0">
-              <div className="flex justify-center pt-3 pb-1">
-                <div className="w-10 h-[4px] rounded-full bg-gray-300" />
+        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-surface rounded-xl border border-border shadow-card overflow-hidden animate-scale-in origin-top">
+          {/* Search */}
+          {searchable && (
+            <div className="p-2.5 border-b border-border">
+              <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 h-[38px]">
+                <Search className="w-[14px] h-[14px] text-gray-400 flex-shrink-0" strokeWidth={2} />
+                <input
+                  ref={searchRef}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..."
+                  className="flex-1 bg-transparent text-[14px] outline-none placeholder:text-gray-400"
+                />
+                {search && (
+                  <button onClick={() => setSearch("")} className="press">
+                    <X className="w-3.5 h-3.5 text-gray-400" strokeWidth={2} />
+                  </button>
+                )}
               </div>
-              <div className="flex items-center justify-between px-5 py-3">
-                <h3 className="text-[17px] font-semibold text-gray-900">
-                  {placeholder?.replace("...", "").replace("Select ", "").replace("your ", "") || "Select"}
-                </h3>
-                <button onClick={() => setOpen(false)} className="press w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                  <X className="w-4 h-4 text-gray-500" strokeWidth={2} />
-                </button>
-              </div>
+            </div>
+          )}
 
-              {/* Search */}
-              {searchable && (
-                <div className="px-4 pb-3">
-                  <div className="flex items-center gap-2.5 bg-gray-100 rounded-xl px-4 h-[44px]">
-                    <Search className="w-[16px] h-[16px] text-gray-400 flex-shrink-0" strokeWidth={2} />
-                    <input
-                      ref={searchRef}
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search..."
-                      className="flex-1 bg-transparent text-[15px] outline-none placeholder:text-gray-400"
-                    />
-                    {search && (
-                      <button onClick={() => setSearch("")} className="press">
-                        <X className="w-4 h-4 text-gray-400" strokeWidth={2} />
-                      </button>
-                    )}
+          {/* Options list */}
+          <div ref={listRef} className="max-h-[240px] overflow-y-auto overscroll-contain">
+            {filtered.length === 0 && (
+              <div className="flex flex-col items-center py-8">
+                <p className="text-gray-400 text-[14px]">No results</p>
+              </div>
+            )}
+            {[...groups.entries()].map(([group, items]) => (
+              <div key={group || "__default"}>
+                {group && (
+                  <div className="sticky top-0 bg-gray-50 px-3.5 py-2 border-b border-border">
+                    <p className="text-[11px] text-gray-400 uppercase tracking-[0.08em] font-semibold">{group}</p>
                   </div>
-                </div>
-              )}
-
-              <div className="h-px bg-border" />
-            </div>
-
-            {/* Options list */}
-            <div ref={listRef} className="flex-1 overflow-y-auto overscroll-contain">
-              {filtered.length === 0 && (
-                <div className="flex flex-col items-center py-16">
-                  <p className="text-gray-400 text-[15px]">No results found</p>
-                  {search && (
-                    <button onClick={() => setSearch("")} className="press text-rose text-[14px] mt-2 font-medium">
-                      Clear search
+                )}
+                {items.map((option) => {
+                  const isSelected = option.value === value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      data-selected={isSelected || undefined}
+                      onClick={() => handleSelect(option.value)}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 text-left press transition-colors hover:bg-gray-50 ${
+                        isSelected ? "bg-gray-50" : ""
+                      }`}
+                    >
+                      <span className={`text-[14px] ${isSelected ? "text-gray-900 font-semibold" : "text-gray-700"}`}>
+                        {option.label}
+                      </span>
+                      {isSelected && (
+                        <Check className="w-4 h-4 text-gray-900 flex-shrink-0" strokeWidth={2.5} />
+                      )}
                     </button>
-                  )}
-                </div>
-              )}
-              {[...groups.entries()].map(([group, items]) => (
-                <div key={group || "__default"}>
-                  {group && (
-                    <div className="sticky top-0 bg-surface/95 glass px-5 py-2.5 border-b border-border">
-                      <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-semibold">{group}</p>
-                    </div>
-                  )}
-                  {items.map((option) => {
-                    const isSelected = option.value === value;
-                    return (
-                      <button
-                        key={option.value}
-                        type="button"
-                        data-selected={isSelected || undefined}
-                        onClick={() => handleSelect(option.value)}
-                        className={`w-full flex items-center justify-between px-5 py-3.5 text-left press transition-colors ${
-                          isSelected ? "bg-gray-50" : ""
-                        }`}
-                      >
-                        <span className={`text-[15px] ${isSelected ? "text-gray-900 font-semibold" : "text-gray-700"}`}>
-                          {option.label}
-                        </span>
-                        {isSelected && (
-                          <div className="w-6 h-6 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
-                            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-              {/* Bottom safe area */}
-              <div className="h-8" />
-            </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
