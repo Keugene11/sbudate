@@ -3,17 +3,17 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS, ETHNICITY_OPTIONS } from "@/types";
+import { PROMPT_OPTIONS, GENDER_OPTIONS, RESIDENCE_HALLS, SBU_MAJORS } from "@/types";
 import { ChevronLeft, Plus, X } from "lucide-react";
 import Dropdown from "@/components/Dropdown";
 
-type Step = "basics" | "photos" | "prompts" | "preferences";
-const STEPS: Step[] = ["basics", "photos", "prompts", "preferences"];
+type Step = "firstName" | "age" | "gender" | "height" | "major" | "gradYear" | "hometown" | "residenceHall" | "photos" | "prompts" | "preferences";
+const STEPS: Step[] = ["firstName", "age", "gender", "height", "major", "gradYear", "hometown", "residenceHall", "photos", "prompts", "preferences"];
 
 export default function OnboardingPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [step, setStep] = useState<Step>("basics");
+  const [step, setStep] = useState<Step>("firstName");
   const [loading, setLoading] = useState(false);
 
   const [firstName, setFirstName] = useState("");
@@ -32,9 +32,7 @@ export default function OnboardingPage() {
     { question: "", answer: "" },
     { question: "", answer: "" },
   ]);
-  const [ethnicity, setEthnicity] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
-  const [ethnicityPreference, setEthnicityPreference] = useState<string[]>([]);
 
   const stepIdx = STEPS.indexOf(step);
 
@@ -78,7 +76,14 @@ export default function OnboardingPage() {
 
   const canAdvance = () => {
     switch (step) {
-      case "basics": return firstName && lastName && age && gender;
+      case "firstName": return firstName && lastName;
+      case "age": return age;
+      case "gender": return gender;
+      case "height": return true; // optional
+      case "major": return true; // optional
+      case "gradYear": return true; // optional
+      case "hometown": return true; // optional
+      case "residenceHall": return true; // optional
       case "photos": return photos.length >= 2;
       case "prompts": return prompts.filter((p) => p.question && p.answer).length >= 2;
       case "preferences": return genderPreference;
@@ -104,7 +109,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* Progress bar */}
-      <div className="flex gap-1.5 px-5 mb-8">
+      <div className="flex gap-1 px-5 mb-8">
         {STEPS.map((_, i) => (
           <div key={i} className="h-[3px] rounded-full flex-1 bg-gray-200 overflow-hidden">
             <div className={`h-full rounded-full transition-all duration-500 ease-out ${
@@ -116,95 +121,109 @@ export default function OnboardingPage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 pb-32" key={step}>
-        {step === "basics" && (
+        {step === "firstName" && (
           <div className="animate-slide-up">
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2">About you</h2>
-            <p className="text-gray-400 text-[15px] mb-8">Let&apos;s get to know you</p>
-            <div className="space-y-5">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">First name</label>
-                  <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} placeholder="First" />
-                </div>
-                <div>
-                  <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Last name</label>
-                  <input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} placeholder="Last" />
-                </div>
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Age</label>
-                <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} placeholder="21" />
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Gender</label>
-                <div className="flex gap-2.5">
-                  {GENDER_OPTIONS.map((g) => (
-                    <button key={g} onClick={() => setGender(g)}
-                      className={`press flex-1 h-[50px] rounded-xl text-[14px] font-semibold transition-all duration-200 ${
-                        gender === g ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-600 border border-border"
-                      }`}>{g}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Height</label>
-                <div className="flex gap-3">
-                  <div className="flex items-center gap-1.5 flex-1">
-                    <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={inputCls} placeholder="5" />
-                    <span className="text-gray-400 text-[14px] font-medium">ft</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-1">
-                    <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={inputCls} placeholder="8" />
-                    <span className="text-gray-400 text-[14px] font-medium">in</span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Major</label>
-                <Dropdown
-                  value={major}
-                  onChange={setMajor}
-                  options={SBU_MAJORS.map((m) => ({ value: m, label: m }))}
-                  placeholder="Select your major..."
-                  searchable
-                />
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Graduation year</label>
-                <input type="number" value={gradYear} onChange={(e) => setGradYear(e.target.value)} className={inputCls} placeholder="2027" />
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Hometown</label>
-                <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" />
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Ethnicity</label>
-                <Dropdown
-                  value={ethnicity}
-                  onChange={setEthnicity}
-                  options={ETHNICITY_OPTIONS.map((e) => ({ value: e, label: e }))}
-                  placeholder="Select your ethnicity..."
-                />
-              </div>
-              <div>
-                <label className="text-[12px] text-gray-500 font-medium uppercase tracking-wide mb-1.5 block">Residence Hall</label>
-                <Dropdown
-                  value={residenceHall}
-                  onChange={setResidenceHall}
-                  options={Object.entries(RESIDENCE_HALLS).flatMap(([group, halls]) =>
-                    halls.map((h) => ({ value: h, label: h, group }))
-                  )}
-                  placeholder="Select your dorm..."
-                  searchable
-                />
-              </div>
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">What's your name?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">This is how you'll appear on SBUdate.</p>
+            <div className="space-y-4">
+              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className={inputCls} placeholder="First name" autoFocus />
+              <input value={lastName} onChange={(e) => setLastName(e.target.value)} className={inputCls} placeholder="Last name" />
             </div>
+          </div>
+        )}
+
+        {step === "age" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">How old are you?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Your age will be shown on your profile.</p>
+            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} placeholder="21" autoFocus />
+          </div>
+        )}
+
+        {step === "gender" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">I am a...</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Select your gender.</p>
+            <div className="space-y-2.5">
+              {GENDER_OPTIONS.map((g) => (
+                <button key={g} onClick={() => setGender(g)}
+                  className={`press w-full h-[56px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
+                    gender === g ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-700 border border-border"
+                  }`}>{g}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === "height" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">How tall are you?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Optional, but people love to know.</p>
+            <div className="flex gap-3 items-center">
+              <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={`${inputCls} text-center`} placeholder="5" autoFocus />
+              <span className="text-gray-400 text-[14px] font-medium">ft</span>
+              <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={`${inputCls} text-center`} placeholder="8" />
+              <span className="text-gray-400 text-[14px] font-medium">in</span>
+            </div>
+          </div>
+        )}
+
+        {step === "major" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">What's your major?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Optional. You can always change this later.</p>
+            <Dropdown
+              value={major}
+              onChange={setMajor}
+              options={SBU_MAJORS.map((m) => ({ value: m, label: m }))}
+              placeholder="Select your major..."
+              searchable
+            />
+          </div>
+        )}
+
+        {step === "gradYear" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Graduation year?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Optional. When do you graduate?</p>
+            <div className="space-y-2.5">
+              {["2025", "2026", "2027", "2028", "2029", "2030"].map((y) => (
+                <button key={y} onClick={() => setGradYear(gradYear === y ? "" : y)}
+                  className={`press w-full h-[56px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
+                    gradYear === y ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-700 border border-border"
+                  }`}>Class of {y}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === "hometown" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Where are you from?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Optional. Your hometown.</p>
+            <input value={hometown} onChange={(e) => setHometown(e.target.value)} className={inputCls} placeholder="New York, NY" autoFocus />
+          </div>
+        )}
+
+        {step === "residenceHall" && (
+          <div className="animate-slide-up">
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Where do you live?</h2>
+            <p className="text-gray-400 text-[15px] mb-8">Optional. Your residence hall on campus.</p>
+            <Dropdown
+              value={residenceHall}
+              onChange={setResidenceHall}
+              options={Object.entries(RESIDENCE_HALLS).flatMap(([group, halls]) =>
+                halls.map((h) => ({ value: h, label: h, group }))
+              )}
+              placeholder="Select your dorm..."
+              searchable
+            />
           </div>
         )}
 
         {step === "photos" && (
           <div className="animate-slide-up">
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Your photos</h2>
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Add your photos</h2>
             <p className="text-gray-400 text-[15px] mb-8">At least 2, up to 6. Show your personality.</p>
             <div className="grid grid-cols-3 gap-2.5">
               {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -238,11 +257,11 @@ export default function OnboardingPage() {
 
         {step === "prompts" && (
           <div className="animate-slide-up">
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Your prompts</h2>
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Your prompts</h2>
             <p className="text-gray-400 text-[15px] mb-8">Answer at least 2. Be creative!</p>
             <div className="space-y-4">
               {prompts.map((prompt, idx) => (
-                <div key={idx} className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-gray-100"} rounded-2xl p-5`}>
+                <div key={idx} className="bg-surface rounded-2xl border border-border p-5">
                   <Dropdown
                     value={prompt.question}
                     onChange={(v) => { const u = [...prompts]; u[idx].question = v; setPrompts(u); }}
@@ -254,7 +273,7 @@ export default function OnboardingPage() {
                       <textarea value={prompt.answer}
                         onChange={(e) => { const u = [...prompts]; u[idx].answer = e.target.value.slice(0, 225); setPrompts(u); }}
                         placeholder="Your answer..." maxLength={225} rows={3}
-                        className="w-full bg-transparent text-[18px] font-medium text-gray-900 leading-snug outline-none resize-none mt-2 placeholder:text-gray-400 placeholder:text-[14px] placeholder:font-normal" />
+                        className="w-full bg-transparent text-[18px] font-medium text-gray-900 leading-snug outline-none resize-none mt-3 placeholder:text-gray-400 placeholder:text-[14px] placeholder:font-normal" />
                       <div className="flex justify-end">
                         <span className="text-[11px] text-gray-400 tabular-nums">{prompt.answer.length}/225</span>
                       </div>
@@ -266,33 +285,17 @@ export default function OnboardingPage() {
           </div>
         )}
 
-{step === "preferences" && (
+        {step === "preferences" && (
           <div className="animate-slide-up">
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2">Show me</h2>
+            <h2 className="text-[28px] font-bold tracking-tight mb-2">Show me</h2>
             <p className="text-gray-400 text-[15px] mb-8">Who are you interested in?</p>
             <div className="space-y-2.5">
               {["Women", "Men", "Everyone"].map((p) => (
                 <button key={p} onClick={() => setGenderPreference(p)}
                   className={`press w-full h-[56px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
-                    genderPreference === p ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
+                    genderPreference === p ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-700 border border-border"
                   }`}>{p}</button>
               ))}
-            </div>
-
-            <h2 className="text-[28px] font-semibold tracking-tight mb-2 mt-10">Ethnicity preference</h2>
-            <p className="text-gray-400 text-[15px] mb-6">Select all that apply, or skip for no preference.</p>
-            <div className="space-y-2.5">
-              {ETHNICITY_OPTIONS.filter((e) => e !== "Prefer not to say").map((e) => {
-                const selected = ethnicityPreference.includes(e);
-                return (
-                  <button key={e} onClick={() => setEthnicityPreference((prev) =>
-                    selected ? prev.filter((x) => x !== e) : [...prev, e]
-                  )}
-                    className={`press w-full h-[52px] rounded-xl text-[15px] font-semibold text-left px-6 transition-all duration-200 ${
-                      selected ? "bg-gray-900 text-white animate-pill" : "bg-gray-50 text-gray-700 border border-border"
-                    }`}>{e}</button>
-                );
-              })}
             </div>
           </div>
         )}
