@@ -111,11 +111,6 @@ export default function BottomNav() {
                   </span>
                 )}
               </div>
-              <span className={`text-[9px] leading-none transition-colors ${
-                isActive ? "text-gray-900 font-medium" : "text-gray-400"
-              }`}>
-                {tab.label}
-              </span>
             </Link>
           );
         })}
