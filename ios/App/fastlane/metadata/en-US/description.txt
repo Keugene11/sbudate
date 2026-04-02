@@ -1,0 +1,19 @@
+SBUdate is a dating app built exclusively for Stony Brook University students. Designed to help you meet real people on campus, not just swipe mindlessly.
+
+HOW IT WORKS
+
+Browse profiles of verified SBU students. Like a specific photo or prompt that catches your eye. Leave a comment to stand out. When someone likes you back, you match and can start chatting.
+
+FEATURES
+
+- Prompt-based profiles: Answer fun prompts that show your personality beyond just photos
+- Specific likes: Like a particular photo or prompt answer, not just a whole profile
+- Forced engagement: To match, you have to actually respond — no silent likes
+- SBU verified: Only Stony Brook students
+- Clean, minimal design inspired by the apps you already love
+
+BUILT FOR SBU
+
+Filter by major, graduation year, residence hall, and more. Find someone in your dorm, your lecture, or across campus.
+
+Designed to be deleted.
