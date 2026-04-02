@@ -34,7 +34,7 @@ export default function DiscoverPage() {
     const fullProfiles: ProfileWithContent[] = await Promise.all(
       filtered.map(async (p) => {
         const [{ data: photos }, { data: prompts }] = await Promise.all([
-          supabase.from("photos").select("*").eq("profile_id", p.id).order("position"),
+          supabase.from("photos").select("*").eq("profile_id", p.id).order("position").limit(6),
           supabase.from("prompts").select("*").eq("profile_id", p.id).order("position"),
         ]);
         return { ...p, photos: photos || [], prompts: prompts || [] };

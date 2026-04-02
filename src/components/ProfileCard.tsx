@@ -73,10 +73,11 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
   };
 
   // Interleave photos and prompts like Hinge
+  const photos = profile.photos.slice(0, 6);
   const items: Array<{ type: "photo" | "prompt"; data: (typeof profile.photos)[0] | (typeof profile.prompts)[0] }> = [];
-  const maxLen = Math.max(profile.photos.length, profile.prompts.length);
+  const maxLen = Math.max(photos.length, profile.prompts.length);
   for (let i = 0; i < maxLen; i++) {
-    if (profile.photos[i]) items.push({ type: "photo", data: profile.photos[i] });
+    if (photos[i]) items.push({ type: "photo", data: photos[i] });
     if (profile.prompts[i]) items.push({ type: "prompt", data: profile.prompts[i] });
   }
 
