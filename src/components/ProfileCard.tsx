@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Heart, X, Target, Church, Wine, Cigarette, MoreHorizontal, Flag } from "lucide-react";
+import { Heart, X, Target, Church, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 interface ProfileCardProps {
@@ -129,9 +129,14 @@ export default function ProfileCard({ profile, onLike, onSkip }: ProfileCardProp
                       </div>
                     </div>
                     <div className="absolute bottom-5 left-5 right-16">
-                      <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
-                        {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-white text-[28px] font-semibold tracking-tight leading-none drop-shadow-sm">
+                          {profile.first_name}{profile.age ? `, ${profile.age}` : ""}
+                        </h2>
+                        <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0" title="Stony Brook Student">
+                          <GraduationCap className="w-3 h-3 text-white" strokeWidth={2.5} />
+                        </div>
+                      </div>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         {profile.major && (
                           <span className="text-white/80 text-[14px]">{profile.major}</span>
