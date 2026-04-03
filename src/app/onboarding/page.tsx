@@ -156,7 +156,7 @@ export default function OnboardingPage() {
           <div className="animate-slide-up">
             <h2 className="text-[28px] font-bold tracking-tight mb-2">How tall are you?</h2>
             <p className="text-gray-400 text-[15px] mb-8">Optional, but people love to know.</p>
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-3 items-center max-w-[240px]">
               <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={`${inputCls} text-center`} placeholder="5" autoFocus />
               <span className="text-gray-400 text-[14px] font-medium">ft</span>
               <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={`${inputCls} text-center`} placeholder="8" />
