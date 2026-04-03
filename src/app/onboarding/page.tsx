@@ -97,6 +97,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="h-full flex flex-col bg-surface">
+     <div className="flex flex-col flex-1 w-full max-w-lg mx-auto overflow-hidden">
       {/* Header */}
       <div className="flex items-center px-4 h-[56px] flex-shrink-0">
         {stepIdx > 0 ? (
@@ -298,6 +299,7 @@ export default function OnboardingPage() {
         )}
       </div>
 
+     </div>
       {/* CTA */}
       <div className="fixed bottom-0 left-0 right-0 px-6 pb-10 pt-6 bg-gradient-to-t from-surface via-surface to-transparent">
         <div className="max-w-lg mx-auto">
