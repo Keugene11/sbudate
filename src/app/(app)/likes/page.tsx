@@ -34,13 +34,17 @@ export default function LikesPage() {
     setMyPhotos(photos || []); setMyPrompts(prompts || []);
     const { data: matches } = await supabase.from("matches").select("profile1_id, profile2_id").or(`profile1_id.eq.${myProfile.id},profile2_id.eq.${myProfile.id}`);
     const matchedIds = new Set(matches?.flatMap((m) => m.profile1_id === myProfile.id ? [m.profile2_id] : [m.profile1_id]) || []);
-    const { data: incomingLikes } = await supabase.from("likes").select("id, comment, content_type, content_id, created_at, from_profile_id").eq("to_profile_id", myProfile.id).order("created_at", { ascending: false });
+    const { data: incomingLikes } = await supabase.from("likes").select("id, comment, content_type, content_id, created_at, from_profile_id, status").eq("to_profile_id", myProfile.id).order("created_at", { ascending: false });
     if (!incomingLikes) { setLoading(false); return; }
     const enriched: IncomingLike[] = [];
     for (const like of incomingLikes.filter((l) => !matchedIds.has(l.from_profile_id))) {
       const { data: profile } = await supabase.from("profiles").select("id, first_name, age, major, is_premium").eq("id", like.from_profile_id).single();
       const { data: theirPhotos } = await supabase.from("photos").select("url").eq("profile_id", like.from_profile_id).order("position").limit(1);
-      if (profile) enriched.push({ ...like, from_profile: { ...profile, is_premium: profile.is_premium || false, photo_url: theirPhotos?.[0]?.url || null } });
+      if (profile) {
+        // Hide comment if not yet approved
+        const visibleComment = like.status === "approved" ? like.comment : null;
+        enriched.push({ ...like, comment: visibleComment, from_profile: { ...profile, is_premium: profile.is_premium || false, photo_url: theirPhotos?.[0]?.url || null } });
+      }
     }
     setLikes(enriched); setLoading(false);
   }, [supabase]);
@@ -60,7 +64,7 @@ export default function LikesPage() {
 
   const handleMatch = async (message?: string) => {
     if (!myProfileId || !viewing) return;
-    await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: viewing.from_profile_id, content_type: "photo", content_id: "like-back" });
+    await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: viewing.from_profile_id, content_type: "photo", content_id: "like-back", status: "approved" });
     const { data: match } = await supabase.from("matches").insert({ profile1_id: myProfileId, profile2_id: viewing.from_profile_id }).select().single();
     if (message && match) {
       const { data: msg } = await supabase.from("messages").insert({ match_id: match.id, sender_id: myProfileId, content: message }).select().single();

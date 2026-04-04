@@ -58,7 +58,16 @@ export default function DiscoverPage() {
   const handleLike = async (contentType: "photo" | "prompt", contentId: string, comment?: string) => {
     if (!myProfileId || !profiles[currentIndex]) return;
     const likedProfile = profiles[currentIndex];
-    await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: likedProfile.id, content_type: contentType, content_id: contentId, comment: comment || null });
+    const hasComment = !!comment?.trim();
+    const { data: likeData } = await supabase.from("likes").insert({
+      from_profile_id: myProfileId, to_profile_id: likedProfile.id,
+      content_type: contentType, content_id: contentId,
+      comment: comment || null,
+      status: hasComment ? "pending" : "approved",
+    }).select().single();
+    if (hasComment && likeData) {
+      fetch("/api/notify-like", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ likeId: likeData.id }) }).catch(() => {});
+    }
     const { data: mutualLike } = await supabase.from("likes").select("id").eq("from_profile_id", likedProfile.id).eq("to_profile_id", myProfileId).limit(1);
     if (mutualLike && mutualLike.length > 0) {
       const { data: match } = await supabase.from("matches").insert({ profile1_id: myProfileId, profile2_id: likedProfile.id }).select().single();
