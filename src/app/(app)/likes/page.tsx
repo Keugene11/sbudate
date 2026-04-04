@@ -62,7 +62,10 @@ export default function LikesPage() {
     if (!myProfileId || !viewing) return;
     await supabase.from("likes").insert({ from_profile_id: myProfileId, to_profile_id: viewing.from_profile_id, content_type: "photo", content_id: "like-back" });
     const { data: match } = await supabase.from("matches").insert({ profile1_id: myProfileId, profile2_id: viewing.from_profile_id }).select().single();
-    if (message && match) await supabase.from("messages").insert({ match_id: match.id, sender_id: myProfileId, content: message });
+    if (message && match) {
+      const { data: msg } = await supabase.from("messages").insert({ match_id: match.id, sender_id: myProfileId, content: message }).select().single();
+      if (msg) fetch("/api/notify-message", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messageId: msg.id }) }).catch(() => {});
+    }
     setLikes((prev) => prev.filter((l) => l.id !== viewing.id));
     setViewing(null); setViewingProfile(null); setReply("");
   };

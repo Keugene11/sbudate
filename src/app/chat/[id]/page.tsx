@@ -51,6 +51,7 @@ export default function ChatPage() {
   const [reportDetails, setReportDetails] = useState("");
   const [reportSent, setReportSent] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const myProfileIdRef = useRef<string | null>(null);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -58,8 +59,12 @@ export default function ChatPage() {
 
   const fetchMessages = useCallback(async () => {
     const { data } = await supabase.from("messages").select("*").eq("match_id", matchId).order("created_at", { ascending: true });
-    if (data) setMessages(data);
-  }, [supabase, matchId]);
+    if (!data) return;
+    // Sender sees all their own messages; recipient only sees approved
+    const pid = myProfileId;
+    const filtered = pid ? data.filter((m) => m.sender_id === pid || m.status === "approved") : data;
+    setMessages(filtered);
+  }, [supabase, matchId, myProfileId]);
 
   useEffect(() => {
     const init = async () => {
@@ -68,6 +73,7 @@ export default function ChatPage() {
       const { data: myProfile } = await supabase.from("profiles").select("id").eq("user_id", user.id).single();
       if (!myProfile) return;
       setMyProfileId(myProfile.id);
+      myProfileIdRef.current = myProfile.id;
       const { data: match } = await supabase.from("matches").select("*").eq("id", matchId).single();
       if (!match) return;
       const otherId = match.profile1_id === myProfile.id ? match.profile2_id : match.profile1_id;
@@ -83,8 +89,13 @@ export default function ChatPage() {
     const channel = supabase.channel(`chat-${matchId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` },
         (payload) => {
-          const newMsg = payload.new as ChatMessage;
-          setMessages((prev) => prev.some((m) => m.id === newMsg.id) ? prev : [...prev, newMsg]);
+          const newMsg = payload.new as ChatMessage & { status?: string };
+          // Only show if it's my own message or approved
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            if (newMsg.sender_id !== myProfileIdRef.current && newMsg.status !== "approved") return prev;
+            return [...prev, newMsg as ChatMessage];
+          });
         }
       ).subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -137,8 +148,17 @@ export default function ChatPage() {
     const optimisticId = `temp-${Date.now()}`;
     setMessages((prev) => [...prev, { id: optimisticId, sender_id: myProfileId, content, created_at: new Date().toISOString() } as ChatMessage]);
     const { data, error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: myProfileId, content }).select().single();
-    if (data) setMessages((prev) => prev.map((m) => m.id === optimisticId ? data : m));
-    else if (error) setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
+    if (data) {
+      setMessages((prev) => prev.map((m) => m.id === optimisticId ? data : m));
+      // Notify admin for review (fire-and-forget)
+      fetch("/api/notify-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageId: data.id }),
+      }).catch(() => {});
+    } else if (error) {
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
+    }
   };
 
   if (loading) return (
