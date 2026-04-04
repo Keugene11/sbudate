@@ -76,7 +76,7 @@ export default function LikesPage() {
 
   const handleDismiss = async () => {
     if (!viewing) return;
-    await supabase.from("likes").delete().eq("id", viewing.id);
+    await fetch("/api/dismiss-like", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ likeId: viewing.id }) });
     setLikes((prev) => prev.filter((l) => l.id !== viewing.id));
     setViewing(null); setViewingProfile(null); setReply("");
   };
