@@ -18,6 +18,7 @@ export interface Profile {
   drinking: string | null;
   smoking: string | null;
   is_paused: boolean;
+  status: "pending" | "approved" | "rejected";
   created_at: string;
   updated_at: string;
 }

@@ -40,8 +40,20 @@ export async function GET(request: Request) {
     return NextResponse.json(enriched);
   }
 
+  if (action === "pending") {
+    const { data: profiles } = await admin.from("profiles").select("id, user_id, first_name, last_name, age, gender, major, graduation_year, hometown, residence_hall, created_at").eq("status", "pending").order("created_at", { ascending: false }).limit(100);
+    // Enrich with photos
+    const enriched = [];
+    for (const profile of profiles || []) {
+      const { data: photos } = await admin.from("photos").select("url, position").eq("profile_id", profile.id).order("position").limit(6);
+      const { data: prompts } = await admin.from("prompts").select("question, answer, position").eq("profile_id", profile.id).order("position");
+      enriched.push({ ...profile, photos: photos || [], prompts: prompts || [] });
+    }
+    return NextResponse.json(enriched);
+  }
+
   if (action === "users") {
-    const { data: profiles } = await admin.from("profiles").select("id, first_name, last_name, age, gender, major, created_at").order("created_at", { ascending: false }).limit(100);
+    const { data: profiles } = await admin.from("profiles").select("id, first_name, last_name, age, gender, major, status, created_at").order("created_at", { ascending: false }).limit(100);
     return NextResponse.json(profiles || []);
   }
 
@@ -77,7 +89,7 @@ export async function POST(request: Request) {
   const user = await getAdmin();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { action, profileId, reportId } = await request.json();
+  const { action, profileId, reportId, status } = await request.json();
   const admin = getAdminClient();
 
   if (action === "deleteUser") {
@@ -90,6 +102,11 @@ export async function POST(request: Request) {
     await admin.from("reports").delete().eq("reporter_profile_id", profileId);
     await admin.from("reports").delete().eq("reported_profile_id", profileId);
     await admin.from("profiles").delete().eq("id", profileId);
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === "updateStatus") {
+    await admin.from("profiles").update({ status }).eq("id", profileId);
     return NextResponse.json({ success: true });
   }
 

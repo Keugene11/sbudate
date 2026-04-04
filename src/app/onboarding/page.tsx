@@ -55,6 +55,7 @@ export default function OnboardingPage() {
         graduation_year: gradYear ? parseInt(gradYear) : null,
         hometown: hometown || null,
         residence_hall: residenceHall || null,
+        status: "pending",
       }).select().single();
       if (error) throw error;
 
@@ -70,7 +71,15 @@ export default function OnboardingPage() {
       for (let i = 0; i < valid.length; i++) {
         await supabase.from("prompts").insert({ profile_id: profile.id, question: valid[i].question, answer: valid[i].answer, position: i });
       }
-      router.push("/discover");
+
+      // Notify admin of new profile for review
+      fetch("/api/notify-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId: profile.id }),
+      }).catch(() => {}); // fire-and-forget
+
+      router.push("/pending");
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 

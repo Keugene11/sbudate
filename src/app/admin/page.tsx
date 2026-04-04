@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Users, MessageCircle, Flag, Trash2, X, ChevronRight, ChevronLeft } from "lucide-react";
+import { Shield, Users, MessageCircle, Flag, Trash2, X, ChevronRight, ChevronLeft, Clock, Check } from "lucide-react";
 
-type Tab = "reports" | "users" | "messages";
+type Tab = "pending" | "reports" | "users" | "messages";
 
 interface Report {
   id: string; reporter_profile_id: string; reported_profile_id: string;
@@ -22,13 +22,23 @@ interface Message {
   id: string; match_id: string; sender_id: string; content: string; created_at: string;
 }
 
+interface PendingProfile {
+  id: string; first_name: string; last_name: string; age: number;
+  gender: string; major: string | null; graduation_year: number | null;
+  hometown: string | null; residence_hall: string | null; created_at: string;
+  photos: { url: string; position: number }[];
+  prompts: { question: string; answer: string; position: number }[];
+}
+
 export default function AdminPage() {
-  const [tab, setTab] = useState<Tab>("reports");
+  const [tab, setTab] = useState<Tab>("pending");
   const [reports, setReports] = useState<Report[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState<PendingProfile[]>([]);
+  const [viewingPending, setViewingPending] = useState<PendingProfile | null>(null);
   const [viewingMatch, setViewingMatch] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +50,7 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin?action=${t}`);
       if (!res.ok) { setError("Unauthorized — admin only"); setLoading(false); return; }
       const data = await res.json();
+      if (t === "pending") setPending(data);
       if (t === "reports") setReports(data);
       if (t === "users") setUsers(data);
       if (t === "messages") setMatches(data);
@@ -65,6 +76,16 @@ export default function AdminPage() {
       body: JSON.stringify({ action: "deleteUser", profileId }),
     });
     fetchData(tab);
+  };
+
+  const updateProfileStatus = async (profileId: string, status: "approved" | "rejected") => {
+    await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "updateStatus", profileId, status }),
+    });
+    setPending(prev => prev.filter(p => p.id !== profileId));
+    if (viewingPending?.id === profileId) setViewingPending(null);
   };
 
   const dismissReport = async (reportId: string) => {
@@ -97,13 +118,14 @@ export default function AdminPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {([
+              { key: "pending", label: "Pending", icon: Clock },
               { key: "reports", label: "Reports", icon: Flag },
               { key: "users", label: "Users", icon: Users },
               { key: "messages", label: "Messages", icon: MessageCircle },
             ] as const).map(t => (
-              <button key={t.key} onClick={() => { setTab(t.key); setViewingMatch(null); }}
+              <button key={t.key} onClick={() => { setTab(t.key); setViewingMatch(null); setViewingPending(null); }}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-medium press transition-all ${
                   tab === t.key ? "bg-gray-900 text-white" : "bg-surface text-gray-500 border border-border"
                 }`}>
@@ -122,6 +144,82 @@ export default function AdminPage() {
             </div>
           ) : (
             <>
+              {/* Pending */}
+              {tab === "pending" && !viewingPending && (
+                <div className="space-y-3">
+                  {pending.length === 0 ? (
+                    <p className="text-center text-gray-400 py-16 text-[15px]">No pending profiles</p>
+                  ) : pending.map(profile => (
+                    <button key={profile.id} onClick={() => setViewingPending(profile)}
+                      className="w-full bg-surface border border-border rounded-2xl p-5 text-left press hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        {profile.photos[0] ? (
+                          <img src={profile.photos[0].url} alt="" className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                        ) : <div className="w-14 h-14 rounded-xl bg-gray-200 flex-shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[15px] font-semibold text-gray-900">{profile.first_name}, {profile.age}</p>
+                          <p className="text-[12px] text-gray-400">{profile.gender}{profile.major ? ` · ${profile.major}` : ""}</p>
+                          <p className="text-[11px] text-gray-300 mt-0.5">{new Date(profile.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" strokeWidth={2} />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {tab === "pending" && viewingPending && (
+                <div>
+                  <button onClick={() => setViewingPending(null)} className="flex items-center gap-1 text-[14px] text-gray-400 mb-4 press">
+                    <ChevronLeft className="w-4 h-4" /> Back to pending
+                  </button>
+
+                  {/* Profile details */}
+                  <div className="space-y-3 mb-6">
+                    {/* Photos */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {viewingPending.photos.map((photo, i) => (
+                        <div key={i} className="aspect-square rounded-xl overflow-hidden">
+                          <img src={photo.url} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Info */}
+                    <div className="bg-surface border border-border rounded-2xl p-5">
+                      <p className="text-[18px] font-semibold text-gray-900 mb-1">{viewingPending.first_name}, {viewingPending.age}</p>
+                      <p className="text-[14px] text-gray-500">
+                        {viewingPending.gender}
+                        {viewingPending.major ? ` · ${viewingPending.major}` : ""}
+                        {viewingPending.graduation_year ? ` · Class of ${viewingPending.graduation_year}` : ""}
+                      </p>
+                      {viewingPending.hometown && <p className="text-[13px] text-gray-400 mt-1">From {viewingPending.hometown}</p>}
+                      {viewingPending.residence_hall && <p className="text-[13px] text-gray-400">Lives in {viewingPending.residence_hall}</p>}
+                    </div>
+
+                    {/* Prompts */}
+                    {viewingPending.prompts.map((prompt, i) => (
+                      <div key={i} className="bg-gray-50 rounded-2xl px-5 py-4">
+                        <p className="text-[12px] text-gray-400 uppercase tracking-[0.08em] font-medium mb-2">{prompt.question}</p>
+                        <p className="text-[16px] text-gray-900 font-medium leading-snug">{prompt.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button onClick={() => updateProfileStatus(viewingPending.id, "approved")}
+                      className="press flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-2xl text-[14px] font-semibold">
+                      <Check className="w-4 h-4" strokeWidth={2.5} /> Approve
+                    </button>
+                    <button onClick={() => updateProfileStatus(viewingPending.id, "rejected")}
+                      className="press flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-500 rounded-2xl text-[14px] font-semibold">
+                      <X className="w-4 h-4" strokeWidth={2.5} /> Reject
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Reports */}
               {tab === "reports" && (
                 <div className="space-y-3">
