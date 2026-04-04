@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Clock } from "lucide-react";
+import { Clock, LogOut } from "lucide-react";
 
 export default function PendingPage() {
   const supabase = createClient();
@@ -62,6 +62,13 @@ export default function PendingPage() {
           className="press px-6 py-3 bg-gray-900 text-white rounded-2xl text-[15px] font-semibold"
         >
           {checking ? "Checking..." : "Check status"}
+        </button>
+        <button
+          onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }}
+          className="press flex items-center justify-center gap-2 mt-4 px-6 py-3 text-gray-400 text-[14px] font-medium"
+        >
+          <LogOut className="w-4 h-4" strokeWidth={1.8} />
+          Log out
         </button>
       </div>
     </div>
