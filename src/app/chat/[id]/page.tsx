@@ -57,14 +57,14 @@ export default function ChatPage() {
     setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   }, []);
 
-  const fetchMessages = useCallback(async () => {
+  const fetchMessages = useCallback(async (profileId?: string) => {
     const { data } = await supabase.from("messages").select("*").eq("match_id", matchId).order("created_at", { ascending: true });
     if (!data) return;
     // Sender sees all their own messages; recipient only sees approved
-    const pid = myProfileId;
+    const pid = profileId || myProfileIdRef.current;
     const filtered = pid ? data.filter((m) => m.sender_id === pid || m.status === "approved") : data;
     setMessages(filtered);
-  }, [supabase, matchId, myProfileId]);
+  }, [supabase, matchId]);
 
   useEffect(() => {
     const init = async () => {
@@ -80,8 +80,8 @@ export default function ChatPage() {
       const { data: op } = await supabase.from("profiles").select("first_name").eq("id", otherId).single();
       const { data: photos } = await supabase.from("photos").select("url").eq("profile_id", otherId).order("position").limit(1);
       setOther({ id: otherId, first_name: op?.first_name || "Match", photo_url: photos?.[0]?.url || null });
-      await supabase.from("messages").update({ read: true }).eq("match_id", matchId).neq("sender_id", myProfile.id);
-      await fetchMessages();
+      await supabase.from("messages").update({ read: true }).eq("match_id", matchId).neq("sender_id", myProfile.id).eq("status", "approved");
+      await fetchMessages(myProfile.id);
       setLoading(false);
     };
     init();
