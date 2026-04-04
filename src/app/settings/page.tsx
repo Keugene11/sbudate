@@ -39,15 +39,11 @@ export default function SettingsPage() {
   const handleDelete = async () => {
     if (!profileId) return;
     setDeleting(true);
-    // Delete all user data
-    await supabase.from("messages").delete().or(`sender_id.eq.${profileId}`);
-    await supabase.from("likes").delete().or(`from_profile_id.eq.${profileId},to_profile_id.eq.${profileId}`);
-    await supabase.from("matches").delete().or(`profile1_id.eq.${profileId},profile2_id.eq.${profileId}`);
-    await supabase.from("skips").delete().or(`from_profile_id.eq.${profileId},to_profile_id.eq.${profileId}`);
-    await supabase.from("prompts").delete().eq("profile_id", profileId);
-    await supabase.from("photos").delete().eq("profile_id", profileId);
-    await supabase.from("reports").delete().eq("reporter_profile_id", profileId);
-    await supabase.from("profiles").delete().eq("id", profileId);
+    await fetch("/api/delete-account", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profileId }),
+    });
     await supabase.auth.signOut();
     router.push("/login");
   };
