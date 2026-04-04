@@ -18,6 +18,8 @@ export interface Profile {
   drinking: string | null;
   smoking: string | null;
   is_paused: boolean;
+  is_premium: boolean;
+  stripe_customer_id: string | null;
   status: "pending" | "approved" | "rejected";
   created_at: string;
   updated_at: string;

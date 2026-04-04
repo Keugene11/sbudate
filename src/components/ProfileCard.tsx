@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap, Cake, User, Ruler, Calendar, Briefcase, Home, Globe } from "lucide-react";
+import { Heart, X, Wine, Cigarette, MoreHorizontal, Flag, GraduationCap, Cake, User, Ruler, Calendar, Briefcase, Home, Globe, BadgeCheck } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 import { REPORT_REASONS } from "@/types";
 import { createClient } from "@/lib/supabase/client";
@@ -87,7 +87,10 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
     <div className={`${exiting ? "animate-profile-exit" : "animate-profile-enter"} ${likeSent ? "animate-like-flash" : ""}`}>
       {/* Name header — Hinge style */}
       <div className="flex items-center justify-between px-5 pt-1 pb-2">
-        <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</h2>
+          {profile.is_premium && <BadgeCheck className="w-5 h-5 text-gray-900" strokeWidth={2} fill="currentColor" />}
+        </div>
         <div className="flex items-center gap-1">
           <button
             onClick={handleSkip}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Settings, LogOut, ChevronRight, Pencil, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe } from "lucide-react";
+import { Settings, LogOut, ChevronRight, Pencil, Wine, Cigarette, Cake, User, Ruler, GraduationCap, Home, Building, Globe, BadgeCheck, Sparkles } from "lucide-react";
 import type { ProfileWithContent } from "@/types";
 
 export default function ProfilePage() {
@@ -83,8 +83,28 @@ export default function ProfilePage() {
             <Pencil className="w-3.5 h-3.5 text-white" strokeWidth={2} />
           </button>
         </div>
-        <p className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-[20px] font-semibold text-gray-900 tracking-tight">{profile.first_name}</p>
+          {profile.is_premium && <BadgeCheck className="w-5 h-5 text-gray-900" strokeWidth={2} fill="currentColor" />}
+        </div>
       </div>
+
+      {/* Premium upsell */}
+      {!profile.is_premium && (
+        <button
+          onClick={() => router.push("/premium")}
+          className="mx-5 mb-4 px-5 py-3.5 bg-gray-900 rounded-2xl flex items-center gap-3 press text-left"
+        >
+          <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-semibold text-white">Get Premium</p>
+            <p className="text-[12px] text-gray-400 mt-0.5">Get a verified badge on your profile</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" strokeWidth={2} />
+        </button>
+      )}
 
       {/* Profile completeness prompt */}
       {(() => {

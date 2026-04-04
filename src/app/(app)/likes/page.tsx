@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Heart, MessageCircle, X, Send, ChevronLeft } from "lucide-react";
+import { Heart, MessageCircle, X, Send, ChevronLeft, BadgeCheck } from "lucide-react";
 import type { ProfileWithContent, Photo, Prompt } from "@/types";
 
 interface IncomingLike {
   id: string; comment: string | null; content_type: string; content_id: string; from_profile_id: string;
-  from_profile: { id: string; first_name: string; age: number; major: string | null; photo_url: string | null; };
+  from_profile: { id: string; first_name: string; age: number; major: string | null; photo_url: string | null; is_premium: boolean; };
 }
 
 export default function LikesPage() {
@@ -38,9 +38,9 @@ export default function LikesPage() {
     if (!incomingLikes) { setLoading(false); return; }
     const enriched: IncomingLike[] = [];
     for (const like of incomingLikes.filter((l) => !matchedIds.has(l.from_profile_id))) {
-      const { data: profile } = await supabase.from("profiles").select("id, first_name, age, major").eq("id", like.from_profile_id).single();
+      const { data: profile } = await supabase.from("profiles").select("id, first_name, age, major, is_premium").eq("id", like.from_profile_id).single();
       const { data: theirPhotos } = await supabase.from("photos").select("url").eq("profile_id", like.from_profile_id).order("position").limit(1);
-      if (profile) enriched.push({ ...like, from_profile: { ...profile, photo_url: theirPhotos?.[0]?.url || null } });
+      if (profile) enriched.push({ ...like, from_profile: { ...profile, is_premium: profile.is_premium || false, photo_url: theirPhotos?.[0]?.url || null } });
     }
     setLikes(enriched); setLoading(false);
   }, [supabase]);
@@ -101,7 +101,10 @@ export default function LikesPage() {
               <img src={viewing.from_profile.photo_url} alt="" className="w-12 h-12 rounded-full object-cover" />
             ) : <div className="w-12 h-12 rounded-full bg-gray-200" />}
             <div>
-              <p className="text-[17px] font-semibold text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[17px] font-semibold text-gray-900">{viewing.from_profile.first_name}, {viewing.from_profile.age}</p>
+                {viewing.from_profile.is_premium && <BadgeCheck className="w-4.5 h-4.5 text-gray-900" strokeWidth={2} fill="currentColor" />}
+              </div>
               <div className="flex items-center gap-1.5">
                 <Heart className="w-3.5 h-3.5 text-rose" fill="currentColor" strokeWidth={0} />
                 <span className="text-[13px] text-gray-400 font-medium">
