@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   if (!profile) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
 
   if (!process.env.RESEND_API_KEY) {
     console.warn("RESEND_API_KEY not set — skipping email notification");
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   try {
     await resend.emails.send({
-      from: "SBUdate <notifications@send.sbudate.com>",
+      from: "SBUdate <onboarding@resend.dev>",
       to: "keugenelee11@gmail.com",
       subject: `New profile to review: ${profile.first_name}`,
       html: `
