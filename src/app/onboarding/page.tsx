@@ -90,9 +90,13 @@ export default function OnboardingPage() {
   const canAdvance = () => {
     switch (step) {
       case "firstName": return firstName;
-      case "age": return age;
+      case "age": { const a = parseInt(age); return age && a >= 17 && a <= 100; }
       case "gender": return gender;
-      case "height": return true; // optional
+      case "height": {
+        if (!heightFeet && !heightInches) return true; // optional
+        const f = parseInt(heightFeet); const i = parseInt(heightInches);
+        return (!heightFeet || (f >= 3 && f <= 8)) && (!heightInches || (i >= 0 && i <= 11));
+      }
       case "major": return true; // optional
       case "gradYear": return true; // optional
       case "hometown": return true; // optional
@@ -147,7 +151,7 @@ export default function OnboardingPage() {
           <div className="animate-slide-up">
             <h2 className="text-[28px] font-bold tracking-tight mb-2">How old are you?</h2>
             <p className="text-gray-400 text-[15px] mb-8">Your age will be shown on your profile.</p>
-            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className={inputCls} placeholder="21" autoFocus />
+            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} min={17} max={100} className={inputCls} placeholder="21" autoFocus />
           </div>
         )}
 
@@ -171,9 +175,9 @@ export default function OnboardingPage() {
             <h2 className="text-[28px] font-bold tracking-tight mb-2">How tall are you?</h2>
             <p className="text-gray-400 text-[15px] mb-8">Optional, but people love to know.</p>
             <div className="flex gap-3 items-center max-w-[240px]">
-              <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} className={`${inputCls} text-center`} placeholder="5" autoFocus />
+              <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} min={3} max={8} className={`${inputCls} text-center`} placeholder="5" autoFocus />
               <span className="text-gray-400 text-[14px] font-medium">ft</span>
-              <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} className={`${inputCls} text-center`} placeholder="8" />
+              <input type="number" value={heightInches} onChange={(e) => setHeightInches(e.target.value)} min={0} max={11} className={`${inputCls} text-center`} placeholder="8" />
               <span className="text-gray-400 text-[14px] font-medium">in</span>
             </div>
           </div>
