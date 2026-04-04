@@ -94,9 +94,9 @@ export default function OnboardingPage() {
       case "age": { const a = parseInt(age); return age && a >= 17 && a <= 100; }
       case "gender": return gender;
       case "height": {
-        if (!heightFeet && !heightInches) return true; // optional
+        if (!heightFeet || !heightInches) return false;
         const f = parseInt(heightFeet); const i = parseInt(heightInches);
-        return (!heightFeet || (f >= 3 && f <= 8)) && (!heightInches || (i >= 0 && i <= 11));
+        return f >= 3 && f <= 8 && i >= 0 && i <= 11;
       }
       case "major": return true; // optional
       case "gradYear": return true; // optional
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
         {step === "height" && (
           <div className="animate-slide-up">
             <h2 className="text-[28px] font-bold tracking-tight mb-2">How tall are you?</h2>
-            <p className="text-gray-400 text-[15px] mb-8">Optional, but people love to know.</p>
+            <p className="text-gray-400 text-[15px] mb-8">How tall are you?</p>
             <div className="flex gap-3 items-center max-w-[240px]">
               <input type="number" value={heightFeet} onChange={(e) => setHeightFeet(e.target.value)} min={3} max={8} className={`${inputCls} text-center`} placeholder="5" autoFocus />
               <span className="text-gray-400 text-[14px] font-medium">ft</span>
