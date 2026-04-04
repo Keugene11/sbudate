@@ -81,9 +81,10 @@ export default function OnboardingPage() {
       }).catch(() => {}); // fire-and-forget
 
       router.push("/pending");
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      const msg = err && typeof err === "object" && "message" in err ? (err as { message: string }).message : JSON.stringify(err);
+      alert("Error: " + msg);
     } finally { setLoading(false); }
   };
 
