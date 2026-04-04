@@ -1,7 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 export async function POST(request: Request) {
   const serverSupabase = await createServerClient();
@@ -35,11 +45,6 @@ export async function POST(request: Request) {
     .eq("profile_id", profileId)
     .order("position");
 
-  if (!process.env.RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY not set — skipping email notification");
-    return NextResponse.json({ success: true });
-  }
-
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
   const token = process.env.ADMIN_REVIEW_SECRET;
   const approveUrl = `${appUrl}/api/admin/review?token=${token}&id=${profileId}&action=approve`;
@@ -72,32 +77,18 @@ export async function POST(request: Request) {
     </div>`
   ).join("");
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
   try {
-    await resend.emails.send({
-      from: "SBUdate <onboarding@resend.dev>",
+    await transporter.sendMail({
+      from: `SBUdate <${process.env.GMAIL_USER}>`,
       to: "keugenelee11@gmail.com",
       subject: `Review: ${profile.first_name}, ${profile.age}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 16px; background: #fff;">
-
-          <!-- Header -->
           <p style="font-size: 13px; color: #999; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin: 0 0 20px;">New Profile to Review</p>
-
-          <!-- Name & Details -->
           <h1 style="font-size: 26px; font-weight: 700; color: #111; margin: 0 0 6px;">${profile.first_name}, ${profile.age}</h1>
           <p style="font-size: 14px; color: #666; margin: 0 0 24px; line-height: 1.5;">${detailParts.join(" · ")}</p>
-
-          <!-- Photos -->
           ${photosHtml}
-
-          <!-- Prompts -->
-          <div style="margin-top: 16px;">
-            ${promptsHtml}
-          </div>
-
-          <!-- Action Buttons -->
+          <div style="margin-top: 16px;">${promptsHtml}</div>
           <div style="margin-top: 28px;">
             <a href="${approveUrl}" style="display: inline-block; background: #111; color: #fff; padding: 14px 32px; border-radius: 14px; text-decoration: none; font-size: 15px; font-weight: 600; margin-right: 10px;">
               ✓&nbsp; Approve
@@ -106,7 +97,6 @@ export async function POST(request: Request) {
               ✕&nbsp; Reject
             </a>
           </div>
-
           <p style="font-size: 12px; color: #ccc; margin-top: 32px;">SBUdate Admin · <a href="${appUrl}/admin" style="color: #999;">Open Dashboard</a></p>
         </div>
       `,
