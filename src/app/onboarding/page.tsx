@@ -45,7 +45,7 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) { alert("Session expired. Please log in again."); router.push("/login"); return; }
       const totalInches = heightFeet && heightInches ? parseInt(heightFeet) * 12 + parseInt(heightInches) : null;
 
       const { data: profile, error } = await supabase.from("profiles").insert({
@@ -62,7 +62,8 @@ export default function OnboardingPage() {
       for (let i = 0; i < photos.length; i++) {
         const ext = photos[i].file.name.split(".").pop();
         const path = `${user.id}/${profile.id}/${i}.${ext}`;
-        await supabase.storage.from("photos").upload(path, photos[i].file);
+        const { error: uploadErr } = await supabase.storage.from("photos").upload(path, photos[i].file);
+        if (uploadErr) throw uploadErr;
         const { data: { publicUrl } } = supabase.storage.from("photos").getPublicUrl(path);
         await supabase.from("photos").insert({ profile_id: profile.id, url: publicUrl, position: i });
       }
