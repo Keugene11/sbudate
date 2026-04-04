@@ -35,7 +35,7 @@ export default function BottomNav() {
       if (matchData) {
         let unread = 0;
         for (const match of matchData) {
-          const { data: msgs } = await supabase.from("messages").select("id").eq("match_id", match.id).neq("sender_id", profile.id).eq("read", false);
+          const { data: msgs } = await supabase.from("messages").select("id").eq("match_id", match.id).neq("sender_id", profile.id).eq("read", false).eq("status", "approved");
           if (msgs && msgs.length > 0) unread++;
         }
         setUnreadCount(unread);
