@@ -92,12 +92,6 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
           {profile.is_premium && <BadgeCheck className="w-5 h-5 text-gray-900" strokeWidth={2} fill="currentColor" />}
         </div>
         <div className="flex items-center gap-1">
-          <button
-            onClick={handleSkip}
-            className="w-8 h-8 rounded-full flex items-center justify-center press hover:bg-gray-100 transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-400" strokeWidth={2} />
-          </button>
           <div className="relative">
           <button
             onClick={() => setShowMore(!showMore)}
