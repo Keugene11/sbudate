@@ -70,13 +70,13 @@ export default function DiscoverPage() {
         });
       }
     }
-    setCurrentIndex((prev) => prev + 1 >= profiles.length ? 0 : prev + 1);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const handleSkip = async () => {
     if (!myProfileId || !profiles[currentIndex]) return;
     await supabase.from("skips").insert({ from_profile_id: myProfileId, to_profile_id: profiles[currentIndex].id });
-    setCurrentIndex((prev) => prev + 1 >= profiles.length ? 0 : prev + 1);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   if (loading) return (
@@ -89,9 +89,9 @@ export default function DiscoverPage() {
     </div>
   );
 
-  if (profiles.length === 0) return (
+  if (profiles.length === 0 || currentIndex >= profiles.length) return (
     <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-[75vh] px-10 text-center">
-      <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">No profiles yet</p>
+      <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">No more profiles</p>
       <p className="text-gray-400 text-[15px] leading-relaxed">Check back later for new Stony Brook students.</p>
     </div>
   );
