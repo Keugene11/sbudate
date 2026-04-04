@@ -64,7 +64,7 @@ export async function updateSession(request: NextRequest) {
         url.pathname = "/onboarding";
         return NextResponse.redirect(url);
       }
-    } else if (profile.status === "pending" && !isPending && !isAdmin) {
+    } else if ((profile.status === "pending" || profile.status === "rejected") && !isPending && !isAdmin) {
       const url = request.nextUrl.clone();
       url.pathname = "/pending";
       return NextResponse.redirect(url);

@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Clock, LogOut, Trash2 } from "lucide-react";
+import { Clock, LogOut, Trash2, XCircle } from "lucide-react";
 
 export default function PendingPage() {
   const supabase = createClient();
   const router = useRouter();
   const [checking, setChecking] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -24,6 +25,8 @@ export default function PendingPage() {
         .single();
       if (profile?.status === "approved") {
         router.push("/discover");
+      } else if (profile?.status === "rejected") {
+        setRejected(true);
       }
     };
     check();
@@ -42,9 +45,58 @@ export default function PendingPage() {
       .single();
     if (profile?.status === "approved") {
       router.push("/discover");
+    } else if (profile?.status === "rejected") {
+      setRejected(true);
     }
     setChecking(false);
   };
+
+  const deleteAndLogout = async () => {
+    setDeleting(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", user.id).single();
+      if (profile) {
+        await fetch("/api/delete-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ profileId: profile.id }),
+        });
+      }
+    }
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  if (rejected) return (
+    <div className="min-h-screen bg-surface flex items-center justify-center px-8">
+      <div className="text-center max-w-sm animate-slide-up">
+        <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
+          <XCircle className="w-9 h-9 text-red-400" strokeWidth={1.5} />
+        </div>
+        <h1 className="text-[24px] font-bold text-gray-900 tracking-tight mb-2">
+          Profile not approved
+        </h1>
+        <p className="text-gray-400 text-[15px] leading-relaxed mb-8">
+          Your profile didn&apos;t meet our guidelines. Please make sure your photos are appropriate and your profile is genuine, then try again.
+        </p>
+        <button
+          onClick={deleteAndLogout}
+          disabled={deleting}
+          className="press px-6 py-3 bg-gray-900 text-white rounded-2xl text-[15px] font-semibold"
+        >
+          {deleting ? "Deleting..." : "Delete account & try again"}
+        </button>
+        <button
+          onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }}
+          className="press flex items-center justify-center gap-2 mt-4 px-6 py-3 text-gray-400 text-[14px] font-medium mx-auto"
+        >
+          <LogOut className="w-4 h-4" strokeWidth={1.8} />
+          Log out
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center px-8">
@@ -91,21 +143,7 @@ export default function PendingPage() {
             </p>
             <div className="space-y-2">
               <button
-                onClick={async () => {
-                  setDeleting(true);
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (!user) return;
-                  const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", user.id).single();
-                  if (profile) {
-                    await fetch("/api/delete-account", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ profileId: profile.id }),
-                    });
-                  }
-                  await supabase.auth.signOut();
-                  router.push("/login");
-                }}
+                onClick={deleteAndLogout}
                 disabled={deleting}
                 className="w-full h-[48px] bg-red-500 text-white rounded-xl text-[15px] font-semibold press disabled:opacity-50"
               >
