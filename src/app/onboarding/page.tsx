@@ -80,7 +80,10 @@ export default function OnboardingPage() {
       }).catch(() => {}); // fire-and-forget
 
       router.push("/pending");
-    } catch (err) { console.error(err); } finally { setLoading(false); }
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally { setLoading(false); }
   };
 
   const canAdvance = () => {
