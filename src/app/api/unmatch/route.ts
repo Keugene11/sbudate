@@ -30,10 +30,16 @@ export async function POST(request: Request) {
   const otherId = match.profile1_id === profile.id ? match.profile2_id : match.profile1_id;
 
   // Delete everything
-  await admin.from("messages").delete().eq("match_id", matchId);
-  await admin.from("likes").delete().eq("from_profile_id", profile.id).eq("to_profile_id", otherId);
-  await admin.from("likes").delete().eq("from_profile_id", otherId).eq("to_profile_id", profile.id);
-  await admin.from("matches").delete().eq("id", matchId);
+  await admin.from("skips").upsert({ from_profile_id: profile.id, to_profile_id: otherId });
+  const r1 = await admin.from("messages").delete().eq("match_id", matchId);
+  const r2 = await admin.from("likes").delete().eq("from_profile_id", profile.id).eq("to_profile_id", otherId);
+  const r3 = await admin.from("likes").delete().eq("from_profile_id", otherId).eq("to_profile_id", profile.id);
+  const r4 = await admin.from("matches").delete().eq("id", matchId);
+
+  if (r1.error || r4.error) {
+    console.error("Unmatch errors:", { messages: r1.error, matches: r4.error });
+    return NextResponse.json({ error: "Failed to unmatch", details: { messages: r1.error?.message, matches: r4.error?.message } }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true });
 }
