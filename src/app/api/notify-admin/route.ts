@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     .eq("profile_id", profileId)
     .order("position");
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.com";
   const token = process.env.ADMIN_REVIEW_SECRET;
   const approveUrl = `${appUrl}/api/admin/review?token=${token}&id=${profileId}&action=approve`;
   const rejectUrl = `${appUrl}/api/admin/review?token=${token}&id=${profileId}&action=reject`;

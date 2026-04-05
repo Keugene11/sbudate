@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const { data: sender } = await admin.from("profiles").select("first_name").eq("id", like.from_profile_id).single();
   const { data: recipient } = await admin.from("profiles").select("first_name").eq("id", like.to_profile_id).single();
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.com";
   const token = process.env.ADMIN_REVIEW_SECRET;
   const approveUrl = `${appUrl}/api/admin/review-like?token=${token}&id=${like.id}&action=approve`;
   const rejectUrl = `${appUrl}/api/admin/review-like?token=${token}&id=${like.id}&action=reject`;

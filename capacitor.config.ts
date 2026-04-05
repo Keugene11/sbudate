@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'SBUdate',
   webDir: 'public',
   server: {
-    url: 'https://sbudate.vercel.app',
+    url: 'https://sbudate.com',
     cleartext: false,
   },
   ios: {

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     await admin.from("profiles").update({ stripe_customer_id: customerId }).eq("id", profile.id);
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.com";
 
   const session = await stripe.checkout.sessions.create({
     customer: customerId,

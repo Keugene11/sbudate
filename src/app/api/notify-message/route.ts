@@ -39,7 +39,7 @@ export async function POST(request: Request) {
   const recipientId = match?.profile1_id === message.sender_id ? match?.profile2_id : match?.profile1_id;
   const { data: recipient } = await admin.from("profiles").select("first_name").eq("id", recipientId).single();
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.vercel.app";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://sbudate.com";
   const token = process.env.ADMIN_REVIEW_SECRET;
   const approveUrl = `${appUrl}/api/admin/review-message?token=${token}&id=${message.id}&action=approve`;
   const rejectUrl = `${appUrl}/api/admin/review-message?token=${token}&id=${message.id}&action=reject`;
