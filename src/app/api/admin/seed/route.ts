@@ -171,13 +171,39 @@ const FAKE_PROFILES = [
   },
 ];
 
-// Placeholder photos — each profile gets 3 randomized landscape/portrait photos from picsum
-function getPhotoUrls(seed: number): string[] {
-  return [
-    `https://picsum.photos/seed/${seed}a/600/800`,
-    `https://picsum.photos/seed/${seed}b/600/800`,
-    `https://picsum.photos/seed/${seed}c/600/800`,
-  ];
+async function fetchAndUploadPhotos(
+  admin: ReturnType<typeof getAdminClient>,
+  userId: string,
+  profileId: string,
+  firstName: string,
+  lastName: string,
+  gender: string
+): Promise<string[]> {
+  const apiGender = gender === "Man" ? "male" : "female";
+  const seed = `sbudate-${firstName.toLowerCase()}-${lastName.toLowerCase()}`;
+
+  // Fetch a consistent face from randomuser.me
+  const res = await fetch(`https://randomuser.me/api/?gender=${apiGender}&seed=${seed}`);
+  const data = await res.json();
+  const photoUrl = data.results?.[0]?.picture?.large;
+  if (!photoUrl) return [];
+
+  const imgRes = await fetch(photoUrl);
+  const imgBuffer = Buffer.from(await imgRes.arrayBuffer());
+
+  // Upload the same face 3 times to different paths
+  const urls: string[] = [];
+  for (let j = 0; j < 3; j++) {
+    const path = `${userId}/${profileId}/${j}.jpg`;
+    await admin.storage.from("photos").upload(path, imgBuffer, {
+      contentType: "image/jpeg",
+      upsert: true,
+    });
+    const { data: urlData } = admin.storage.from("photos").getPublicUrl(path);
+    urls.push(urlData.publicUrl);
+  }
+
+  return urls;
 }
 
 export async function POST() {
@@ -231,16 +257,21 @@ export async function POST() {
       continue;
     }
 
-    // Insert photos
-    const photoUrls = getPhotoUrls(i + 1);
-    await admin.from("photos").insert(
-      photoUrls.map((url, pos) => ({
-        profile_id: newProfile.id,
-        url,
-        position: pos,
-        caption: null,
-      }))
+    // Fetch face photo and upload to storage
+    const photoUrls = await fetchAndUploadPhotos(
+      admin, authUser.user.id, newProfile.id,
+      profile.first_name, profile.last_name, profile.gender
     );
+    if (photoUrls.length > 0) {
+      await admin.from("photos").insert(
+        photoUrls.map((url, pos) => ({
+          profile_id: newProfile.id,
+          url,
+          position: pos,
+          caption: null,
+        }))
+      );
+    }
 
     // Insert prompts
     await admin.from("prompts").insert(
@@ -285,6 +316,13 @@ export async function DELETE() {
       await admin.from("prompts").delete().eq("profile_id", existingProfile.id);
       await admin.from("photos").delete().eq("profile_id", existingProfile.id);
       await admin.from("reports").delete().eq("reported_profile_id", existingProfile.id);
+      // Clean up storage photos
+      const { data: storageFiles } = await admin.storage.from("photos").list(`${fakeUser.id}/${existingProfile.id}`);
+      if (storageFiles?.length) {
+        await admin.storage.from("photos").remove(
+          storageFiles.map(f => `${fakeUser.id}/${existingProfile.id}/${f.name}`)
+        );
+      }
       await admin.from("profiles").delete().eq("id", existingProfile.id);
     }
 
