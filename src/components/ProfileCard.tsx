@@ -151,7 +151,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                   onClick={() => handleHeartTap("photo", photo.id)}
                   className={`absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
                     isOpen
-                      ? "bg-rose scale-110 shadow-lg shadow-rose/30"
+                      ? "bg-foreground scale-110 shadow-lg shadow-foreground/20"
                       : "bg-white/95 shadow-md"
                   }`}
                 >
@@ -209,7 +209,7 @@ export default function ProfileCard({ profile, myProfileId, onLike, onSkip }: Pr
                     onClick={() => handleHeartTap("prompt", prompt.id)}
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
                       isOpen
-                        ? "bg-rose scale-110 shadow-lg shadow-rose/30"
+                        ? "bg-foreground scale-110 shadow-lg shadow-foreground/20"
                         : "bg-gray-100 shadow-sm"
                     }`}
                   >

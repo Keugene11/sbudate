@@ -1,29 +1,110 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isNative, setIsNative] = useState(false);
+
+  useEffect(() => {
+    const native = Capacitor.isNativePlatform();
+    setIsNative(native);
+    if (native) {
+      import("@capgo/capacitor-social-login").then(({ SocialLogin }) => {
+        SocialLogin.initialize({
+          apple: { clientId: "com.sbudate.app" },
+          google: {
+            webClientId: "206932884850-4cs3bedpvhadikj2vrcemd4rdie6e2m2.apps.googleusercontent.com",
+            iOSClientId: process.env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID || "",
+            mode: "offline",
+          },
+        });
+      });
+    }
+  }, []);
 
   const handleGoogleLogin = async () => {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) { setError(error.message); setLoading(false); }
+
+    if (isNative) {
+      try {
+        const { SocialLogin } = await import("@capgo/capacitor-social-login");
+        const result = await SocialLogin.login({
+          provider: "google",
+          options: { scopes: ["email", "profile"] },
+        });
+        const idToken = (result as any).result?.idToken;
+        if (!idToken) throw new Error("No ID token received");
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: "google",
+          token: idToken,
+        });
+        if (error) throw error;
+        window.location.href = "/discover";
+      } catch (err: any) {
+        setError(err.message || "Google sign-in failed");
+        setLoading(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+
+    if (isNative) {
+      try {
+        const { SocialLogin } = await import("@capgo/capacitor-social-login");
+        const result = await SocialLogin.login({
+          provider: "apple",
+          options: { scopes: ["email", "name"] },
+        });
+        const identityToken = (result as any).result?.identityToken;
+        if (!identityToken) throw new Error("No identity token received");
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: "apple",
+          token: identityToken,
+        });
+        if (error) throw error;
+        window.location.href = "/discover";
+      } catch (err: any) {
+        setError(err.message || "Apple sign-in failed");
+        setLoading(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "apple",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
   };
 
   return (
     <div className="h-full flex flex-col bg-surface relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 right-0 h-[50vh] bg-gradient-to-b from-rose-light/50 to-transparent" />
-      <div className="absolute top-[15%] left-[10%] w-32 h-32 bg-rose/5 rounded-full blur-3xl" />
-      <div className="absolute top-[25%] right-[5%] w-40 h-40 bg-rose/5 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-0 right-0 h-[50vh] bg-gradient-to-b from-gray-100/50 to-transparent" />
+      <div className="absolute top-[15%] left-[10%] w-32 h-32 bg-foreground/3 rounded-full blur-3xl" />
+      <div className="absolute top-[25%] right-[5%] w-40 h-40 bg-foreground/3 rounded-full blur-3xl" />
 
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 max-w-[400px] mx-auto w-full relative z-10">
@@ -44,10 +125,22 @@ export default function LoginPage() {
 
         {/* CTA */}
         <div className="w-full mt-16 space-y-3 animate-slide-up" style={{ animationDelay: "100ms" }}>
+          {/* Sign in with Apple — always shown on native, also on web */}
+          <button
+            onClick={handleAppleLogin}
+            disabled={loading}
+            className="press w-full h-[56px] bg-gray-900 text-white rounded-2xl text-[15px] font-semibold flex items-center justify-center gap-3 disabled:opacity-50 tracking-[-0.2px] shadow-lg shadow-black/10"
+          >
+            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="white">
+              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            {loading ? "Signing in..." : "Continue with Apple"}
+          </button>
+
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="press w-full h-[56px] bg-gray-900 text-white rounded-2xl text-[15px] font-semibold flex items-center justify-center gap-3 disabled:opacity-50 tracking-[-0.2px] shadow-lg shadow-black/10"
+            className="press w-full h-[56px] bg-white text-gray-900 border border-gray-200 rounded-2xl text-[15px] font-semibold flex items-center justify-center gap-3 disabled:opacity-50 tracking-[-0.2px]"
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -60,7 +153,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <p className="text-rose text-[13px] mt-4 text-center animate-fade-in">{error}</p>
+          <p className="text-red-500 text-[13px] mt-4 text-center animate-fade-in">{error}</p>
         )}
 
         {/* Trust badges */}

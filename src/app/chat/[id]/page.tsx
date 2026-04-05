@@ -253,7 +253,7 @@ export default function ChatPage() {
               {messages.length === 0 && (
                 <div className="text-center py-16 animate-fade-in">
                   {other?.photo_url && (
-                    <img src={other.photo_url} alt="" className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-rose/20 ring-offset-2" />
+                    <img src={other.photo_url} alt="" className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-foreground/20 ring-offset-2" />
                   )}
                   <p className="text-gray-900 text-[18px] font-semibold mb-1 tracking-tight">You matched!</p>
                   <p className="text-gray-400 text-[14px] mb-6">Start a conversation with {other?.first_name}</p>

@@ -70,6 +70,7 @@ export default function EditProfilePage() {
 
   const handleSave = async () => {
     if (!profileId || !userId) return;
+    if (totalPhotos < 6) return;
     setSaving(true);
     try {
       const totalInches = heightFeet && heightInches ? parseInt(heightFeet) * 12 + parseInt(heightInches) : null;
@@ -110,7 +111,7 @@ export default function EditProfilePage() {
         </button>
         <span className="text-[16px] text-gray-900 font-semibold">Edit Profile</span>
         <button onClick={handleSave} disabled={saving}
-          className="press text-[15px] text-rose font-semibold disabled:text-gray-300 w-16 text-right">
+          className="press text-[15px] text-foreground font-semibold disabled:text-gray-300 w-16 text-right">
           {saving ? "Saving" : "Done"}
         </button>
       </div>

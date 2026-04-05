@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Pause, Play, Trash2, LogOut, Mail } from "lucide-react";
@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const [deleting, setDeleting] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -26,7 +26,7 @@ export default function SettingsPage() {
       }
       setLoading(false);
     })();
-  });
+  }, [supabase]);
 
   const togglePause = async () => {
     if (!profileId) return;
@@ -83,7 +83,7 @@ export default function SettingsPage() {
               >
                 <div className="flex items-center gap-3">
                   {isPaused ? (
-                    <Play className="w-[18px] h-[18px] text-teal" strokeWidth={1.8} />
+                    <Play className="w-[18px] h-[18px] text-foreground" strokeWidth={1.8} />
                   ) : (
                     <Pause className="w-[18px] h-[18px] text-gray-500" strokeWidth={1.8} />
                   )}

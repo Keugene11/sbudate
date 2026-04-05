@@ -113,7 +113,7 @@ export default function LikesPage() {
                 {viewing.from_profile.is_premium && <BadgeCheck className="w-4.5 h-4.5 text-gray-900" strokeWidth={2} fill="currentColor" />}
               </div>
               <div className="flex items-center gap-1.5">
-                <Heart className="w-3.5 h-3.5 text-rose" fill="currentColor" strokeWidth={0} />
+                <Heart className="w-3.5 h-3.5 text-foreground" fill="currentColor" strokeWidth={0} />
                 <span className="text-[13px] text-gray-400 font-medium">
                   Liked your {likedContent?.type === "photo" ? "photo" : likedContent?.type === "prompt" ? "prompt" : "profile"}
                 </span>
@@ -234,11 +234,11 @@ export default function LikesPage() {
       ) : likes.length === 0 ? (
         <div className="flex flex-col items-center pt-20 px-8 text-center animate-slide-up">
           <div className="relative mb-6">
-            <div className="w-20 h-20 rounded-full bg-rose/5 flex items-center justify-center">
-              <Heart className="w-9 h-9 text-rose/30" strokeWidth={1.5} />
+            <div className="w-20 h-20 rounded-full bg-foreground/5 flex items-center justify-center">
+              <Heart className="w-9 h-9 text-foreground/30" strokeWidth={1.5} />
             </div>
-            <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-rose/10 flex items-center justify-center">
-              <Heart className="w-4 h-4 text-rose/40" strokeWidth={1.5} />
+            <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center">
+              <Heart className="w-4 h-4 text-foreground/40" strokeWidth={1.5} />
             </div>
           </div>
           <p className="text-[22px] font-semibold text-gray-900 mb-2 tracking-tight">No likes yet</p>

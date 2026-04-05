@@ -110,7 +110,7 @@ export default function MatchesPage() {
           <div className="w-[52px] h-[52px] rounded-full bg-gray-200" />
         )}
         {match.unread && (
-          <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-rose border-2 border-surface" />
+          <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-foreground border-2 border-surface" />
         )}
       </div>
       <div className="flex-1 min-w-0">
@@ -118,7 +118,7 @@ export default function MatchesPage() {
           <p className={`text-[16px] tracking-tight ${match.unread ? "text-gray-900 font-semibold" : "text-gray-900 font-medium"}`}>
             {match.profile.first_name}
           </p>
-          <span className={`text-[12px] ${match.unread ? "text-rose font-medium" : "text-gray-400"}`}>
+          <span className={`text-[12px] ${match.unread ? "text-foreground font-medium" : "text-gray-400"}`}>
             {formatTime(match.last_message_at || "")}
           </span>
         </div>

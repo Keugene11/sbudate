@@ -22,7 +22,7 @@ function FloatingHeart({ delay, x, size }: { delay: number; x: number; size: num
       }}
     >
       <Heart
-        className="text-rose/60"
+        className="text-white/60"
         style={{ width: size, height: size }}
         fill="currentColor"
         strokeWidth={0}
@@ -82,9 +82,9 @@ export default function MatchCelebration({ name, photoUrl, onChat, onKeepBrowsin
               <div className="w-28 h-28 rounded-full bg-gray-300 border-4 border-white shadow-2xl" />
             )}
             {/* Glow ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-rose/30 scale-[1.15]" style={{ animation: "gentle-pulse 2s ease-in-out infinite" }} />
+            <div className="absolute inset-0 rounded-full border-4 border-white/30 scale-[1.15]" style={{ animation: "gentle-pulse 2s ease-in-out infinite" }} />
           </div>
-          <div className="absolute -top-1 -right-1 w-11 h-11 bg-rose rounded-full flex items-center justify-center shadow-lg animate-heart-pop border-2 border-white">
+          <div className="absolute -top-1 -right-1 w-11 h-11 bg-foreground rounded-full flex items-center justify-center shadow-lg animate-heart-pop border-2 border-white">
             <Heart className="w-5 h-5 text-white" fill="white" strokeWidth={0} />
           </div>
         </div>

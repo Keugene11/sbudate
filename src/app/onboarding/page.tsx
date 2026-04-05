@@ -102,7 +102,7 @@ export default function OnboardingPage() {
       case "gradYear": return true; // optional
       case "hometown": return true; // optional
       case "residenceHall": return true; // optional
-      case "photos": return photos.length >= 2;
+      case "photos": return photos.length >= 6;
       case "prompts": return prompts.filter((p) => p.question && p.answer).length >= 2;
       case "preferences": return genderPreference;
     }
@@ -240,7 +240,7 @@ export default function OnboardingPage() {
         {step === "photos" && (
           <div className="animate-slide-up">
             <h2 className="text-[28px] font-bold tracking-tight mb-2">Add your photos</h2>
-            <p className="text-gray-400 text-[15px] mb-8">At least 2, up to 6. Show your personality.</p>
+            <p className="text-gray-400 text-[15px] mb-8">All 6 required. Show your personality.</p>
             <div className="grid grid-cols-3 gap-2.5">
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="aspect-square relative">

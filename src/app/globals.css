@@ -17,17 +17,20 @@
   --color-gray-900: #1A1A1A;
   --color-cream: #f0f0f0;
   --color-cream-dark: #e5e5e5;
-  --color-rose: #E64980;
-  --color-rose-light: #FFF0F5;
-  --color-teal: #097270;
+  --color-rose: #1a1a1a;
+  --color-rose-light: #f5f5f5;
+  --color-teal: #1a1a1a;
   --color-border: #efefef;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f5f5f5;
+  --color-text-muted: #999999;
   --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', system-ui, sans-serif;
   --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', system-ui, sans-serif;
-  --shadow-card: 0 1px 4px 0 rgba(0, 0, 0, 0.04), 0 2px 12px 0 rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 4px 16px 0 rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 6px 20px 0 rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.05);
   --shadow-photo: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
   --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-nav: 0 -1px 8px 0 rgba(0, 0, 0, 0.06);
+  --shadow-nav: 0 -2px 10px 0 rgba(0, 0, 0, 0.06);
 }
 
 body {
@@ -42,13 +45,13 @@ body {
 ::-webkit-scrollbar { width: 0; height: 0; }
 * { scrollbar-width: none; -webkit-tap-highlight-color: transparent; }
 
-/* Press effect — scale-based like Hinge */
+/* Press effect */
 .press {
-  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.press:active { transform: scale(0.97); opacity: 0.85; }
+.press:active { transform: scale(0.975); }
 
 /* ========== Animations ========== */
 
@@ -188,7 +191,7 @@ body {
 
 /* Like sent success flash */
 @keyframes like-flash {
-  0%   { background-color: rgba(230, 73, 128, 0.08); }
+  0%   { background-color: rgba(26, 26, 26, 0.06); }
   100% { background-color: transparent; }
 }
 .animate-like-flash { animation: like-flash 600ms ease-out; }
@@ -220,6 +223,6 @@ body {
 
 /* Selection color */
 ::selection {
-  background-color: rgba(230, 73, 128, 0.15);
+  background-color: rgba(26, 26, 26, 0.12);
   color: inherit;
 }

@@ -49,7 +49,7 @@ export default function BottomNav() {
       label: "Discover",
       badge: 0,
       icon: (active: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#FFFFFF" : "none"} stroke={active ? "#FFFFFF" : "rgba(255,255,255,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "rgba(26,26,26,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="4" />
         </svg>
       ),
@@ -59,7 +59,7 @@ export default function BottomNav() {
       label: "Likes",
       badge: likeCount,
       icon: (active: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#FFFFFF" : "none"} stroke={active ? "none" : "rgba(255,255,255,0.35)"} strokeWidth="1.8">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1a1a1a" : "none"} stroke={active ? "none" : "rgba(26,26,26,0.35)"} strokeWidth="1.8">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
       ),
@@ -69,7 +69,7 @@ export default function BottomNav() {
       label: "Matches",
       badge: unreadCount,
       icon: (active: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#FFFFFF" : "none"} stroke={active ? "none" : "rgba(255,255,255,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1a1a1a" : "none"} stroke={active ? "none" : "rgba(26,26,26,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       ),
@@ -79,7 +79,7 @@ export default function BottomNav() {
       label: "Premium",
       badge: 0,
       icon: (active: boolean) => (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#FFFFFF" : "none"} stroke={active ? "#FFFFFF" : "rgba(255,255,255,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "rgba(26,26,26,0.35)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
           <polyline points="22 4 12 14.01 9 11.01" />
         </svg>
@@ -89,7 +89,7 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border z-50 shadow-nav">
       <div
         className="max-w-lg mx-auto flex items-center justify-around h-[56px]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
@@ -107,17 +107,17 @@ export default function BottomNav() {
                   tab.icon(isActive)
                 ) : avatarUrl ? (
                   <div className={`w-[24px] h-[24px] rounded-full overflow-hidden transition-all duration-200 ${
-                    isActive ? "ring-[1.5px] ring-white ring-offset-[1.5px] ring-offset-[#1a1a1a]" : "opacity-40"
+                    isActive ? "ring-[1.5px] ring-foreground ring-offset-[1.5px] ring-offset-background" : "opacity-40"
                   }`}>
                     <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className={`w-[24px] h-[24px] rounded-full transition-colors ${
-                    isActive ? "bg-white" : "bg-white/30"
+                    isActive ? "bg-foreground" : "bg-foreground/30"
                   }`} />
                 )}
                 {tab.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] bg-rose text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-[16px] bg-foreground text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
                     {tab.badge > 9 ? "9+" : tab.badge}
                   </span>
                 )}

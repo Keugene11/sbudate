@@ -1,1 +1,3 @@
-Initial release of SBUdate — dating for Stony Brook University students.
+- Added Sign in with Apple
+- Improved sign-in experience
+- Bug fixes and performance improvements

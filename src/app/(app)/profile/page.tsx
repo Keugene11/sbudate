@@ -71,7 +71,7 @@ export default function ProfilePage() {
       {/* Avatar + name */}
       <div className="flex flex-col items-center pt-2 pb-5">
         <div className="relative mb-3">
-          <div className="w-[92px] h-[92px] rounded-full overflow-hidden ring-[2.5px] ring-rose ring-offset-[3px]">
+          <div className="w-[92px] h-[92px] rounded-full overflow-hidden ring-[2.5px] ring-foreground ring-offset-[3px]">
             {profile.photos[0] ? (
               <img src={profile.photos[0].url} alt="" className="w-full h-full object-cover" />
             ) : <div className="w-full h-full bg-gray-200" />}
@@ -118,8 +118,8 @@ export default function ProfilePage() {
             onClick={() => router.push("/edit-profile")}
             className="mx-5 mb-4 px-5 py-3.5 bg-gray-50 rounded-2xl flex items-center gap-3 press text-left"
           >
-            <div className="w-9 h-9 bg-rose/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <Pencil className="w-4 h-4 text-rose" strokeWidth={2} />
+            <div className="w-9 h-9 bg-foreground/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Pencil className="w-4 h-4 text-foreground" strokeWidth={2} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[14px] font-semibold text-gray-900">Complete your profile</p>

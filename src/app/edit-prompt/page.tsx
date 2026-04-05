@@ -80,7 +80,7 @@ function EditPromptInner() {
           </button>
           <span className="text-[16px] text-gray-900 font-semibold">Write Answer</span>
           <button onClick={handleDone} disabled={!answer.trim() || saving}
-            className="press text-[15px] text-rose font-semibold disabled:text-gray-300">
+            className="press text-[15px] text-foreground font-semibold disabled:text-gray-300">
             {saving ? "Saving" : "Done"}
           </button>
         </div>
