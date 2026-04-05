@@ -223,12 +223,7 @@ export async function POST() {
       graduation_year: profile.graduation_year,
       hometown: profile.hometown,
       residence_hall: profile.residence_hall,
-      ethnicity: profile.ethnicity,
-      drinking: profile.drinking,
-      smoking: profile.smoking,
       status: "approved",
-      is_paused: false,
-      is_premium: false,
     }).select().single();
 
     if (profileError || !newProfile) {
