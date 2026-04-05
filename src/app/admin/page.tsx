@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Users, MessageCircle, Flag, Trash2, X, ChevronRight, ChevronLeft, Clock, Check } from "lucide-react";
+import { Shield, Users, MessageCircle, Flag, Trash2, X, ChevronRight, ChevronLeft, Clock, Check, UserPlus } from "lucide-react";
 
 type Tab = "pending" | "reports" | "users" | "messages";
 
@@ -42,6 +42,8 @@ export default function AdminPage() {
   const [viewingMatch, setViewingMatch] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [seeding, setSeeding] = useState(false);
+  const [seedResult, setSeedResult] = useState<string | null>(null);
 
   const fetchData = async (t: Tab) => {
     setLoading(true);
@@ -88,6 +90,35 @@ export default function AdminPage() {
     if (viewingPending?.id === profileId) setViewingPending(null);
   };
 
+  const seedProfiles = async () => {
+    setSeeding(true);
+    setSeedResult(null);
+    try {
+      const res = await fetch("/api/admin/seed", { method: "POST" });
+      const data = await res.json();
+      setSeedResult(`Seeded ${data.created?.length || 0} profiles`);
+      fetchData(tab);
+    } catch {
+      setSeedResult("Failed to seed");
+    }
+    setSeeding(false);
+  };
+
+  const removeFakeProfiles = async () => {
+    if (!confirm("Remove all fake profiles?")) return;
+    setSeeding(true);
+    setSeedResult(null);
+    try {
+      const res = await fetch("/api/admin/seed", { method: "DELETE" });
+      const data = await res.json();
+      setSeedResult(`Removed ${data.deleted?.length || 0} fake profiles`);
+      fetchData(tab);
+    } catch {
+      setSeedResult("Failed to remove");
+    }
+    setSeeding(false);
+  };
+
   const dismissReport = async (reportId: string) => {
     await fetch("/api/admin", {
       method: "POST",
@@ -115,6 +146,21 @@ export default function AdminPage() {
           <div className="flex items-center gap-2 mb-5">
             <Shield className="w-5 h-5 text-gray-900" strokeWidth={2} />
             <h1 className="text-[22px] font-bold text-gray-900 tracking-tight">Admin Dashboard</h1>
+          </div>
+
+          {/* Seed controls */}
+          <div className="flex items-center gap-2 mb-4">
+            <button onClick={seedProfiles} disabled={seeding}
+              className="press flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-medium bg-surface text-gray-500 border border-border disabled:opacity-50">
+              <UserPlus className="w-4 h-4" strokeWidth={1.8} />
+              {seeding ? "Seeding..." : "Seed Fake Profiles"}
+            </button>
+            <button onClick={removeFakeProfiles} disabled={seeding}
+              className="press flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-medium bg-red-50 text-red-500 border border-red-100 disabled:opacity-50">
+              <Trash2 className="w-4 h-4" strokeWidth={1.8} />
+              Remove Fakes
+            </button>
+            {seedResult && <span className="text-[13px] text-gray-400">{seedResult}</span>}
           </div>
 
           {/* Tabs */}
